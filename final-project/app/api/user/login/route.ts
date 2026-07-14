@@ -1,4 +1,4 @@
-import UserModel from "@/app/db/models/elshadModels/userModel";
+import UserModel from "@/app/db/models/userModel";
 import errorHandler from "@/app/helpers/errorHandler";
 import { compareSync } from "bcryptjs";
 import {sign} from "jsonwebtoken"

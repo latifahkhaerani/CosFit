@@ -1,4 +1,4 @@
-import UserModel from "@/app/db/models/elshadModels/userModel";
+import UserModel from "@/app/db/models/userModel";
 import errorHandler from "@/app/helpers/errorHandler";
 
 export async function POST(req: Request)
