@@ -1,5 +1,6 @@
 import { Checkout } from "@/app/types";
 import { database } from "../config/mongoDb";
+import { ObjectId } from "mongodb";
 
 export default class CheckoutModel{
     static collection(){
@@ -7,12 +8,12 @@ export default class CheckoutModel{
     }
     
     static async getAllCheckouts(userId: string){
-        const checkouts = await this.collection().find({userId}).toArray()
+        const checkouts = await this.collection().find({userId: new ObjectId(userId)}).toArray()
         return checkouts
     }
-
+    
     static async createCheckout(checkoutData: Checkout, userId: string){
-        const result = await this.collection().insertOne({...checkoutData, userId})
+        const result = await this.collection().insertOne({...checkoutData, userId: new ObjectId(userId)})
         return "Checkout created with ID: " + result.insertedId
     }
 }

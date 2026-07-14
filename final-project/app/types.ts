@@ -23,8 +23,8 @@ export interface Wishlist {
 }
 
 export interface UserProfile {
-    id: string;
-    userId: string;
+    id?: string;
+    userId?: string;
     address: string;
     photo: string;
 }
