@@ -15,5 +15,4 @@ export default class CheckoutModel{
         const result = await this.collection().insertOne({...checkoutData, userId})
         return "Checkout created with ID: " + result.insertedId
     }
-
 }
