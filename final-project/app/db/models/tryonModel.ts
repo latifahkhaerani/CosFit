@@ -1,4 +1,4 @@
-import { InputImage } from "@/app/types";
+import { PostInputImage } from "@/app/types";
 import { database } from "@/db/config/mongodb";
 import { put } from '@vercel/blob';
 
@@ -8,7 +8,7 @@ export default class TryOnModel {
     return database.collection("cosplay");
   }
 
-  static async UserTryOn(img: InputImage) {
+  static async UserTryOn(img: PostInputImage) {
     const { yourImg, cosImg } = img;
 
     const blob1 = await put(yourImg.name, yourImg, {

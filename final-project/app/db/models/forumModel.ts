@@ -1,4 +1,4 @@
-import { Room } from "@/app/types";
+import { PostRoom } from "@/app/types";
 import { database } from "../config/mongoDb";
 
 export default class ForumModel{
@@ -11,7 +11,7 @@ export default class ForumModel{
         return forums
     }
 
-    static async createForum(forumData: Room){
+    static async createForum(forumData: PostRoom){
         const result = await this.collection().insertOne(forumData)
         return "Forum created with ID: " + result.insertedId
     }
