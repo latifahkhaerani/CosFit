@@ -1,4 +1,4 @@
-import { Checkout } from "@/app/types";
+import { PostCheckout } from "@/app/types";
 import { database } from "../config/mongoDb";
 
 export default class CheckoutModel{
@@ -11,7 +11,7 @@ export default class CheckoutModel{
         return checkouts
     }
 
-    static async createCheckout(checkoutData: Checkout, userId: string){
+    static async createCheckout(checkoutData: PostCheckout, userId: string){
         const result = await this.collection().insertOne({...checkoutData, userId})
         return "Checkout created with ID: " + result.insertedId
     }

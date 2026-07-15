@@ -1,4 +1,4 @@
-import { Wishlist } from "@/app/types";
+import { PostWishlist } from "@/app/types";
 import { database } from "@/db/config/mongodb";
 import { ObjectId } from "mongodb";
 
@@ -15,7 +15,7 @@ export default class WishlistModel {
     return this.collection().findOne({ _id: new ObjectId(id) });
   }
 
-  static async addWishlist(wishlistData: Wishlist, userId: string) {
+  static async addWishlist(wishlistData: PostWishlist, userId: string) {
     const result = await this.collection().insertOne({
       ...wishlistData,
       userId,

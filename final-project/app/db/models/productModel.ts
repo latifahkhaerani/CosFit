@@ -1,4 +1,4 @@
-import { InputImage } from "@/app/types";
+import { PostInputImage } from "@/app/types";
 import { database } from "../config/mongoDb";
 import { ObjectId } from "mongodb";
 
