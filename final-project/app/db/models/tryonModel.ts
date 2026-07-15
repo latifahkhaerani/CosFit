@@ -8,7 +8,7 @@ export default class TryOnModel {
     return database.collection("cosplay");
   }
 
-  static async UserTryOn(img: PostInputImage) {
+  static async UserTryOn(img: PostInputImage, userId: string | null) {
     const { yourImg, cosImg } = img;
 
     const blob1 = await put(yourImg.name, yourImg, {
@@ -37,7 +37,7 @@ const result = await response.json();
 
 const payload = {
     CosImg: result.output[0],
-    // UserId: id
+    UserId: userId
 }
 
 await this.collection().insertOne(payload)
