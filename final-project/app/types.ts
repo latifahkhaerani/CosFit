@@ -35,3 +35,8 @@ export interface Checkout {
     userId: string;
     status: string;
 }
+
+export interface InputImage {
+    yourImg: File;
+    cosImg: File
+}
