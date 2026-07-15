@@ -1,14 +1,14 @@
 @import "tailwindcss";
 
-/* :root {
-  --background: #ffffff;
-  --foreground: #171717;
-} */
-
 :root {
-  --primary: #B14744;
-  --secondary: #B15D44;
-  --accent: #CC8857;
+  /* Brand palette — from Figma "Selection colors" */
+  --primary: #B14744;    /* main CTA, active links, price */
+  --secondary: #B15D44;  /* hover / darker state of primary */
+  --tertiary: #B17144;   /* tags, mid-tone accents */
+  --accent: #CC8857;     /* icons, sparkles, highlights */
+  --gold: #D8A363;       /* lighter warm accent, ratings */
+  --cream: #E1BD9C;      /* soft tint backgrounds, badges */
+
   --background: #FAF8F5;
   --surface: #FFFFFF;
   --text: #4D565C;
@@ -18,20 +18,26 @@
 
 @theme inline {
   --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-foreground: var(--text);
+
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+  --color-tertiary: var(--tertiary);
+  --color-accent: var(--accent);
+  --color-gold: var(--gold);
+  --color-cream: var(--cream);
+
+  --color-surface: var(--surface);
+  --color-text: var(--text);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
 }
