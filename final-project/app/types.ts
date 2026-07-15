@@ -1,12 +1,14 @@
+import { ObjectId } from "mongodb";
+
 export interface User {
-    id: string;
+    _id?: ObjectId;
     email: string;
     password: string;
     username: string;
 }
 
 export interface Product {
-    id: string;
+    _id?: ObjectId;
     imgUrl: string;
     desc: string;
     size: string;
@@ -16,21 +18,21 @@ export interface Product {
 }
 
 export interface Wishlist {
-    id: string;
+    _id?: ObjectId;
     productId: string;
     aiImgUrl: string;
     userId: string;
 }
 
 export interface UserProfile {
-    id: string;
+    _id?: ObjectId;
     userId: string;
     address: string;
     photo: string;
 }
 
 export interface Checkout {
-    id: string;
+    _id?: ObjectId;
     productId: string;
     userId: string;
     status: string;
@@ -39,4 +41,20 @@ export interface Checkout {
 export interface InputImage {
     yourImg: File;
     cosImg: File
+}
+
+export interface Chat {
+    _id?: ObjectId;
+    content: string;
+    userId: string;
+    roomId: string;
+    imgUrl: string;
+}
+
+export interface Room {
+    _id?: ObjectId;
+    nameForum: string;
+    desc: string;
+    img: string;
+    tag: [string];
 }
