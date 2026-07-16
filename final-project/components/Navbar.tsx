@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X, Sparkles, ShoppingBag, User } from "lucide-react";
+// import { cookies } from "next/headers";
 import { useEffect, useState } from "react";
 import { handleLoginCookies } from "@/action";
 // import { cookies } from "next/headers";
@@ -33,7 +34,7 @@ const defaultLinks: NavLink[] = [
   { id: "events", label: "Events", href: "/events" },
   { id: "wishlist", label: "Wishlist", href: "/wishlist" },
   { id: "try-on", label: "Try On", href: "/try-on" },
-  { id: "vendor", label: "Become a Vendor", href: "/become-a-vendor" },
+  { id: "vendor", label: "Become a Vendor", href: "/vendor/login" },
 ];
 
 /** "/" only matches exactly; every other route also matches its sub-paths. */

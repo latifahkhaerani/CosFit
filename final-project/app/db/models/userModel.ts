@@ -40,6 +40,6 @@ export default class UserModel {
         parsedData.password = hashSync(parsedData.password, 10)
 
         const result = await this.collection().insertOne(parsedData)
-        return "User created with ID: " + result.insertedId
+        return {msg: "User created with ID: " + result.insertedId, insertedId: result.insertedId}
     }
 }
