@@ -73,10 +73,10 @@ export default function TryOnPage() {
 
         {/* ========================= */}
 
-        <div className="grid grid-cols-12 gap-7">
+        <div className="grid grid-cols-[320px_1fr_360px] gap-7">
           {/* LEFT */}
 
-          <section className="col-span-3 space-y-6">
+          <section>
             {/* ================= */}
 
             {/* YOUR PHOTO */}
@@ -96,45 +96,15 @@ export default function TryOnPage() {
                   alt="body"
                   width={500}
                   height={700}
-                  className="h-[420px] w-full object-cover"
+                  className="h-105 w-full object-cover"
                 />
 
-                <button
-                  className="
-        absolute
-        right-4
-        top-4
-        flex
-        h-10
-        w-10
-        items-center
-        justify-center
-        rounded-full
-        bg-white
-        shadow-card
-      "
-                >
+                <button className=" absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-card">
                   <Camera size={18} />
                 </button>
               </div>
 
-              <button
-                className="
-      mt-4
-      flex
-      h-12
-      w-full
-      items-center
-      justify-center
-      gap-2
-      rounded-2xl
-      border
-      border-[var(--border)]
-      bg-white
-      font-medium
-      hover:bg-[#FFF8F6]
-    "
-              >
+              <button className=" mt-4 flex h-12 w-full items-center justify-center gap-2 rounded-2xl border border-(--border) bg-white font-medium hover:bg-[#FFF8F6]">
                 <Camera size={18} />
                 Change Photo
               </button>
@@ -150,16 +120,7 @@ export default function TryOnPage() {
               <div className="mb-5 flex items-center justify-between">
                 <h3 className="font-semibold">Your Measurements</h3>
 
-                <button
-                  className="
-        flex
-        items-center
-        gap-1
-        text-sm
-        font-medium
-        text-[var(--primary)]
-      "
-                >
+                <button className=" flex items-center gap-1 text-sm font-medium text-(--primary)">
                   <Pencil size={15} />
                   Edit
                 </button>
@@ -207,7 +168,7 @@ export default function TryOnPage() {
 
           {/* CENTER */}
 
-          <section className="col-span-6 space-y-6">
+          <section>
             {/* AI Preview */}
 
             <div className="card p-6">
@@ -233,13 +194,13 @@ export default function TryOnPage() {
                   alt="Generated Preview"
                   width={900}
                   height={900}
-                  className="h-[640px] w-full object-cover"
+                  className="h-150 w-full object-cover"
                 />
 
                 {/* AI Badge */}
 
                 <div className="absolute left-5 top-5 rounded-full bg-white/90 px-4 py-2 shadow-card backdrop-blur">
-                  <p className="text-xs font-medium text-[var(--primary)]">
+                  <p className="text-xs font-medium text-(--primary)">
                     AI Generated Preview
                   </p>
                 </div>
@@ -247,7 +208,7 @@ export default function TryOnPage() {
                 {/* Match Score */}
 
                 <div className="absolute right-5 top-5 rounded-2xl bg-white p-4 shadow-card">
-                  <p className="text-xs text-[var(--muted)]">Match Score</p>
+                  <p className="text-xs text-(--muted)">Match Score</p>
 
                   <h3 className="mt-1 text-3xl font-bold text-green-600">
                     95%
@@ -299,7 +260,7 @@ export default function TryOnPage() {
 
           {/* RIGHT */}
 
-          <section className="col-span-3 space-y-6">
+          <section>
             {/* ========================== */}
             {/* Selected Costume */}
             {/* ========================== */}
@@ -312,7 +273,7 @@ export default function TryOnPage() {
                   <p className="subtitle mt-1">Ready for rental</p>
                 </div>
 
-                <button className="text-sm font-medium text-[var(--primary)] hover:underline">
+                <button className="text-sm font-medium text-(--primary) hover:underline">
                   Change
                 </button>
               </div>
@@ -323,7 +284,7 @@ export default function TryOnPage() {
                   alt="Hu Tao"
                   width={500}
                   height={700}
-                  className="h-[270px] w-full object-cover"
+                  className="h-67.5 w-full object-cover"
                 />
 
                 <span className="absolute left-4 top-4 badge-success">
@@ -356,7 +317,7 @@ export default function TryOnPage() {
                   <div>
                     <p className="subtitle">Rental Price</p>
 
-                    <h3 className="text-3xl font-bold text-[var(--primary)]">
+                    <h3 className="text-3xl font-bold text-(--primary)">
                       Rp450.000
                     </h3>
 
@@ -389,29 +350,6 @@ export default function TryOnPage() {
             {/* ========================== */}
             {/* AI Match */}
             {/* ========================== */}
-
-            <div className="overflow-hidden rounded-[28px] bg-gradient-to-br from-[#FFF4EE] to-[#FFFDFB] p-6 shadow-card">
-              <div className="flex items-center gap-4">
-                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white">
-                  🤖
-                </div>
-
-                <div>
-                  <p className="subtitle">AI Match Score</p>
-
-                  <h2 className="text-4xl font-bold text-green-600">95%</h2>
-                </div>
-              </div>
-
-              <p className="mt-5 text-sm leading-7 text-[var(--muted)]">
-                Based on your uploaded body profile, this costume has an
-                excellent fitting recommendation.
-              </p>
-
-              <button className="primary-btn mt-6 w-full">
-                Rent This Costume
-              </button>
-            </div>
           </section>
         </div>
 
@@ -440,7 +378,7 @@ export default function TryOnPage() {
                 <button className="secondary-btn">Download</button>
               </div>
 
-              <div className="overflow-hidden rounded-[28px]">
+              <div className="overflow-hidden  rounded-[28px]">
                 <ReactCompareSlider
                   itemOne={
                     <ReactCompareSliderImage
@@ -472,7 +410,7 @@ export default function TryOnPage() {
                   <p className="subtitle mt-1">Recent AI previews</p>
                 </div>
 
-                <button className="text-sm text-[var(--primary)] hover:underline">
+                <button className="text-sm text-(--primary) hover:underline">
                   View All
                 </button>
               </div>
@@ -481,7 +419,7 @@ export default function TryOnPage() {
                 {history.map((item) => (
                   <div
                     key={item.id}
-                    className="group flex cursor-pointer gap-3 rounded-2xl p-2 transition hover:bg-[#FCFBFA]"
+                    className="group flex cursor-pointer gap-3 rounded-2xl p-2 transition hover:soft-bg"
                   >
                     <div className="relative h-24 w-20 overflow-hidden rounded-xl">
                       <Image
@@ -508,7 +446,7 @@ export default function TryOnPage() {
 
             {/* Generate */}
 
-            <div className="overflow-hidden rounded-[28px] bg-gradient-to-br from-[#FFF4EE] to-[#FFFDFB] p-6 shadow-card">
+            <div className="overflow-hidden rounded-[28px] bg-linear-to-br from-[#FFF4EE] to-[#FFFDFB] p-6 shadow-card">
               <h3 className="text-xl font-semibold">Want another look?</h3>
 
               <p className="subtitle mt-2">
@@ -541,23 +479,11 @@ function MeasureCard({ icon, title, value }: MeasureProps) {
     <div
       className="
       rounded-2xl
-      bg-[#FCFBFA]
+      soft-bg
       p-4
     "
     >
-      <div
-        className="
-        mb-3
-        flex
-        h-9
-        w-9
-        items-center
-        justify-center
-        rounded-xl
-        bg-white
-        text-[var(--primary)]
-      "
-      >
+      <div className=" mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-white text-[var(--primary)]">
         {icon}
       </div>
 
@@ -575,7 +501,7 @@ type InfoItemProps = {
 
 function InfoItem({ title, value }: InfoItemProps) {
   return (
-    <div className="flex items-center justify-between rounded-2xl bg-[#FCFBFA] p-4">
+    <div className="flex items-center justify-between rounded-2xl soft-bg p-4">
       <span className="subtitle">{title}</span>
 
       <span className="font-semibold">{value}</span>
