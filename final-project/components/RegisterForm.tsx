@@ -1,11 +1,43 @@
 'use client'
 
+import errorHandler from "@/app/helpers/errorHandler";
 import { User, Mail, Lock, Eye, Sparkles } from "lucide-react";
-import Link from "next/link";
+import { SubmitEvent, useState } from "react";
 
 export default function RegisterForm() {
-  
-  
+
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [username, setUsername] = useState("")
+  const [confirmPass, setConfirmPass] = useState("")
+  const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    try {
+      if(confirmPass !== password)
+      {
+        throw new Error("Password doesnt match")
+      }
+      console.log({email, password, username})
+
+      const data = await fetch(`http://localhost:3000/api/user/register`, {
+        method: "POST",
+        headers: {
+          'Content-Type':'application/json'
+        },
+        body: JSON.stringify({username, email, password})
+      })
+
+      setEmail("")
+      setPassword("")
+      setUsername("")
+      setConfirmPass("")
+
+      return data
+
+    } catch (error) {
+      errorHandler(error)
+    }
+  }
   return (
     <section className="flex min-h-screen items-center justify-center bg-[var(--background)] p-10">
       <div className="w-full max-w-2xl rounded-[32px] bg-white p-12 shadow-xl">
@@ -21,8 +53,8 @@ export default function RegisterForm() {
             Join thousands of cosplayers in the CosFit community.
           </p>
         </div>
-
-        <form action="">
+        
+        <form action="" onSubmit={handleSubmit}>
           {/* Username */}
 
           <div className="mb-6">
@@ -37,6 +69,8 @@ export default function RegisterForm() {
                 type="text"
                 placeholder="Enter your username"
                 className="ml-3 w-full bg-transparent outline-none placeholder:text-gray-400"
+                onChange={(e) => {setUsername(e.target.value)}}
+                value={username}
               />
             </div>
           </div>
@@ -55,6 +89,8 @@ export default function RegisterForm() {
                 type="email"
                 placeholder="Enter your email"
                 className="ml-3 w-full bg-transparent outline-none placeholder:text-gray-400"
+                onChange={(e) => {setEmail(e.target.value)}}
+                value={email}
               />
             </div>
           </div>
@@ -73,6 +109,8 @@ export default function RegisterForm() {
                 type="password"
                 placeholder="Create a password"
                 className="ml-3 w-full bg-transparent outline-none placeholder:text-gray-400"
+                onChange={(e) => {setPassword(e.target.value)}}
+                value={password}
               />
 
               <Eye size={20} className="text-gray-400" />
@@ -93,6 +131,8 @@ export default function RegisterForm() {
                 type="password"
                 placeholder="Confirm your password"
                 className="ml-3 w-full bg-transparent outline-none placeholder:text-gray-400"
+                onChange={(e) => {setConfirmPass(e.target.value)}}
+                value={confirmPass}
               />
 
               <Eye size={20} className="text-gray-400" />
@@ -114,21 +154,10 @@ export default function RegisterForm() {
 
           {/* Button */}
 
-          <button className="mb-8 h-14 w-full rounded-2xl bg-[var(--primary)] text-lg font-semibold text-white transition hover:opacity-90">
+          <button className="mb-8 h-14 w-full rounded-2xl bg-[var(--primary)] text-lg font-semibold text-white transition hover:opacity-90" type="submit">
             Register Now ✨
           </button>
         </form>
-
-
-        {/* Divider */}
-
-        <div className="mb-8 flex items-center gap-4">
-          <div className="h-px flex-1 bg-[var(--border)]" />
-
-          <span className="text-sm text-gray-400">or register with</span>
-
-          <div className="h-px flex-1 bg-[var(--border)]" />
-        </div>
       </div>
     </section>
   );
