@@ -1,9 +1,9 @@
+"use client";
 import QuickAction from "@/components/vendor/QuickAction";
 import RecentRentalCard from "@/components/vendor/RecentRentalCard";
 import UpcomingEventCard from "@/components/vendor/UpcomingEventCard";
+import VendorProductRow from "@/components/vendor/VendorProductRow";
 import VendorSidebar from "@/components/vendor/VendorSidebar";
-// import VendorSidebar from "@/components/vendor/VendorSidebar";
-
 import VendorStatCard from "@/components/vendor/VendorStatCard";
 import {
   Shirt,
@@ -31,10 +31,18 @@ export default function VendorDashboard() {
               size={20}
             />
 
-            <input
-              placeholder="Search costumes..."
-              className="input-soft h-14 w-full pl-14"
-            />
+    <div className="relative w-[520px]">
+
+    <Search
+        size={20}
+        className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400"
+    />
+
+    <input
+        className="h-14 w-full rounded-2xl border border-[var(--border)] bg-white pl-14 pr-5 shadow-card outline-none focus:border-[var(--primary)]"
+    />
+
+</div>
           </div>
 
           <div className="flex items-center gap-5">
@@ -105,40 +113,78 @@ export default function VendorDashboard() {
           <div className="col-span-8 space-y-6">
             {/* Quick Actions */}
 
-            <div className="card p-6">
-              <div className="mb-5 flex items-center justify-between">
-                <h3 className="card-title">Quick Actions</h3>
+            <div className="card p-7">
+              <div className="mb-6 flex items-center justify-between">
+                <h3 className="card-title">My Costumes</h3>
+
+                <button className="secondary-btn">View All Costumes</button>
               </div>
 
-              <div className="grid grid-cols-4 gap-5">
-                <QuickAction
-                  title="Add Costume"
-                  desc="Upload a new costume"
-                  color="#EF4444"
-                  icon={<Plus size={22} />}
-                />
+              <table className="w-full">
+                <thead>
+                  <tr className="text-left text-sm text-(--muted)">
+                    <th className="pb-4">Costume</th>
 
-                <QuickAction
-                  title="Manage Orders"
-                  desc="View rental requests"
-                  color="#F59E0B"
-                  icon={<ShoppingBag size={22} />}
-                />
+                    <th>Rental Price</th>
 
-                <QuickAction
-                  title="Upcoming Events"
-                  desc="Join cosplay events"
-                  color="#6B5BDB"
-                  icon={<CalendarDays size={22} />}
-                />
+                    <th>Availability</th>
 
-                <QuickAction
-                  title="Community"
-                  desc="Connect vendors"
-                  color="#16A34A"
-                  icon={<MessageSquare size={22} />}
-                />
-              </div>
+                    <th>Rental</th>
+
+                    <th>Views</th>
+
+                    <th>Wishlist</th>
+
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  <VendorProductRow
+                    image="/images/raiden.jpg"
+                    character="Raiden Shogun"
+                    series="Genshin Impact"
+                    price={350000}
+                    availability="Available"
+                    rental="Rented"
+                    views={1200}
+                    wishlist={234}
+                  />
+
+                  <VendorProductRow
+                    image="/images/saber.jpg"
+                    character="Saber"
+                    series="Fate"
+                    price={300000}
+                    availability="Available"
+                    rental="Available"
+                    views={980}
+                    wishlist={198}
+                  />
+
+                  <VendorProductRow
+                    image="/images/zerotwo.jpg"
+                    character="Zero Two"
+                    series="Darling in the Franxx"
+                    price={280000}
+                    availability="Low Stock"
+                    rental="Available"
+                    views={760}
+                    wishlist={145}
+                  />
+
+                  <VendorProductRow
+                    image="/images/levi.jpg"
+                    character="Levi Ackerman"
+                    series="Attack on Titan"
+                    price={250000}
+                    availability="Out of Stock"
+                    rental="Available"
+                    views={620}
+                    wishlist={102}
+                  />
+                </tbody>
+              </table>
             </div>
           </div>
 
@@ -148,6 +194,28 @@ export default function VendorDashboard() {
             <RecentRentalCard />
 
             <UpcomingEventCard />
+
+            <div className="card card-hover p-7">
+              <div className="mb-5">
+                <h3 className="card-title">Level Up Your Store</h3>
+
+                <p className="card-subtitle">
+                  Complete your profile and increase visibility.
+                </p>
+              </div>
+
+              <div className="my-8 flex justify-center">
+                <div className="relative flex h-40 w-40 items-center justify-center rounded-full border-[10px] border-[#F6D5BE]">
+                  <div className="text-center">
+                    <h2 className="text-4xl font-bold">85%</h2>
+
+                    <p className="text-sm text-[var(--muted)]">Completed</p>
+                  </div>
+                </div>
+              </div>
+
+              <button className="primary-btn w-full">Complete Profile</button>
+            </div>
           </div>
         </div>
       </section>

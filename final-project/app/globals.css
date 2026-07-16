@@ -158,3 +158,38 @@ p {
   background: #fcfbfa;
 }
 
+.card-hover {
+  transition: all .25s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    0 10px 35px rgba(0,0,0,.06);
+}
+
+.icon-wrapper{
+  @apply flex items-center justify-center rounded-2xl;
+  width:56px;
+  height:56px;
+}
+
+.section-spacing{
+  @apply mt-8;
+}
+
+.hover-scale{
+  transition:.25s;
+}
+
+.hover-scale:hover{
+  transform:scale(1.04);
+}
+
+.badge{
+  @apply inline-flex items-center rounded-full px-3 py-1 text-xs font-medium;
+}
+
+.divider{
+  border-color:#F5F1EC;
+}
