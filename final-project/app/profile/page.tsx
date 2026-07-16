@@ -137,8 +137,10 @@ export default function ProfilePage() {
       image: "/images/makima-avatar.jpg",
     },
   ];
+
   const newLocal =
     "rounded-2xl bg-gradient-to-r from-[#FFF4EE] to-[#FFFDFB] p-8";
+
   return (
     <main className="min-h-screen bg-background">
       <div className="mx-auto max-w-362.5 px-6 py-8">
@@ -148,7 +150,7 @@ export default function ProfilePage() {
           <aside className="space-y-5">
             {/* Profile */}
 
-            <div className="rounded-2xl border border-border bg-white p-6 shadow-sm">
+            <div className="card p-6">
               <div className="flex flex-col items-center">
                 <div className="relative">
                   <div className="relative h-28 w-28 overflow-hidden rounded-full border-4 border-[#F7D8C4]">
@@ -187,7 +189,7 @@ export default function ProfilePage() {
 
             {/* Menu */}
 
-            <div className="rounded-2xl border border-border bg-white p-3 shadow-sm">
+            <div className="card p-3">
               <SidebarItem active icon={<Home size={18} />} title="Overview" />
 
               <SidebarItem icon={<User size={18} />} title="Body Profile" />
@@ -239,7 +241,7 @@ export default function ProfilePage() {
           <section className="space-y-6">
             {/* Welcome */}
 
-            <div className="flex items-center justify-between rounded-2xl border border-border bg-white p-6 shadow-sm">
+            <div className="card flex items-center justify-between rounded-2xl border p-6 shadow-sm">
               <div>
                 <h1 className="flex items-center gap-2 text-3xl font-bold">
                   Welcome back, Yuna!
@@ -262,110 +264,108 @@ export default function ProfilePage() {
             <div className="grid gap-5 xl:grid-cols-[1.2fr_1.3fr_1fr]">
               {/* BODY PROFILE */}
 
-              <div className="rounded-2xl border border-border bg-white p-5">
-                <div className="rounded-2xl border border-border bg-white p-5 shadow-sm">
-                  {/* Header */}
+              <div className="card p-5">
+                {/* Header */}
 
-                  <div className="mb-5 flex items-center justify-between">
-                    <div>
-                      <h3 className="text-xl font-semibold text-text">
-                        Body Profile
-                      </h3>
+                <div className="mb-5 flex items-center justify-between">
+                  <div>
+                    <h3 className="text-xl font-semibold text-text">
+                      Body Profile
+                    </h3>
 
-                      <p className="mt-1 text-sm text-muted">
-                        Used for AI size matching
-                      </p>
-                    </div>
-
-                    <button className="text-sm font-medium text-primary hover:underline">
-                      View Details →
-                    </button>
+                    <p className="mt-1 text-sm text-muted">
+                      Used for AI size matching
+                    </p>
                   </div>
 
-                  {/* Content */}
+                  <button className="text-sm font-medium text-primary hover:underline">
+                    View Details →
+                  </button>
+                </div>
 
-                  <div className="grid gap-5 lg:grid-cols-[160px_1fr]">
-                    {/* Image */}
+                {/* Content */}
 
-                    <div className="relative aspect-2/4 overflow-hidden rounded-2xl">
-                      <Image
-                        src="/images/user-body.png"
-                        alt="Body"
-                        fill
-                        className="object-cover"
-                      />
+                <div className="grid gap-5 lg:grid-cols-[160px_1fr]">
+                  {/* Image */}
+
+                  <div className="relative aspect-2/4 overflow-hidden rounded-2xl">
+                    <Image
+                      src="/images/user-body.png"
+                      alt="Body"
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+
+                  {/* Right */}
+
+                  <div className="space-y-4">
+                    {/* Height Weight */}
+
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="rounded-xl bg-[#FCFBFA] p-4">
+                        <p className="text-sm text-muted">Height</p>
+
+                        <h3 className="mt-2 text-2xl font-bold">155 cm</h3>
+                      </div>
+
+                      <div className="rounded-xl bg-[#FCFBFA] p-4">
+                        <p className="text-sm text-muted">Weight</p>
+
+                        <h3 className="mt-2 text-2xl font-bold">45 kg</h3>
+                      </div>
                     </div>
 
-                    {/* Right */}
+                    {/* Measurement */}
 
-                    <div className="space-y-4">
-                      {/* Height Weight */}
+                    <div className="card rounded-xl p-4">
+                      <h4 className="mb-4 font-semibold">Measurements</h4>
 
-                      <div className="grid grid-cols-2 gap-3">
-                        <div className="rounded-xl bg-[#FCFBFA] p-4">
-                          <p className="text-sm text-muted">Height</p>
+                      <div className="space-y-3">
+                        <MeasureRow label="Bust" value="84 cm" />
 
-                          <h3 className="mt-2 text-2xl font-bold">155 cm</h3>
-                        </div>
+                        <MeasureRow label="Waist" value="62 cm" />
 
-                        <div className="rounded-xl bg-[#FCFBFA] p-4">
-                          <p className="text-sm text-muted">Weight</p>
+                        <MeasureRow label="Hip" value="88 cm" />
 
-                          <h3 className="mt-2 text-2xl font-bold">45 kg</h3>
-                        </div>
+                        <MeasureRow label="Shoulder" value="38 cm" />
+
+                        <MeasureRow label="Inseam" value="72 cm" />
                       </div>
-
-                      {/* Measurement */}
-
-                      <div className="rounded-xl border border-border p-4">
-                        <h4 className="mb-4 font-semibold">Measurements</h4>
-
-                        <div className="space-y-3">
-                          <MeasureRow label="Bust" value="84 cm" />
-
-                          <MeasureRow label="Waist" value="62 cm" />
-
-                          <MeasureRow label="Hip" value="88 cm" />
-
-                          <MeasureRow label="Shoulder" value="38 cm" />
-
-                          <MeasureRow label="Inseam" value="72 cm" />
-                        </div>
-                      </div>
-
-                      {/* AI */}
-
-                      <div className="rounded-xl bg-green-50 p-4">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <p className="text-sm text-green-700">
-                              AI Match Accuracy
-                            </p>
-
-                            <h3 className="mt-1 text-3xl font-bold text-green-600">
-                              95%
-                            </h3>
-                          </div>
-
-                          <div className="flex h-16 w-16 items-center justify-center rounded-full border-[6px] border-green-500 text-xl font-bold text-green-600">
-                            ✓
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Button */}
-
-                      <button className="w-full rounded-xl border border-primary py-3 font-medium text-primary transition hover:bg-primary hover:text-white">
-                        ✨ Update Measurements
-                      </button>
                     </div>
+
+                    {/* AI */}
+
+                    <div className="rounded-xl bg-green-50 p-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-sm text-green-700">
+                            AI Match Accuracy
+                          </p>
+
+                          <h3 className="mt-1 text-3xl font-bold text-green-600">
+                            95%
+                          </h3>
+                        </div>
+
+                        <div className="flex h-16 w-16 items-center justify-center rounded-full border-[6px] border-green-500 text-xl font-bold text-green-600">
+                          ✓
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Button */}
+
+                    <button className="w-full rounded-xl border border-primary py-3 font-medium text-primary transition hover:bg-primary hover:text-white">
+                      ✨ Update Measurements
+                    </button>
                   </div>
                 </div>
               </div>
 
               {/* SAVED LOOK */}
 
-              <div className="rounded-2xl border border-border bg-white p-5 shadow-sm">
+              <div className="card p-5">
                 {/* Header */}
 
                 <div className="mb-5 flex items-center justify-between">
@@ -431,7 +431,7 @@ export default function ProfilePage() {
               </div>
 
               {/* WISHLIST */}
-              <div className="rounded-2xl border border-border bg-white p-5 shadow-sm">
+              <div className="card p-5">
                 {/* Header */}
 
                 <div className="mb-5 flex items-center justify-between">
@@ -456,7 +456,7 @@ export default function ProfilePage() {
                   {wishlistItems.map((item) => (
                     <div
                       key={item.id}
-                      className="flex items-center gap-3 rounded-xl border border-border p-3 transition hover:border-primary"
+                      className="card flex items-center gap-3 rounded-xl border p-3 transition hover:border-primary"
                     >
                       <div className="relative h-20 w-16 overflow-hidden rounded-lg">
                         <Image
@@ -523,7 +523,7 @@ export default function ProfilePage() {
             {/* Bottom Grid */}
 
             <div className="grid gap-5 xl:grid-cols-[1.1fr_1fr_1fr]">
-              <div className="rounded-2xl border border-border bg-white p-5 shadow-sm">
+              <div className="card p-5">
                 {/* Header */}
 
                 <div className="mb-5 flex items-center justify-between">
@@ -544,7 +544,7 @@ export default function ProfilePage() {
                   {rentals.map((item) => (
                     <div
                       key={item.id}
-                      className="flex items-center gap-4 rounded-xl border border-border p-3 transition hover:border-primary"
+                      className="card flex items-center gap-3 rounded-xl border p-3 transition hover:border-primary"
                     >
                       <div className="relative h-20 w-16 overflow-hidden rounded-lg">
                         <Image
@@ -588,7 +588,7 @@ export default function ProfilePage() {
                 </div>
               </div>
 
-              <div className="rounded-2xl border border-border bg-white p-5 shadow-sm">
+              <div className="card p-5">
                 {/* Header */}
 
                 <div className="mb-5 flex items-center justify-between">
@@ -609,7 +609,7 @@ export default function ProfilePage() {
                   {events.map((event) => (
                     <div
                       key={event.id}
-                      className="flex gap-4 rounded-xl border border-border p-4 transition hover:border-primary"
+                      className="card flex items-center gap-3 rounded-xl border p-3 transition hover:border-primary"
                     >
                       {/* Date */}
 
@@ -649,7 +649,7 @@ export default function ProfilePage() {
                 </div>
               </div>
 
-              <div className="rounded-2xl border border-border bg-white p-5 shadow-sm">
+              <div className="card p-5">
                 <div className="mb-5 flex items-center justify-between">
                   <div>
                     <h3 className="text-xl font-semibold">

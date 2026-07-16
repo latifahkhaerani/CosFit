@@ -52,7 +52,7 @@ export default function CheckoutPage() {
           <section className="space-y-5">
             {/* Costume */}
 
-            <div className="rounded-2xl border border-border bg-white p-5 shadow-sm">
+            <div className="card p-5">
               <div className="mb-5 flex items-center gap-3">
                 <CircleNumber number={1} />
 
@@ -109,7 +109,7 @@ export default function CheckoutPage() {
 
             {/* Rental */}
 
-            <div className="rounded-2xl border border-border bg-white p-5 shadow-sm">
+            <div className="card p-5">
               <div className="mb-5 flex items-center gap-3">
                 <CircleNumber number={2} />
 
@@ -134,7 +134,7 @@ export default function CheckoutPage() {
 
             {/* Vendor Information */}
 
-            <div className="rounded-2xl border border-border bg-white p-5 shadow-sm">
+            <div className="card p-5">
               <div className="mb-5 flex items-center gap-3">
                 <CircleNumber number={3} />
 
@@ -180,7 +180,7 @@ export default function CheckoutPage() {
 
             {/* Pickup / Delivery */}
 
-            <div className="rounded-2xl border border-border bg-white p-5 shadow-sm">
+            <div className="card p-5">
               <div className="mb-5 flex items-center gap-3">
                 <CircleNumber number={4} />
 
@@ -190,7 +190,7 @@ export default function CheckoutPage() {
               <div className="grid gap-4 md:grid-cols-2">
                 {/* Pickup */}
 
-                <div className="cursor-pointer rounded-2xl border-2 border-primary bg-[#FFF8F6] p-5 transition">
+                <div className="cursor-pointer rounded-2xl card bg-[#baa9a4] p-5 transition">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-white">
@@ -222,7 +222,7 @@ export default function CheckoutPage() {
 
                 {/* Delivery */}
 
-                <div className="cursor-pointer rounded-2xl border border-border p-5 transition hover:border-primary">
+                <div className="cursor-poi nter rounded-2xl card bg-[#baa9a4] p-5 transition">
                   <div className="flex items-center gap-3">
                     <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-background">
                       🚚
@@ -245,7 +245,7 @@ export default function CheckoutPage() {
 
             {/* Additional Information */}
 
-            <div className="rounded-2xl border border-border bg-white p-5 shadow-sm">
+            <div className="card p-5">
               <div className="mb-5 flex items-center gap-3">
                 <CircleNumber number={5} />
 
@@ -254,7 +254,7 @@ export default function CheckoutPage() {
                 </h3>
               </div>
 
-              <div className="grid gap-5 lg:grid-cols-[1fr_340px]">
+              <div className="card p-5 grid gap-5 lg:grid-cols-[1fr_340px]">
                 {/* Notes */}
 
                 <div>
@@ -265,7 +265,7 @@ export default function CheckoutPage() {
                   <textarea
                     rows={5}
                     placeholder="Any special request, body adjustment, event date..."
-                    className="w-full resize-none rounded-xl border border-border p-4 outline-none transition focus:border-primary"
+                    className="card w-full resize-none rounded-xl border p-4 outline-none transition focus:border-primary"
                   />
 
                   <p className="mt-2 text-right text-xs text-muted">0 / 300</p>
@@ -281,7 +281,7 @@ export default function CheckoutPage() {
                   <div className="flex gap-3">
                     <input
                       placeholder="Enter promo"
-                      className="flex-1 rounded-xl border border-border px-4 outline-none focus:border-primary"
+                      className="flex-1 soft-bg rounded-2xl p-4 px-4 outline-none focus:border-primary"
                     />
 
                     <button className="rounded-xl bg-primary px-5 text-white transition hover:opacity-90">
@@ -323,7 +323,7 @@ export default function CheckoutPage() {
           <aside className="sticky top-24 h-fit space-y-5">
             {/* Order Summary */}
 
-            <div className="rounded-2xl border border-border bg-white p-5 shadow-sm">
+            <div className="card p-5">
               <h3 className="mb-5 text-xl font-semibold">Order Summary</h3>
 
               <div className="flex gap-4">
@@ -388,7 +388,7 @@ export default function CheckoutPage() {
 
             {/* Payment */}
 
-            <div className="rounded-2xl border border-border bg-white p-5 shadow-sm">
+            <div className="card p-5">
               <h3 className="mb-5 text-xl font-semibold">Payment Method</h3>
 
               <div className="space-y-3">
@@ -430,7 +430,7 @@ export default function CheckoutPage() {
               <div className="mt-4 flex gap-3">
                 <input
                   placeholder="Promo Code"
-                  className="flex-1 rounded-xl border border-border px-4 py-3 outline-none focus:border-primary"
+                  className="flex-1 soft-bg rounded-2xl p-4 px-4 py-3 outline-none focus:border-primary"
                 />
 
                 <button className="rounded-xl bg-primary px-5 text-white">
