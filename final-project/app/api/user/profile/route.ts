@@ -23,3 +23,15 @@ export async function PUT(req: Request)
         errorHandler(error)
     }
 }
+
+export async function PATCH(req: Request)
+{
+    const userId = req.headers.get("x-user-id") as string;
+    const body = await req.json();
+    try {
+        const result = await ProfileModel.patchProfile(body, userId);
+        return Response.json(result);
+    } catch (error) {
+        errorHandler(error)
+    }
+}

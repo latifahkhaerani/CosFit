@@ -22,11 +22,15 @@ export default class ProfileModel{
         return "Profile updated with ID: " + result.upsertedId
     }
 
-    static async updateImage(photo: File, userId: string){
+    static async patchProfile(photo: File, userId: string){
+
+        const blob = await put(photo.name, photo, {
+        addRandomSuffix: true,
+        access: 'product'
+        });
 
 
-
-        const result = await this.collection().updateOne({userId: new ObjectId(userId)}, {$set: {photo}})
+        const result = await this.collection().updateOne({userId: new ObjectId(userId)}, {$set: {photo: blob.url}})
         return "Profile image updated with ID: " + result.upsertedId
     }
 }
