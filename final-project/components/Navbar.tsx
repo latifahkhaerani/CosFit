@@ -1,8 +1,10 @@
+'use client'
+
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X, Sparkles, ShoppingBag, User } from "lucide-react";
-import { Sparkles } from "lucide-react";
-import { cookies } from "next/headers";
+// import { cookies } from "next/headers";
+import { useState } from "react";
 
 export interface NavLink {
   id: string;
@@ -31,7 +33,7 @@ const defaultLinks: NavLink[] = [
   { id: "events", label: "Events", href: "/events" },
   { id: "wishlist", label: "Wishlist", href: "/wishlist" },
   { id: "try-on", label: "Try On", href: "/try-on" },
-  { id: "vendor", label: "Become a Vendor", href: "/become-a-vendor" },
+  { id: "vendor", label: "Become a Vendor", href: "/vendor/login" },
 ];
 
 /** "/" only matches exactly; every other route also matches its sub-paths. */
@@ -56,8 +58,8 @@ export default function Navbar({
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
   
-  const cookieStore = await cookies();
-  const isLoggedIn = cookieStore.get("Authorization") ? true : false;
+  // const cookieStore = await cookies();
+  // const isLoggedIn = cookieStore.get("Authorization") ? true : false;
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-surface/90 backdrop-blur">
