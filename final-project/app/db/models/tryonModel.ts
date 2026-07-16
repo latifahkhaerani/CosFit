@@ -8,8 +8,6 @@ export default class TryOnModel {
     return database.collection("cosplay");
   }
 
-
-
 static async UserTryOn(yourImg: File, cosImg: File, userId: string) {
   const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
