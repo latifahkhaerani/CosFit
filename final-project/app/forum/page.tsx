@@ -110,7 +110,7 @@ export default function ForumPage() {
         </div>
       </main>
 
-      <Footer />
+      
     </>
   );
 }
