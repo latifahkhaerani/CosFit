@@ -6,17 +6,17 @@
 } */
 
 :root {
-  --primary: #B14744;
-  --secondary: #B15D44;
-  --accent: #CC8857;
-  --background: #FAF8F5;
-  --surface: #FFFFFF;
-  --text: #4D565C;
+  --primary: #b14744;
+  --secondary: #b15d44;
+  --accent: #cc8857;
+  --background: #faf8f5;
+  --surface: #ffffff;
+  --text: #4d565c;
   --muted: #849282;
-  --border: #ECE8E2;
+  --border: #ece8e2;
 }
 
-@theme inline {
+/* @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
@@ -34,4 +34,4 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
-}
+} */
