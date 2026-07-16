@@ -13,7 +13,10 @@
   --surface: #ffffff;
   --text: #4d565c;
   --muted: #849282;
-  --border: #ece8e2;
+  --border: #ECE8E2;
+  --tertiary: #B17144;
+  --gold: #D8A363;
+  --cream: #E1BD9C;
 
   --font-heading: var(--font-heading);
   --font-body: var(--font-body);
