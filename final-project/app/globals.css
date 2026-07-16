@@ -85,8 +85,11 @@ p {
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
 }
 
-.card {
-  @apply rounded-[28px] bg-white shadow-sm border border-[#F5EEE8];
+.card{
+    @apply bg-white rounded-[28px];
+    border:1px solid #F7F1EB;
+    box-shadow:
+        0 6px 24px rgba(0,0,0,.04);
 }
 
 .section-title {
@@ -149,3 +152,4 @@ p {
 .soft-bg {
   background: #fcfbfa;
 }
+
