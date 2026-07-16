@@ -9,7 +9,6 @@ export interface NavLink {
   id: string;
   label: string;
   href: string;
-  loginOnly?: boolean;
 }
 
 export interface NavbarProps {
@@ -30,9 +29,9 @@ const defaultLinks: NavLink[] = [
   { id: "marketplace", label: "Marketplace", href: "/marketplace" },
   { id: "forum", label: "Forum", href: "/forum" },
   { id: "events", label: "Events", href: "/events" },
-  { id: "vendor", label: "Become a Vendor", href: "/become-a-vendor", loginOnly: true },
-  { id: "wishlist", label: "Wishlist", href: "/wishlist", loginOnly: true },
-  { id: "try-on", label: "Try On", href: "/try-on", loginOnly: true },
+  { id: "wishlist", label: "Wishlist", href: "/wishlist" },
+  { id: "try-on", label: "Try On", href: "/try-on" },
+  { id: "vendor", label: "Become a Vendor", href: "/become-a-vendor" },
 ];
 
 /** "/" only matches exactly; every other route also matches its sub-paths. */
@@ -56,8 +55,6 @@ export default function Navbar({
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
 
-  const visibleLinks = links.filter((link) => !link.loginOnly || isLoggedIn);
-
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-surface/90 backdrop-blur">
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-3 lg:px-8">
@@ -72,7 +69,7 @@ export default function Navbar({
 
         {/* Desktop links */}
         <ul className="hidden items-center gap-7 md:flex">
-          {visibleLinks.map((link) => {
+          {links.map((link) => {
             const active = isActivePath(pathname, link.href);
             return (
               <li key={link.id}>
@@ -152,7 +149,7 @@ export default function Navbar({
       {isMenuOpen && (
         <div className="border-t border-border px-6 py-4 md:hidden">
           <ul className="flex flex-col gap-3">
-            {visibleLinks.map((link) => {
+            {links.map((link) => {
               const active = isActivePath(pathname, link.href);
               return (
                 <li key={link.id}>

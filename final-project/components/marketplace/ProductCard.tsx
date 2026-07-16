@@ -33,7 +33,7 @@ export default function ProductCard({
   onToggleFavorite,
 }: ProductCardProps) {
   return (
-    <div className="flex flex-col overflow-hidden rounded-2xl border border-border bg-surface transition hover:shadow-md">
+    <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-surface transition hover:shadow-md">
       <div className="relative aspect-[4/5] w-full overflow-hidden bg-cream/30">
         <Link href={`/marketplace/products/${product._id}`} className="block h-full w-full">
           {product.imgUrl ? (
@@ -64,7 +64,7 @@ export default function ProductCard({
           <p className="line-clamp-1 text-lg font-semibold text-foreground">
             {product.title || "Product Title"}
           </p>
-          <p className="mt-0.5 text-sm text-muted">{product.theme || "Series"}</p>
+          <p className="mt-0.5 line-clamp-1 text-sm text-muted">{product.theme || "Series"}</p>
         </div>
         <p className="text-2xl font-bold text-primary">
           {formatProductPrice(product.OriginalPrice, currency)}
