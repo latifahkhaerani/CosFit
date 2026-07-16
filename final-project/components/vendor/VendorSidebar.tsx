@@ -56,7 +56,7 @@ export default function VendorSidebar() {
       {/* Logo */}
 
       <div className="px-8 py-8">
-        <h1 className="text-4xl font-bold text-(--text)">CosFit</h1>
+        <h1 className="text-[42px] font-bold tracking-tight">CosFit</h1>
 
         <p className="text-(--primary)">Vendor</p>
       </div>
@@ -73,7 +73,7 @@ export default function VendorSidebar() {
               href={menu.href}
               className={`flex items-center justify-between rounded-2xl px-5 py-4 transition ${
                 menu.title === "Dashboard"
-                  ? "bg-[#FFF3EF] text-(--primary)"
+                  ? "bg-linear-to-r from-[#FFF5F0] shadow-soft to-[#FFFDFB]  text-(--primary)"
                   : "hover:bg-[#FCFBFA]"
               }`}
             >
@@ -94,7 +94,7 @@ export default function VendorSidebar() {
       </nav>
 
       <div className="mt-auto p-5">
-        <div className="card p-5">
+        <div className="card card-hover p-6">
           <div className="flex items-center gap-4">
             <Image
               src="/images/vendor-avatar.jpg"
@@ -123,7 +123,9 @@ export default function VendorSidebar() {
             </div>
           </div>
 
-          <button className="secondary-btn mt-6 w-full">View Profile</button>
+          <button className="secondary-btn hover-scale mt-6 w-full">
+            View Profile
+          </button>
         </div>
       </div>
     </aside>
