@@ -1,8 +1,11 @@
+'use client'
+
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X, Sparkles, ShoppingBag, User } from "lucide-react";
-import { Sparkles } from "lucide-react";
-import { cookies } from "next/headers";
+import { useEffect, useState } from "react";
+import { handleLoginCookies } from "@/action";
+// import { cookies } from "next/headers";
 
 export interface NavLink {
   id: string;
@@ -21,7 +24,6 @@ export interface NavbarProps {
   registerHref?: string;
   checkoutHref?: string;
   profileHref?: string;
-  profileLabel?: string,
 }
 
 const defaultLinks: NavLink[] = [
@@ -44,20 +46,27 @@ export default function Navbar({
   brandName = "CosFit",
   brandTagline = "AI Virtual Fitting",
   links = defaultLinks,
-  isLoggedIn = false,
   loginLabel = "Login",
   registerLabel = "Register",
   loginHref = "/login",
   registerHref = "/register",
   checkoutHref = "/checkout",
   profileHref = "/profile",
-  profileLabel="Profile",
 }: NavbarProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isLoggedIn, setIsLogin] = useState(false)
   const pathname = usePathname();
-  
-  const cookieStore = await cookies();
-  const isLoggedIn = cookieStore.get("Authorization") ? true : false;
+  useEffect(() => {
+    const checkLogin = async () => {
+      const res = await handleLoginCookies()
+      setIsLogin(res)
+    }
+
+    checkLogin()
+  }, [])
+
+  // const cookieStore = await cookies();
+  // const isLoggedIn = cookieStore.get("Authorization") ? true : false;
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-surface/90 backdrop-blur">

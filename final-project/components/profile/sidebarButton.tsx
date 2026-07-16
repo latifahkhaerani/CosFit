@@ -1,6 +1,6 @@
 'use client'
 
-import { handleDeleteCookies } from "@/app/action";
+import { handleDeleteCookies } from "@/action";
 import Link from "next/link";
 
 export default function SidebarItem({ title, icon, active }: SidebarItemProps) {

@@ -22,6 +22,10 @@ const placeholderCharacters: GetProduct[] = Array.from({ length: 4 }, (_, i) => 
   theme: "",
   title: "",
   OriginalPrice: 0,
+  vendorId: "",
+  discount: 0,
+  finalPrice: 0,
+  stock: 0,
 }));
 
 function CharacterCard({
