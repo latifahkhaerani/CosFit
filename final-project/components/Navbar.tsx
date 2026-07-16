@@ -4,7 +4,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X, Sparkles, ShoppingBag, User } from "lucide-react";
 // import { cookies } from "next/headers";
-import { useState } from "react";
 import { useEffect, useState } from "react";
 import { handleLoginCookies } from "@/action";
 // import { cookies } from "next/headers";
