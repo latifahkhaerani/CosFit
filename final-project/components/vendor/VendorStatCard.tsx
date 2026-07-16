@@ -1,5 +1,4 @@
 "use client";
-
 import { LucideIcon, TrendingUp } from "lucide-react";
 
 type Props = {
@@ -18,22 +17,42 @@ export default function VendorStatCard({
   color,
 }: Props) {
   return (
-    <div className="card p-6">
+    <div className="card group relative overflow-hidden p-6 hover:-translate-y-1 transition-all duration-300">
+      <div
+        className="absolute -right-10 -top-10 h-28 w-28 rounded-full blur-3xl opacity-20"
+        style={{
+          background: color,
+        }}
+      />
+      <div className="mt-8 flex h-14 items-end gap-1">
+        {[18, 24, 20, 30, 28, 38, 34, 45].map((bar, i) => (
+          <div
+            key={i}
+            className="flex-1 rounded-full"
+            style={{
+              height: `${bar}px`,
+              background: color,
+              opacity: 0.15 + i / 12,
+            }}
+          />
+        ))}
+      </div>
       <div className="mb-6 flex items-center justify-between">
         <div
-          className="flex h-14 w-14 items-center justify-center rounded-2xl"
+          className="icon-wrapper"
           style={{
             background: `${color}15`,
             color,
           }}
         >
+          
           <Icon size={26} />
         </div>
       </div>
 
       <p className="text-sm text-(--muted)">{title}</p>
 
-      <h2 className="mt-2 text-4xl font-bold">{value}</h2>
+      <h2 className="mt-2 text-5xl font-bold tracking-tight">{value}</h2>
 
       <div className="mt-6 flex items-center gap-2 text-sm text-green-600">
         <TrendingUp size={15} />

@@ -1,59 +1,197 @@
 "use client";
 
 import Image from "next/image";
+import {
+  CalendarDays,
+  MapPin,
+  Users,
+  ArrowRight,
+  Ticket,
+} from "lucide-react";
 
-const events = [
-  {
-    title: "Cosplay Festival",
+type Props = {
+  image: string;
+  category: string;
+  title: string;
+  date: string;
+  location: string;
+  participants: string;
+  price: string;
+  status: "Upcoming" | "Ongoing" | "Completed";
+};
 
-    image: "/images/event1.jpg",
+export default function UpcomingEventCard({
+  image,
+  category,
+  title,
+  date,
+  location,
+  participants,
+  price,
+  status,
+}: Props) {
+  const statusStyle = {
+    Upcoming: "bg-green-100 text-green-700",
+    Ongoing: "bg-orange-100 text-orange-700",
+    Completed: "bg-gray-100 text-gray-600",
+  };
 
-    date: "May 25",
-  },
-
-  {
-    title: "Design Contest",
-
-    image: "/images/event2.jpg",
-
-    date: "Jun 10",
-  },
-];
-
-export default function UpcomingEventCard() {
   return (
-    <div className="card p-6">
-      <div className="mb-6 flex justify-between">
-        <h3 className="card-title">Upcoming Events</h3>
+    <article
+      className="
+      card
+      group
+      overflow-hidden
+      transition-all
+      duration-300
 
-        <button className="text-sm text-(--primary)">View All</button>
+      hover:-translate-y-1
+      hover:shadow-soft
+      "
+    >
+      {/* IMAGE */}
+
+      <div className="relative overflow-hidden">
+
+        <Image
+          src={image}
+          alt={title}
+          width={700}
+          height={500}
+          className="
+          h-56
+          w-full
+          object-cover
+
+          transition-transform
+          duration-500
+
+          group-hover:scale-105
+          "
+        />
+
+        {/* Category */}
+
+        <div className="absolute left-5 top-5">
+
+          <span className="rounded-full bg-white/90 px-3 py-1 text-xs font-semibold backdrop-blur-xl">
+
+            {category}
+
+          </span>
+
+        </div>
+
       </div>
 
-      <div className="space-y-5">
-        {events.map((event) => (
-          <div key={event.title} className="flex gap-4">
-            <Image
-              src={event.image}
-              alt=""
-              width={80}
-              height={70}
-              className="rounded-2xl object-cover"
+      {/* CONTENT */}
+
+      <div className="p-6">
+
+        <h3
+          className="
+          text-xl
+          font-semibold
+          leading-snug
+
+          transition-colors
+
+          group-hover:text-[var(--primary)]
+          "
+        >
+          {title}
+        </h3>
+
+        {/* Date */}
+
+        <div className="mt-5 flex items-center gap-3 text-sm">
+
+          <CalendarDays
+            size={16}
+            className="text-[var(--primary)]"
+          />
+
+          <span>{date}</span>
+
+        </div>
+
+        {/* Location */}
+
+        <div className="mt-3 flex items-center gap-3 text-sm">
+
+          <MapPin
+            size={16}
+            className="text-[var(--primary)]"
+          />
+
+          <span className="text-[var(--muted)]">
+
+            {location}
+
+          </span>
+
+        </div>
+
+        {/* Divider */}
+
+        <div className="my-6 h-px bg-[var(--border)]" />
+
+        {/* Footer */}
+
+        <div className="mb-6 flex flex-wrap gap-4">
+
+          <div className="flex items-center gap-2 text-sm">
+
+            <Users
+              size={16}
+              className="text-[var(--primary)]"
             />
 
-            <div className="flex flex-1 flex-col justify-between">
-              <div>
-                <h4 className="font-semibold">{event.title}</h4>
+            {participants}
 
-                <p className="text-sm text-(--muted)">{event.date}</p>
-              </div>
-
-              <button className="secondary-btn mt-2 w-fit px-4 py-2">
-                Join
-              </button>
-            </div>
           </div>
-        ))}
+
+          <div className="flex items-center gap-2 text-sm">
+
+            <Ticket
+              size={16}
+              className="text-[var(--primary)]"
+            />
+
+            {price}
+
+          </div>
+
+          <span
+            className={`rounded-full px-3 py-1 text-xs font-medium ${statusStyle[status]}`}
+          >
+            {status}
+          </span>
+
+        </div>
+
+        {/* BUTTON */}
+
+        <button
+          className="
+          secondary-btn
+          flex
+          w-full
+          items-center
+          justify-center
+          gap-2
+
+          hover:bg-[var(--primary)]
+          hover:text-white
+          "
+        >
+          Join Event
+
+          <ArrowRight size={16} />
+
+        </button>
+
       </div>
-    </div>
+    </article>
   );
 }
