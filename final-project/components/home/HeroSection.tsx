@@ -30,7 +30,7 @@ export default function HeroSection({
   onSecondaryCtaClick,
 }: HeroSectionProps) {
   return (
-    <section className="relative overflow-hidden bg-gradient-to-b from-cream/50 via-gold/10 to-background">
+    <section className="relative overflow-hidden bg-background">
       <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-6 py-16 md:grid-cols-2 md:py-24 lg:px-8">
         {/* Left: copy */}
         <div className="flex flex-col justify-center">
@@ -46,7 +46,7 @@ export default function HeroSection({
             <button
               type="button"
               onClick={onPrimaryCtaClick}
-              className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-primary to-secondary px-6 py-3 text-sm font-medium text-white shadow-sm transition hover:brightness-105 active:brightness-95"
+              className="inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-medium text-white transition hover:bg-secondary"
             >
               {primaryCtaLabel}
               <ArrowRight className="h-4 w-4" />
@@ -54,7 +54,7 @@ export default function HeroSection({
             <button
               type="button"
               onClick={onSecondaryCtaClick}
-              className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-surface px-6 py-3 text-sm font-medium text-secondary transition hover:bg-cream/40"
+              className="inline-flex items-center gap-2 rounded-xl border border-primary bg-surface px-6 py-3 text-sm font-medium text-primary transition hover:bg-cream/40"
             >
               {secondaryCtaLabel}
             </button>
@@ -75,7 +75,7 @@ export default function HeroSection({
 
         {/* Right: placeholder visual area */}
         <div className="relative flex min-h-[380px] items-center justify-center">
-          <div className="absolute inset-0 flex items-center justify-center rounded-3xl border border-dashed border-gold/40 bg-surface/50">
+          <div className="absolute inset-0 flex items-center justify-center rounded-3xl border border-dashed border-border bg-surface">
             <span className="text-sm text-muted">Hero illustration placeholder</span>
           </div>
 
@@ -88,7 +88,7 @@ export default function HeroSection({
           </div>
 
           {/* AI Virtual Try-On pill */}
-          <div className="absolute left-1/2 top-[42%] -translate-x-1/2 rounded-full bg-gradient-to-r from-primary to-accent px-4 py-1.5 text-[11px] font-medium text-white shadow sm:top-[38%]">
+          <div className="absolute left-1/2 top-[42%] -translate-x-1/2 rounded-full bg-primary px-4 py-1.5 text-[11px] font-medium text-white shadow sm:top-[38%]">
             AI Virtual Try-On
           </div>
 

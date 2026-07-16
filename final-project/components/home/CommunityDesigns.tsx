@@ -26,7 +26,7 @@ function DesignCard({
   onVote?: (designId: string) => void;
 }) {
   return (
-    <div className="group relative aspect-[3/4] w-full overflow-hidden rounded-2xl bg-cream/30">
+    <div className="group relative aspect-[3/4] w-full overflow-hidden rounded-2xl border border-border bg-cream/30">
       {design.imgUrl ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img
@@ -42,9 +42,9 @@ function DesignCard({
       <button
         type="button"
         onClick={() => onVote?.(design._id)}
-        className="absolute bottom-2 right-2 flex items-center gap-1 rounded-full bg-surface/90 px-2.5 py-1 text-xs font-medium text-text shadow-sm transition hover:text-primary"
+        className="absolute bottom-3 right-3 flex items-center gap-1 rounded-full bg-surface/90 px-3 py-1.5 text-sm font-medium text-text shadow-sm transition hover:text-primary"
       >
-        <ThumbsUp className="h-3.5 w-3.5" />
+        <ThumbsUp className="h-4 w-4" />
         {design.vote}
       </button>
     </div>
@@ -59,15 +59,15 @@ export default function CommunityDesigns({
 }: CommunityDesignsProps) {
   return (
     <section className="mx-auto max-w-7xl px-6 py-10 lg:px-8">
-      <div className="mb-5">
-        <h2 className="flex items-center gap-1.5 font-serif text-xl font-semibold text-foreground">
+      <div className="mb-6">
+        <h2 className="flex items-center gap-1.5 font-serif text-2xl font-semibold text-foreground">
           {title}
           <Sparkles className="h-4 w-4 text-accent" />
         </h2>
         <p className="mt-1 text-sm text-muted">{subtitle}</p>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+      <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4">
         {designs.map((design) => (
           <DesignCard key={design._id} design={design} onVote={onVote} />
         ))}

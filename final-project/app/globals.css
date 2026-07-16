@@ -22,6 +22,21 @@
   --font-body: var(--font-body);
 }
 
+@theme inline {
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+  --color-accent: var(--accent);
+  --color-background: var(--background);
+  --color-foreground: var(--text);
+  --color-surface: var(--surface);
+  --color-text: var(--text);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-tertiary: var(--tertiary);
+  --color-gold: var(--gold);
+  --color-cream: var(--cream);
+}
+
 /* @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);

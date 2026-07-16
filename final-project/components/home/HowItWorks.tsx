@@ -27,27 +27,27 @@ export default function HowItWorks({
 }: HowItWorksProps) {
   return (
     <section className="mx-auto max-w-7xl px-6 py-10 lg:px-8">
-      <h2 className="mb-6 flex items-center gap-1.5 font-serif text-xl font-semibold text-foreground">
+      <h2 className="mb-6 flex items-center gap-1.5 font-serif text-2xl font-semibold text-foreground">
         {title}
         <Sparkles className="h-4 w-4 text-accent" />
       </h2>
 
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
         {steps.map((step, index) => (
           <div key={step.id} className="flex items-start gap-4">
             <div className="flex flex-1 flex-col gap-3 rounded-2xl border border-border bg-surface p-5">
               <div className="flex items-center gap-2">
-                <span className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary to-secondary text-xs font-semibold text-white">
+                <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-primary text-sm font-semibold text-white">
                   {step.step}
                 </span>
-                <p className="text-sm font-semibold text-foreground">
+                <p className="text-base font-semibold text-foreground">
                   {step.title || "Step Title"}
                 </p>
               </div>
-              <p className="text-xs text-muted">
+              <p className="text-sm text-muted">
                 {step.description || "Short description of this step."}
               </p>
-              <div className="mt-2 flex h-28 items-center justify-center rounded-xl bg-cream/30">
+              <div className="mt-2 flex h-36 items-center justify-center rounded-xl bg-cream/30">
                 {step.imageUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img

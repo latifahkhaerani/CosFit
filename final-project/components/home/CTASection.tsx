@@ -17,7 +17,7 @@ export default function CTASection({
 }: CTASectionProps) {
   return (
     <section className="px-6 py-6 lg:px-8">
-      <div className="relative mx-auto flex max-w-7xl flex-col items-start justify-between gap-6 overflow-hidden rounded-3xl bg-gradient-to-r from-primary via-secondary to-tertiary px-8 py-10 sm:flex-row sm:items-center">
+      <div className="relative mx-auto flex max-w-7xl flex-col items-start justify-between gap-6 overflow-hidden rounded-3xl bg-primary px-8 py-12 sm:flex-row sm:items-center">
         <div>
           <h2 className="max-w-md font-serif text-2xl font-semibold text-white sm:text-3xl">
             {headline}
@@ -28,7 +28,7 @@ export default function CTASection({
         <button
           type="button"
           onClick={onCtaClick}
-          className="inline-flex flex-shrink-0 items-center gap-2 rounded-full bg-surface px-6 py-3 text-sm font-medium text-secondary transition hover:bg-cream/40"
+          className="inline-flex flex-shrink-0 items-center gap-2 rounded-xl bg-surface px-6 py-3 text-sm font-medium text-primary transition hover:bg-cream/40"
         >
           {ctaLabel}
           <ArrowRight className="h-4 w-4" />
