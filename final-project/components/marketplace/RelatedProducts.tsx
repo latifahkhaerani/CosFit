@@ -19,8 +19,8 @@ export default function RelatedProducts({
   if (products.length === 0) return null;
 
   return (
-    <section className="mt-16">
-      <h2 className="mb-6 font-serif text-2xl font-semibold text-foreground">{title}</h2>
+    <section className="mt-20">
+      <h2 className="mb-8 font-serif text-3xl font-semibold text-foreground">{title}</h2>
       <ProductGrid
         products={products}
         wishlist={wishlist}

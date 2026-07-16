@@ -35,16 +35,16 @@ function DesignCard({
           className="h-full w-full object-cover transition group-hover:scale-105"
         />
       ) : (
-        <div className="flex h-full w-full items-center justify-center text-xs text-muted">
+        <div className="flex h-full w-full items-center justify-center text-sm text-muted">
           Design image
         </div>
       )}
       <button
         type="button"
         onClick={() => onVote?.(design._id)}
-        className="absolute bottom-3 right-3 flex items-center gap-1 rounded-full bg-surface/90 px-3 py-1.5 text-sm font-medium text-text shadow-sm transition hover:text-primary"
+        className="absolute bottom-3 right-3 flex items-center gap-1 rounded-full bg-surface/90 px-3 py-1.5 text-base font-medium text-text shadow-sm transition hover:text-primary"
       >
-        <ThumbsUp className="h-4 w-4" />
+        <ThumbsUp className="h-5 w-5" />
         {design.vote}
       </button>
     </div>
@@ -60,11 +60,11 @@ export default function CommunityDesigns({
   return (
     <section className="mx-auto max-w-7xl px-6 py-10 lg:px-8">
       <div className="mb-6">
-        <h2 className="flex items-center gap-1.5 font-serif text-2xl font-semibold text-foreground">
+        <h2 className="flex items-center gap-2 font-serif text-3xl font-semibold text-foreground">
           {title}
-          <Sparkles className="h-4 w-4 text-accent" />
+          <Sparkles className="h-5 w-5 text-accent" />
         </h2>
-        <p className="mt-1 text-sm text-muted">{subtitle}</p>
+        <p className="mt-1 text-base text-muted">{subtitle}</p>
       </div>
 
       <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4">

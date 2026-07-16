@@ -25,16 +25,16 @@ export default function ProductGrid({
 
   if (products.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-border bg-surface py-20 text-center">
-        <PackageSearch className="h-8 w-8 text-muted" />
-        <p className="text-sm font-medium text-foreground">{emptyTitle}</p>
+      <div className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-border bg-surface py-24 text-center">
+        <PackageSearch className="h-10 w-10 text-muted" />
+        <p className="text-base font-medium text-foreground">{emptyTitle}</p>
         <p className="text-sm text-muted">{emptyDescription}</p>
       </div>
     );
   }
 
   return (
-    <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
       {products.map((product) => (
         <ProductCard
           key={product._id}

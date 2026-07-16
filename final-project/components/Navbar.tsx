@@ -19,10 +19,10 @@ export interface NavbarProps {
   isLoggedIn?: boolean;
   loginLabel?: string;
   registerLabel?: string;
+  loginHref?: string;
+  registerHref?: string;
   checkoutHref?: string;
   profileHref?: string;
-  onLoginClick?: () => void;
-  onRegisterClick?: () => void;
 }
 
 const defaultLinks: NavLink[] = [
@@ -48,10 +48,10 @@ export default function Navbar({
   isLoggedIn = false,
   loginLabel = "Login",
   registerLabel = "Register",
+  loginHref = "/login",
+  registerHref = "/register",
   checkoutHref = "/checkout",
   profileHref = "/profile",
-  onLoginClick,
-  onRegisterClick,
 }: NavbarProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
@@ -121,20 +121,18 @@ export default function Navbar({
             </>
           ) : (
             <>
-              <button
-                type="button"
-                onClick={onLoginClick}
+              <Link
+                href={loginHref}
                 className="rounded-full border border-border px-5 py-2 text-sm font-medium text-text transition hover:bg-cream/40"
               >
                 {loginLabel}
-              </button>
-              <button
-                type="button"
-                onClick={onRegisterClick}
+              </Link>
+              <Link
+                href={registerHref}
                 className="rounded-full bg-primary px-5 py-2 text-sm font-medium text-white transition hover:bg-secondary"
               >
                 {registerLabel}
-              </button>
+              </Link>
             </>
           )}
         </div>
@@ -210,20 +208,20 @@ export default function Navbar({
 
           {!isLoggedIn && (
             <div className="mt-4 flex gap-3">
-              <button
-                type="button"
-                onClick={onLoginClick}
-                className="flex-1 rounded-full border border-border px-5 py-2 text-sm font-medium text-text hover:bg-cream/40"
+              <Link
+                href={loginHref}
+                onClick={() => setIsMenuOpen(false)}
+                className="flex-1 rounded-full border border-border px-5 py-2 text-center text-sm font-medium text-text hover:bg-cream/40"
               >
                 {loginLabel}
-              </button>
-              <button
-                type="button"
-                onClick={onRegisterClick}
-                className="flex-1 rounded-full bg-primary px-5 py-2 text-sm font-medium text-white transition hover:bg-secondary"
+              </Link>
+              <Link
+                href={registerHref}
+                onClick={() => setIsMenuOpen(false)}
+                className="flex-1 rounded-full bg-primary px-5 py-2 text-center text-sm font-medium text-white transition hover:bg-secondary"
               >
                 {registerLabel}
-              </button>
+              </Link>
             </div>
           )}
         </div>

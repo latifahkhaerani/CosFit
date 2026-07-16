@@ -71,7 +71,7 @@ function CostumeCard({
               className="h-full w-full object-cover"
             />
           ) : (
-            <div className="flex h-full w-full items-center justify-center text-sm text-muted">
+            <div className="flex h-full w-full items-center justify-center text-base text-muted">
               Costume image
             </div>
           )}
@@ -82,28 +82,28 @@ function CostumeCard({
           onClick={() => onToggleFavorite?.(costume._id)}
           className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full bg-surface shadow-sm transition hover:bg-cream/40"
         >
-          <Heart className={`h-4 w-4 ${isFavorited ? "fill-primary text-primary" : "text-muted"}`} />
+          <Heart className={`h-5 w-5 ${isFavorited ? "fill-primary text-primary" : "text-muted"}`} />
         </button>
       </div>
 
       <div className="flex flex-1 flex-col gap-2 p-4">
         <div>
-          <p className="text-base font-semibold text-foreground">
+          <p className="text-lg font-semibold text-foreground">
             {costume.title || "Costume Title"}
           </p>
-          <p className="text-sm text-muted">{costume.theme || "Series"}</p>
+          <p className="text-base text-muted">{costume.theme || "Series"}</p>
         </div>
-        <p className="text-lg font-bold text-primary">
+        <p className="text-xl font-bold text-primary">
           {formatPrice(costume.OriginalPrice, currency)}
         </p>
 
         <button
           type="button"
           onClick={() => onSelect?.(costume._id)}
-          className="mt-auto inline-flex items-center justify-center gap-2 rounded-xl border border-primary px-4 py-2.5 text-sm font-medium text-primary transition hover:bg-cream/40"
+          className="mt-auto inline-flex items-center justify-center gap-2 rounded-xl border border-primary px-4 py-2.5 text-base font-medium text-primary transition hover:bg-cream/40"
         >
           {detailsLabel}
-          <ArrowRight className="h-4 w-4" />
+          <ArrowRight className="h-5 w-5" />
         </button>
       </div>
     </div>
@@ -126,14 +126,14 @@ export default function FeaturedCostumes({
   return (
     <section className="mx-auto max-w-7xl px-6 py-10 lg:px-8">
       <div className="mb-6 flex items-center justify-between">
-        <h2 className="flex items-center gap-1.5 font-serif text-2xl font-semibold text-foreground">
+        <h2 className="flex items-center gap-2 font-serif text-3xl font-semibold text-foreground">
           {title}
-          <Sparkles className="h-4 w-4 text-accent" />
+          <Sparkles className="h-5 w-5 text-accent" />
         </h2>
         <button
           type="button"
           onClick={onViewAll}
-          className="text-sm font-medium text-primary hover:text-secondary"
+          className="text-base font-medium text-primary hover:text-secondary"
         >
           {viewAllLabel} &rarr;
         </button>

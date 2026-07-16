@@ -17,9 +17,6 @@
   --tertiary: #B17144;
   --gold: #D8A363;
   --cream: #E1BD9C;
-
-  --font-heading: var(--font-heading);
-  --font-body: var(--font-body);
 }
 
 @theme inline {
@@ -35,6 +32,9 @@
   --color-tertiary: var(--tertiary);
   --color-gold: var(--gold);
   --color-cream: var(--cream);
+
+  --font-sans: var(--font-body);
+  --font-serif: var(--font-heading);
 }
 
 /* @theme inline {
@@ -69,6 +69,10 @@ body {
   background: var(--background);
 }
 
+h1, h2, h3 {
+  font-family: var(--font-heading);
+}
+
 h1 {
   font-size: 3rem;
   font-weight: 700;
@@ -87,7 +91,6 @@ h3 {
 
 p {
   line-height: 1.7;
-  font-family: var(--font-heading);
 }
 * {
   transition:

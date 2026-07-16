@@ -41,30 +41,30 @@ function EventCard({
             className="h-full w-full object-cover"
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center text-sm text-muted">
+          <div className="flex h-full w-full items-center justify-center text-base text-muted">
             Event image
           </div>
         )}
       </div>
 
       <div className="flex flex-1 flex-col gap-2 p-5">
-        <p className="text-xs font-semibold uppercase tracking-wide text-muted">
+        <p className="text-sm font-semibold uppercase tracking-wide text-muted">
           {event.category || "Category"}
         </p>
-        <p className="text-lg font-semibold text-foreground">
+        <p className="text-xl font-semibold text-foreground">
           {event.eventName || "Event Name"}
         </p>
-        <p className="line-clamp-2 text-sm text-muted">
+        <p className="line-clamp-2 text-base text-muted">
           {event.description || "Short description of this event."}
         </p>
 
         <button
           type="button"
           onClick={() => onSelect?.(event._id)}
-          className="mt-4 inline-flex items-center justify-center gap-2 rounded-xl border border-primary px-4 py-2.5 text-sm font-medium text-primary transition hover:bg-cream/40"
+          className="mt-4 inline-flex items-center justify-center gap-2 rounded-xl border border-primary px-4 py-2.5 text-base font-medium text-primary transition hover:bg-cream/40"
         >
           {joinLabel}
-          <ArrowRight className="h-4 w-4" />
+          <ArrowRight className="h-5 w-5" />
         </button>
       </div>
     </div>
@@ -82,14 +82,14 @@ export default function UpcomingEvents({
   return (
     <section className="mx-auto max-w-7xl px-6 py-10 lg:px-8">
       <div className="mb-6 flex items-center justify-between">
-        <h2 className="flex items-center gap-1.5 font-serif text-2xl font-semibold text-foreground">
+        <h2 className="flex items-center gap-2 font-serif text-3xl font-semibold text-foreground">
           {title}
-          <Sparkles className="h-4 w-4 text-accent" />
+          <Sparkles className="h-5 w-5 text-accent" />
         </h2>
         <button
           type="button"
           onClick={onViewAll}
-          className="text-sm font-medium text-primary hover:text-secondary"
+          className="text-base font-medium text-primary hover:text-secondary"
         >
           {viewAllLabel} &rarr;
         </button>

@@ -39,7 +39,7 @@ function RoomCard({
           // eslint-disable-next-line @next/next/no-img-element
           <img src={room.img} alt={room.nameForum || "Forum room"} className="h-full w-full object-cover" />
         ) : (
-          <div className="flex h-full w-full items-center justify-center text-sm text-muted">
+          <div className="flex h-full w-full items-center justify-center text-base text-muted">
             Room image
           </div>
         )}
@@ -47,23 +47,23 @@ function RoomCard({
 
       <div className="flex flex-1 flex-col gap-2 p-5">
         {tagLabel ? (
-          <p className="text-xs font-semibold uppercase tracking-wide text-muted">{tagLabel}</p>
+          <p className="text-sm font-semibold uppercase tracking-wide text-muted">{tagLabel}</p>
         ) : null}
-        <p className="flex items-center gap-2 text-lg font-semibold text-foreground">
-          <MessagesSquare className="h-4 w-4 text-accent" />
+        <p className="flex items-center gap-2 text-xl font-semibold text-foreground">
+          <MessagesSquare className="h-5 w-5 text-accent" />
           {room.nameForum || "Forum Room Name"}
         </p>
-        <p className="line-clamp-2 text-sm text-muted">
+        <p className="line-clamp-2 text-base text-muted">
           {room.desc || "Short description of what this room is about."}
         </p>
 
         <button
           type="button"
           onClick={() => onSelect?.(room._id)}
-          className="mt-4 inline-flex items-center justify-center gap-2 rounded-xl border border-primary px-4 py-2.5 text-sm font-medium text-primary transition hover:bg-cream/40"
+          className="mt-4 inline-flex items-center justify-center gap-2 rounded-xl border border-primary px-4 py-2.5 text-base font-medium text-primary transition hover:bg-cream/40"
         >
           {joinLabel}
-          <ArrowRight className="h-4 w-4" />
+          <ArrowRight className="h-5 w-5" />
         </button>
       </div>
     </div>
@@ -81,14 +81,14 @@ export default function CommunityDiscussions({
   return (
     <section className="mx-auto max-w-7xl px-6 py-10 lg:px-8">
       <div className="mb-6 flex items-center justify-between">
-        <h2 className="flex items-center gap-1.5 font-serif text-2xl font-semibold text-foreground">
+        <h2 className="flex items-center gap-2 font-serif text-3xl font-semibold text-foreground">
           {title}
-          <Sparkles className="h-4 w-4 text-accent" />
+          <Sparkles className="h-5 w-5 text-accent" />
         </h2>
         <button
           type="button"
           onClick={onViewAll}
-          className="text-sm font-medium text-primary hover:text-secondary"
+          className="text-base font-medium text-primary hover:text-secondary"
         >
           {viewAllLabel} &rarr;
         </button>

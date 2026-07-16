@@ -6,7 +6,7 @@ export interface ProductGalleryProps {
 
 export default function ProductGallery({ product }: ProductGalleryProps) {
   return (
-    <div className="aspect-[3/4] w-full overflow-hidden rounded-2xl border border-border bg-cream/30">
+    <div className="aspect-[4/5] w-full overflow-hidden rounded-3xl border border-border bg-cream/30">
       {product.imgUrl ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img
@@ -15,7 +15,7 @@ export default function ProductGallery({ product }: ProductGalleryProps) {
           className="h-full w-full object-cover"
         />
       ) : (
-        <div className="flex h-full w-full items-center justify-center text-sm text-muted">
+        <div className="flex h-full w-full items-center justify-center text-base text-muted">
           Product image
         </div>
       )}
