@@ -1,7 +1,5 @@
-"use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import {
   Home,
   User,
@@ -13,8 +11,10 @@ import {
   Crown,
   Pencil,
   Sparkles,
+  
 } from "lucide-react";
-import { CheckCircle2, Circle } from "lucide-react";
+import { CheckCircle2, Circle, LogOut } from "lucide-react";
+import SidebarItem from "@/components/profile/sidebarButton";
 
 export default function ProfilePage() {
   const savedLooks = [
@@ -190,11 +190,11 @@ export default function ProfilePage() {
             {/* Menu */}
 
             <div className="card p-3">
-              <SidebarItem active icon={<Home size={18} />} title="Overview" />
+              <SidebarItem active icon={<Home size={18} />} title={"Overview"} />
 
-              <SidebarItem icon={<User size={18} />} title="Body Profile" />
+              <SidebarItem icon={<User size={18} />} title={"Body Profile"} />
 
-              <SidebarItem icon={<Sparkles size={18} />} title="Saved Looks" />
+              <SidebarItem icon={<Sparkles size={18} />} title={"Saved Looks"} />
 
               <SidebarItem icon={<Heart size={18} />} title="Wishlist" />
 
@@ -211,6 +211,9 @@ export default function ProfilePage() {
               />
 
               <SidebarItem icon={<Settings size={18} />} title="Settings" />
+
+              <SidebarItem icon={<LogOut size={18} />} title="Logout" />
+
             </div>
 
             {/* Premium */}
@@ -754,55 +757,6 @@ export default function ProfilePage() {
         </div>
       </div>
     </main>
-  );
-}
-
-type SidebarItemProps = {
-  title: string;
-  icon: React.ReactNode;
-  active?: boolean;
-};
-
-function SidebarItem({ title, icon, active }: SidebarItemProps) {
-  const savedLooks = [
-    {
-      id: 1,
-      character: "Hu Tao",
-      series: "Genshin Impact",
-      image: "/images/hutao-card.jpg",
-    },
-    {
-      id: 2,
-      character: "Rem",
-      series: "Re:Zero",
-      image: "/images/rem.jpg",
-    },
-    {
-      id: 3,
-      character: "2B",
-      series: "NieR",
-      image: "/images/2b.jpg",
-    },
-    {
-      id: 4,
-      character: "Saber",
-      series: "Fate",
-      image: "/images/saber.jpg",
-    },
-  ];
-  return (
-    <Link
-      href="#"
-      className={`mb-2 flex items-center gap-3 rounded-xl px-4 py-3 transition ${
-        active
-          ? "bg-[#FFF4EE] font-medium text-primary"
-          : "text-muted hover:bg-[#FAF7F4]"
-      }`}
-    >
-      {icon}
-
-      <span>{title}</span>
-    </Link>
   );
 }
 

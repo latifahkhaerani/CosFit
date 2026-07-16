@@ -1,3 +1,5 @@
+'use client'
+
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -10,8 +12,33 @@ import {
   WandSparkles,
   ArrowRight,
 } from "lucide-react";
+import { SubmitEvent, useState } from "react";
+import errorHandler from "../helpers/errorHandler";
+import { redirect } from "next/navigation";
 
 export default function LoginPage() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    try {
+      const data = await fetch(`http://localhost:3000/api/user/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type':'application/json'
+        },
+        body: JSON.stringify({email, password})
+      })
+
+      setEmail('')
+      setPassword('')
+      redirect("/")
+    } catch (error) {
+      errorHandler(error)
+    }
+  }
+
   return (
     <main className="grid min-h-screen lg:grid-cols-2">
       {/* ================= LEFT ================= */}
@@ -128,107 +155,72 @@ export default function LoginPage() {
             </p>
           </div>
 
-          {/* Email */}
+          <form action="" onSubmit={handleSubmit}>
+            {/* Email */}
 
-          <div className="mb-6">
-            <label className="mb-2 block font-medium">Email</label>
+            <div className="mb-6">
+              <label className="mb-2 block font-medium">Email</label>
 
-            <div className="flex h-14 items-center rounded-2xl border border-border px-4">
-              <Mail size={20} className="text-gray-400" />
+              <div className="flex h-14 items-center rounded-2xl border border-border px-4">
+                <Mail size={20} className="text-gray-400" />
 
-              <input
-                type="email"
-                placeholder="Enter your email"
-                className="ml-3 w-full bg-transparent outline-none"
-              />
+                <input
+                  type="email"
+                  placeholder="Enter your email"
+                  className="ml-3 w-full bg-transparent outline-none"
+                  onChange={(e) => {setEmail(e.target.value)}}
+                  value={email}
+                />
+              </div>
             </div>
-          </div>
 
-          {/* Password */}
+            {/* Password */}
 
-          <div>
-            <label className="mb-2 block font-medium">Password</label>
+            <div>
+              <label className="mb-2 block font-medium">Password</label>
 
-            <div className="flex h-14 items-center rounded-2xl border border-border px-4">
-              <Lock size={20} className="text-gray-400" />
+              <div className="flex h-14 items-center rounded-2xl border border-border px-4">
+                <Lock size={20} className="text-gray-400" />
 
-              <input
-                type="password"
-                placeholder="Enter password"
-                className="ml-3 w-full bg-transparent outline-none"
-              />
+                <input
+                  type="password"
+                  placeholder="Enter password"
+                  className="ml-3 w-full bg-transparent outline-none"
+                  onChange={(e) => {setPassword(e.target.value)}}
+                  value={password}
+                />
 
-              <Eye size={20} className="text-gray-400" />
+                <Eye size={20} className="text-gray-400" />
+              </div>
             </div>
-          </div>
 
-          {/* Remember & Forgot */}
+            {/* Remember & Forgot */}
 
-          <div className="mt-5 mb-8 flex items-center justify-between">
-            <label className="flex items-center gap-3">
-              <input
-                type="checkbox"
-                className="checkbox checkbox-sm border-border checked:border-primary checked:bg-primary"
-              />
+            <div className="mt-5 mb-8 flex items-center justify-between">
+              <label className="flex items-center gap-3">
+                <input
+                  type="checkbox"
+                  className="checkbox checkbox-sm border-border checked:border-primary checked:bg-primary"
+                />
 
-              <span className="text-sm text-gray-600">Remember me</span>
-            </label>
+                <span className="text-sm text-gray-600">Remember me</span>
+              </label>
 
-            <Link
-              href="#"
-              className="text-sm font-medium text-primary hover:underline"
-            >
-              Forgot password?
-            </Link>
-          </div>
+              <Link
+                href="#"
+                className="text-sm font-medium text-primary hover:underline"
+              >
+                Forgot password?
+              </Link>
+            </div>
 
-          {/* Login Button */}
+            {/* Login Button */}
 
-          <button className="flex h-14 w-full items-center justify-center gap-2 rounded-2xl bg-primary text-lg font-semibold text-white transition-all duration-300 hover:scale-[1.01] hover:bg-secondary">
-            Login
-            <ArrowRight size={18} />
-          </button>
-
-          {/* Divider */}
-
-          <div className="my-8 flex items-center gap-4">
-            <div className="h-px flex-1 bg-border" />
-
-            <span className="text-sm text-gray-400">or continue with</span>
-
-            <div className="h-px flex-1 bg-border" />
-          </div>
-
-          {/* Social Login */}
-
-          <div className="grid grid-cols-3 gap-4">
-            <button className="flex h-14 items-center justify-center rounded-2xl border border-border transition-all hover:border-primary hover:bg-[#FFF8F6]">
-              <Image
-                src="/icons/google.svg"
-                alt="google"
-                width={22}
-                height={22}
-              />
+            <button className="flex h-14 w-full items-center justify-center gap-2 rounded-2xl bg-primary text-lg font-semibold text-white transition-all duration-300 hover:scale-[1.01] hover:bg-secondary">
+              Login
+              <ArrowRight size={18} />
             </button>
-
-            <button className="flex h-14 items-center justify-center rounded-2xl border border-border transition-all hover:border-primary hover:bg-[#FFF8F6]">
-              <Image
-                src="/icons/github.svg"
-                alt="github"
-                width={22}
-                height={22}
-              />
-            </button>
-
-            <button className="flex h-14 items-center justify-center rounded-2xl border border-border transition-all hover:border-primary hover:bg-[#FFF8F6]">
-              <Image
-                src="/icons/discord.svg"
-                alt="discord"
-                width={22}
-                height={22}
-              />
-            </button>
-          </div>
+          </form>
 
           {/* Register */}
 
