@@ -1,10 +1,12 @@
 import TryOnModel from "@/app/db/models/tryonModel";
-import { PostInputImage } from "@/app/types";
 
-export default async function POST(req: Request)
+export async function POST(req: Request)
 {
-    const img: PostInputImage = await req.json()
-    const response = await TryOnModel.UserTryOn(img)
+    const userId = req.headers.get("x-user-id") as string;
+    const formData = await req.formData();
+    const yourImg = formData.get("User") as File;
+    const cosImg = formData.get("Product") as File;
+    const response = await TryOnModel.UserTryOn(yourImg, cosImg, userId)
     return Response.json(response)
 
 }
