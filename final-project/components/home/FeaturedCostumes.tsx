@@ -1,0 +1,157 @@
+"use client";
+
+import { Sparkles, Heart, ArrowRight } from "lucide-react";
+import type { GetProduct, GetWishlist } from "@/app/types";
+
+export interface FeaturedCostumesProps {
+  title?: string;
+  viewAllLabel?: string;
+  /** Products rendered as costume cards (imgUrl, title, theme -> series, OriginalPrice). */
+  costumes?: GetProduct[];
+  /** Current user's wishlist entries, used to derive each costume's favorited state. */
+  wishlist?: GetWishlist[];
+  detailsLabel?: string;
+  onViewAll?: () => void;
+  onSelectCostume?: (productId: string) => void;
+  onToggleFavorite?: (productId: string) => void;
+  currency?: string; // e.g. "USD", "IDR" — passed to Intl.NumberFormat
+}
+
+const placeholderCostumes: GetProduct[] = Array.from({ length: 4 }, (_, i) => ({
+  _id: `costume-${i}`,
+  imgUrl: "",
+  desc: "",
+  size: "",
+  theme: "",
+  title: "",
+  OriginalPrice: 0,
+}));
+
+function formatPrice(amount: number, currency: string) {
+  if (!amount) return "$0";
+  try {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency,
+      maximumFractionDigits: 0,
+    }).format(amount);
+  } catch {
+    return `$${amount}`;
+  }
+}
+
+function CostumeCard({
+  costume,
+  isFavorited,
+  currency,
+  detailsLabel,
+  onSelect,
+  onToggleFavorite,
+}: {
+  costume: GetProduct;
+  isFavorited: boolean;
+  currency: string;
+  detailsLabel: string;
+  onSelect?: (productId: string) => void;
+  onToggleFavorite?: (productId: string) => void;
+}) {
+  return (
+    <div className="flex flex-col overflow-hidden rounded-2xl border border-border bg-surface">
+      <div className="relative aspect-[3/4] w-full overflow-hidden bg-cream/30">
+        <button
+          type="button"
+          onClick={() => onSelect?.(costume._id)}
+          className="h-full w-full text-left"
+        >
+          {costume.imgUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={costume.imgUrl}
+              alt={costume.title || "Costume"}
+              className="h-full w-full object-cover"
+            />
+          ) : (
+            <div className="flex h-full w-full items-center justify-center text-base text-muted">
+              Costume image
+            </div>
+          )}
+        </button>
+        <button
+          type="button"
+          aria-label="Toggle favorite"
+          onClick={() => onToggleFavorite?.(costume._id)}
+          className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full bg-surface shadow-sm transition hover:bg-cream/40"
+        >
+          <Heart className={`h-5 w-5 ${isFavorited ? "fill-primary text-primary" : "text-muted"}`} />
+        </button>
+      </div>
+
+      <div className="flex flex-1 flex-col gap-2 p-4">
+        <div>
+          <p className="text-lg font-semibold text-foreground">
+            {costume.title || "Costume Title"}
+          </p>
+          <p className="text-base text-muted">{costume.theme || "Series"}</p>
+        </div>
+        <p className="text-xl font-bold text-primary">
+          {formatPrice(costume.OriginalPrice, currency)}
+        </p>
+
+        <button
+          type="button"
+          onClick={() => onSelect?.(costume._id)}
+          className="mt-auto inline-flex items-center justify-center gap-2 rounded-xl border border-primary px-4 py-2.5 text-base font-medium text-primary transition hover:bg-cream/40"
+        >
+          {detailsLabel}
+          <ArrowRight className="h-5 w-5" />
+        </button>
+      </div>
+    </div>
+  );
+}
+
+export default function FeaturedCostumes({
+  title = "Featured Costumes",
+  viewAllLabel = "View All Costumes",
+  costumes = placeholderCostumes,
+  wishlist = [],
+  detailsLabel = "View Details",
+  onViewAll,
+  onSelectCostume,
+  onToggleFavorite,
+  currency = "USD",
+}: FeaturedCostumesProps) {
+  const favoritedIds = new Set(wishlist.map((entry) => entry.productId));
+
+  return (
+    <section className="mx-auto max-w-7xl px-6 py-10 lg:px-8">
+      <div className="mb-6 flex items-center justify-between">
+        <h2 className="flex items-center gap-2 font-serif text-3xl font-semibold text-foreground">
+          {title}
+          <Sparkles className="h-5 w-5 text-accent" />
+        </h2>
+        <button
+          type="button"
+          onClick={onViewAll}
+          className="text-base font-medium text-primary hover:text-secondary"
+        >
+          {viewAllLabel} &rarr;
+        </button>
+      </div>
+
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        {costumes.map((costume) => (
+          <CostumeCard
+            key={costume._id}
+            costume={costume}
+            isFavorited={favoritedIds.has(costume._id)}
+            currency={currency}
+            detailsLabel={detailsLabel}
+            onSelect={onSelectCostume}
+            onToggleFavorite={onToggleFavorite}
+          />
+        ))}
+      </div>
+    </section>
+  );
+}

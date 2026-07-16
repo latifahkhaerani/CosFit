@@ -1,4 +1,4 @@
-import { Checkout } from "@/app/types";
+import { PostCheckout } from "@/app/types";
 import { database } from "../config/mongoDb";
 import { ObjectId } from "mongodb";
 

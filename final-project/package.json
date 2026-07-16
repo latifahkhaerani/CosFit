@@ -3,20 +3,29 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "ts-node --project tsconfig.server.json server.ts",
     "build": "next build",
-    "start": "next start",
+    "start": "next NODE_ENV=production node server.ts",
     "lint": "eslint"
   },
   "dependencies": {
     "@imagekit/next": "^2.1.5",
+    "@vercel/blob": "^2.6.1",
     "bcryptjs": "^3.0.3",
+    "clsx": "^2.1.1",
     "dotenv": "^17.4.2",
+    "imagekit": "^6.0.0",
     "jsonwebtoken": "^9.0.3",
+    "lucide-react": "^1.24.0",
     "mongodb": "^7.5.0",
+    "multer": "^2.2.0",
     "next": "16.2.10",
     "react": "19.2.4",
+    "react-compare-slider": "^4.0.0",
     "react-dom": "19.2.4",
+    "socket.io": "^4.8.3",
+    "socket.io-client": "^4.8.3",
+    "react-icons": "^5.7.0",
     "zod": "^4.4.3"
   },
   "devDependencies": {
@@ -28,6 +37,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.2.10",
     "tailwindcss": "^4",
+    "ts-node": "^10.9.2",
     "typescript": "^5"
   }
 }
