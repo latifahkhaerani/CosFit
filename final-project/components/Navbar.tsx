@@ -5,6 +5,9 @@ import { usePathname } from "next/navigation";
 import { Menu, X, Sparkles, ShoppingBag, User } from "lucide-react";
 // import { cookies } from "next/headers";
 import { useState } from "react";
+import { useEffect, useState } from "react";
+import { handleLoginCookies } from "@/action";
+// import { cookies } from "next/headers";
 
 export interface NavLink {
   id: string;
@@ -23,7 +26,6 @@ export interface NavbarProps {
   registerHref?: string;
   checkoutHref?: string;
   profileHref?: string;
-  profileLabel?: string,
 }
 
 const defaultLinks: NavLink[] = [
@@ -46,18 +48,25 @@ export default function Navbar({
   brandName = "CosFit",
   brandTagline = "AI Virtual Fitting",
   links = defaultLinks,
-  isLoggedIn = false,
   loginLabel = "Login",
   registerLabel = "Register",
   loginHref = "/login",
   registerHref = "/register",
   checkoutHref = "/checkout",
   profileHref = "/profile",
-  profileLabel="Profile",
 }: NavbarProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isLoggedIn, setIsLogin] = useState(false)
   const pathname = usePathname();
-  
+  useEffect(() => {
+    const checkLogin = async () => {
+      const res = await handleLoginCookies()
+      setIsLogin(res)
+    }
+
+    checkLogin()
+  }, [])
+
   // const cookieStore = await cookies();
   // const isLoggedIn = cookieStore.get("Authorization") ? true : false;
 

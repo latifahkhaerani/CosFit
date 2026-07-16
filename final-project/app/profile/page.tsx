@@ -17,6 +17,9 @@ import { CheckCircle2, Circle, LogOut } from "lucide-react";
 import SidebarItem from "@/components/profile/sidebarButton";
 
 export default function ProfilePage() {
+
+  
+
   const savedLooks = [
     {
       id: 1,
