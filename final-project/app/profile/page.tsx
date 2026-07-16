@@ -213,7 +213,7 @@ export default function ProfilePage() {
 
             {/* Premium */}
 
-            <div className="overflow-hidden rounded-2xl bg-gradient-to-br from-[#FFF4EE] to-[#FFFDFB] p-5 shadow-sm">
+            <div className="overflow-hidden rounded-2xl bg-linear-to-br from-[#FFF4EE] to-[#FFFDFB] p-5 shadow-sm">
               <div className="flex items-center gap-3">
                 <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white">
                   <Crown className="text-primary" />
@@ -389,7 +389,7 @@ export default function ProfilePage() {
                 <div className="grid grid-cols-4 gap-3">
                   {savedLooks.map((item) => (
                     <div key={item.id} className="group cursor-pointer">
-                      <div className="relative aspect-[3/4] overflow-hidden rounded-xl">
+                      <div className="relative aspect-3/4 overflow-hidden rounded-xl">
                         <Image
                           src={item.image}
                           alt={item.character}
@@ -596,7 +596,7 @@ export default function ProfilePage() {
                     <h3 className="text-xl font-semibold">Upcoming Events</h3>
 
                     <p className="mt-1 text-sm text-muted">
-                      Events you're planning to attend
+                      Events you&apos;re planning to attend
                     </p>
                   </div>
 
@@ -699,7 +699,7 @@ export default function ProfilePage() {
 
             {/* Banner */}
 
-            <div className="overflow-hidden rounded-2xl bg-gradient-to-r from-[#FFF4EE] via-[#FFF9F6] to-[#FFFDFB] shadow-sm">
+            <div className="overflow-hidden rounded-2xl bg-linear-to-r from-[#FFF4EE] via-[#FFF9F6] to-[#FFFDFB] shadow-sm">
               <div className="flex flex-col items-center justify-between gap-8 p-8 lg:flex-row">
                 {/* Left */}
 
