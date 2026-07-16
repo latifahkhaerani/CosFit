@@ -21,7 +21,6 @@ export interface NavbarProps {
 
 const defaultLinks: NavLink[] = [
   { id: "home", label: "Home", href: "/" },
-  { id: "characters", label: "Characters", href: "/characters" },
   { id: "marketplace", label: "Marketplace", href: "/marketplace" },
   { id: "forum", label: "Forum", href: "/forum" },
   { id: "events", label: "Events", href: "/events" },
