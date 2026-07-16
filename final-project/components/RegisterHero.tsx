@@ -45,7 +45,7 @@ export default function RegisterHero() {
 
       <div className="pointer-events-none absolute bottom-0 right-0">
         <Image
-          src="/images/register-girl.png"
+          src="/images/register-girl1.png"
           alt="CosFit"
           width={750}
           height={900}
