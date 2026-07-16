@@ -1,7 +1,7 @@
 import ProfileModel from "@/app/db/models/profileModel";
 import UserModel from "@/app/db/models/userModel";
 import errorHandler from "@/app/helpers/errorHandler";
-import { UserProfile } from "@/app/types";
+import { PostUserProfile } from "@/app/types";
 
 export async function POST(req: Request)
 {
@@ -9,7 +9,8 @@ export async function POST(req: Request)
         const body = await req.json()
         const result = await UserModel.register(body)
 
-        const newProfile: UserProfile = {
+        const newProfile: PostUserProfile = {
+            userId: result.insertedId.toString(),
             address: body.address || "",
             photo: body.photo || ""
         }
