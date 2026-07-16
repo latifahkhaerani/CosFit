@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronLeft, ChevronRight, Sparkles, Heart } from "lucide-react";
+import { Sparkles, Heart, ArrowRight } from "lucide-react";
 import type { GetProduct, GetWishlist } from "@/app/types";
 
 export interface FeaturedCostumesProps {
@@ -10,12 +10,14 @@ export interface FeaturedCostumesProps {
   costumes?: GetProduct[];
   /** Current user's wishlist entries, used to derive each costume's favorited state. */
   wishlist?: GetWishlist[];
+  detailsLabel?: string;
   onViewAll?: () => void;
+  onSelectCostume?: (productId: string) => void;
   onToggleFavorite?: (productId: string) => void;
   currency?: string; // e.g. "USD", "IDR" — passed to Intl.NumberFormat
 }
 
-const placeholderCostumes: GetProduct[] = Array.from({ length: 6 }, (_, i) => ({
+const placeholderCostumes: GetProduct[] = Array.from({ length: 4 }, (_, i) => ({
   _id: `costume-${i}`,
   imgUrl: "",
   desc: "",
@@ -42,44 +44,68 @@ function CostumeCard({
   costume,
   isFavorited,
   currency,
+  detailsLabel,
+  onSelect,
   onToggleFavorite,
 }: {
   costume: GetProduct;
   isFavorited: boolean;
   currency: string;
+  detailsLabel: string;
+  onSelect?: (productId: string) => void;
   onToggleFavorite?: (productId: string) => void;
 }) {
   return (
-    <div className="group w-40 flex-shrink-0 sm:w-44">
-      <div className="relative aspect-[3/4] w-full overflow-hidden rounded-2xl bg-cream/30">
-        {costume.imgUrl ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={costume.imgUrl}
-            alt={costume.title || "Costume"}
-            className="h-full w-full object-cover transition group-hover:scale-105"
-          />
-        ) : (
-          <div className="flex h-full w-full items-center justify-center text-xs text-muted">
-            Costume image
-          </div>
-        )}
+    <div className="flex flex-col overflow-hidden rounded-2xl border border-border bg-surface">
+      <div className="relative aspect-[3/4] w-full overflow-hidden bg-cream/30">
+        <button
+          type="button"
+          onClick={() => onSelect?.(costume._id)}
+          className="h-full w-full text-left"
+        >
+          {costume.imgUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={costume.imgUrl}
+              alt={costume.title || "Costume"}
+              className="h-full w-full object-cover"
+            />
+          ) : (
+            <div className="flex h-full w-full items-center justify-center text-base text-muted">
+              Costume image
+            </div>
+          )}
+        </button>
         <button
           type="button"
           aria-label="Toggle favorite"
           onClick={() => onToggleFavorite?.(costume._id)}
-          className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full bg-surface/90 text-muted shadow-sm hover:text-accent"
+          className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full bg-surface shadow-sm transition hover:bg-cream/40"
         >
-          <Heart className={`h-3.5 w-3.5 ${isFavorited ? "fill-primary text-primary" : "text-muted"}`} />
+          <Heart className={`h-5 w-5 ${isFavorited ? "fill-primary text-primary" : "text-muted"}`} />
         </button>
       </div>
-      <p className="mt-2 truncate text-sm font-medium text-foreground">
-        {costume.title || "Costume Title"}
-      </p>
-      <p className="truncate text-xs text-muted">{costume.theme || "Series"}</p>
-      <p className="mt-1 text-sm font-semibold text-primary">
-        {formatPrice(costume.OriginalPrice, currency)}
-      </p>
+
+      <div className="flex flex-1 flex-col gap-2 p-4">
+        <div>
+          <p className="text-lg font-semibold text-foreground">
+            {costume.title || "Costume Title"}
+          </p>
+          <p className="text-base text-muted">{costume.theme || "Series"}</p>
+        </div>
+        <p className="text-xl font-bold text-primary">
+          {formatPrice(costume.OriginalPrice, currency)}
+        </p>
+
+        <button
+          type="button"
+          onClick={() => onSelect?.(costume._id)}
+          className="mt-auto inline-flex items-center justify-center gap-2 rounded-xl border border-primary px-4 py-2.5 text-base font-medium text-primary transition hover:bg-cream/40"
+        >
+          {detailsLabel}
+          <ArrowRight className="h-5 w-5" />
+        </button>
+      </div>
     </div>
   );
 }
@@ -89,7 +115,9 @@ export default function FeaturedCostumes({
   viewAllLabel = "View All Costumes",
   costumes = placeholderCostumes,
   wishlist = [],
+  detailsLabel = "View Details",
   onViewAll,
+  onSelectCostume,
   onToggleFavorite,
   currency = "USD",
 }: FeaturedCostumesProps) {
@@ -97,48 +125,32 @@ export default function FeaturedCostumes({
 
   return (
     <section className="mx-auto max-w-7xl px-6 py-10 lg:px-8">
-      <div className="mb-5 flex items-center justify-between">
-        <h2 className="flex items-center gap-1.5 font-serif text-xl font-semibold text-foreground">
+      <div className="mb-6 flex items-center justify-between">
+        <h2 className="flex items-center gap-2 font-serif text-3xl font-semibold text-foreground">
           {title}
-          <Sparkles className="h-4 w-4 text-accent" />
+          <Sparkles className="h-5 w-5 text-accent" />
         </h2>
         <button
           type="button"
           onClick={onViewAll}
-          className="text-sm font-medium text-primary hover:text-secondary"
+          className="text-base font-medium text-primary hover:text-secondary"
         >
           {viewAllLabel} &rarr;
         </button>
       </div>
 
-      <div className="relative">
-        <button
-          type="button"
-          aria-label="Scroll left"
-          className="absolute -left-4 top-1/2 z-10 hidden h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-surface text-muted shadow-sm hover:bg-cream/40 sm:flex"
-        >
-          <ChevronLeft className="h-4 w-4" />
-        </button>
-
-        <div className="flex gap-4 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          {costumes.map((costume) => (
-            <CostumeCard
-              key={costume._id}
-              costume={costume}
-              isFavorited={favoritedIds.has(costume._id)}
-              currency={currency}
-              onToggleFavorite={onToggleFavorite}
-            />
-          ))}
-        </div>
-
-        <button
-          type="button"
-          aria-label="Scroll right"
-          className="absolute -right-4 top-1/2 z-10 hidden h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-surface text-muted shadow-sm hover:bg-cream/40 sm:flex"
-        >
-          <ChevronRight className="h-4 w-4" />
-        </button>
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        {costumes.map((costume) => (
+          <CostumeCard
+            key={costume._id}
+            costume={costume}
+            isFavorited={favoritedIds.has(costume._id)}
+            currency={currency}
+            detailsLabel={detailsLabel}
+            onSelect={onSelectCostume}
+            onToggleFavorite={onToggleFavorite}
+          />
+        ))}
       </div>
     </section>
   );

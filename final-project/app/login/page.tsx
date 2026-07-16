@@ -16,7 +16,23 @@ export default function LoginPage() {
     <main className="grid min-h-screen lg:grid-cols-2">
       {/* ================= LEFT ================= */}
 
-      <section className="relative hidden overflow-hidden bg-background lg:flex">
+      <section className="relative hidden overflow-hidden bg-background lg:flex lg:sticky lg:top-16 lg:h-[calc(100vh-4rem)]">
+        {/* Character — full-bleed background photo */}
+
+        <div className="pointer-events-none absolute inset-0">
+          <Image
+            src="/images/register-girl.png"
+            alt=""
+            fill
+            priority
+            className="object-cover object-top"
+          />
+        </div>
+
+        {/* Scrim: keeps the left side (where the text sits) legible while the photo stays fully visible on the right */}
+
+        <div className="absolute inset-0 bg-gradient-to-r from-background via-background/85 to-transparent" />
+
         {/* Glow */}
 
         <div className="absolute left-10 top-10 h-72 w-72 rounded-full bg-[#E1BD9C]/30 blur-3xl" />
@@ -32,7 +48,7 @@ export default function LoginPage() {
 
           {/* Heading */}
 
-          <div className="mt-20 max-w-lg">
+          <div className="mt-12 max-w-lg">
             <h2 className="text-6xl font-bold leading-tight text-text">
               See Yourself.
               <br />
@@ -45,21 +61,9 @@ export default function LoginPage() {
             </p>
           </div>
 
-          {/* Image */}
-
-          <div className="pointer-events-none absolute bottom-0 right-0">
-            <Image
-              src="/images/login-girl.png"
-              width={700}
-              height={900}
-              alt="login"
-              priority
-            />
-          </div>
-
           {/* Floating Card */}
 
-          <div className="relative z-10 mt-auto w-[420px] rounded-[30px] bg-white/80 p-8 shadow-xl backdrop-blur">
+          <div className="relative z-10 mt-auto w-[420px] max-w-full rounded-[30px] bg-white/80 p-8 shadow-xl backdrop-blur">
             <div className="mb-6 flex items-center gap-4">
               <div className="rounded-2xl bg-background p-3">
                 <Users className="text-primary" size={24} />
