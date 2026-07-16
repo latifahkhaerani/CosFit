@@ -125,15 +125,15 @@ export default function WishlistPage() {
 
           {/* Summary */}
 
-          <div className="grid overflow-hidden rounded-3xl border border-(--border) bg-white shadow-sm lg:grid-cols-3">
+          <div className="grid overflow-hidden rounded-3xl border border-(--border) bg-white shadow-sm lg:grid-cols-[1fr_1.3fr_1.4fr]">
             {/* Saved */}
 
             <div className="flex items-center gap-5 border-r border-[var(--border)] p-8">
-              <div className="rounded-2xl bg-[#FFF3EF] p-4">
+              <div className="flex-shrink-0 rounded-2xl bg-[#FFF3EF] p-4">
                 <ShoppingBag className="text-[var(--primary)]" size={24} />
               </div>
 
-              <div>
+              <div className="min-w-0">
                 <p className="text-sm text-gray-500">Saved Costumes</p>
 
                 <h2 className="text-4xl font-bold">{wishlist.length}</h2>
@@ -143,14 +143,14 @@ export default function WishlistPage() {
             {/* Price */}
 
             <div className="flex items-center gap-5 border-r border-[var(--border)] p-8">
-              <div className="rounded-2xl bg-[#FFF3EF] p-4">
+              <div className="flex-shrink-0 rounded-2xl bg-[#FFF3EF] p-4">
                 <ShoppingCart className="text-[var(--primary)]" size={24} />
               </div>
 
-              <div>
+              <div className="min-w-0">
                 <p className="text-sm text-gray-500">Estimated Total</p>
 
-                <h2 className="text-3xl font-bold">
+                <h2 className="text-2xl font-bold sm:text-3xl">
                   Rp{" "}
                   {wishlist
                     .reduce((a, b) => a + b.price, 0)

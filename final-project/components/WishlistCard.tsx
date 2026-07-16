@@ -85,12 +85,12 @@ export default function WishlistCard({
 
       <div className="space-y-3 p-5">
         <div className="flex items-start justify-between">
-          <div>
-            <h3 className="text-lg font-semibold text-[#4D565C]">
+          <div className="min-w-0">
+            <h3 className="line-clamp-1 text-lg font-semibold text-[#4D565C]">
               {character}
             </h3>
 
-            <p className="text-sm text-gray-500">{series}</p>
+            <p className="line-clamp-1 text-sm text-gray-500">{series}</p>
           </div>
 
           <div className="text-right">
@@ -110,10 +110,10 @@ export default function WishlistCard({
             alt={vendor}
             width={24}
             height={24}
-            className="rounded-full"
+            className="flex-shrink-0 rounded-full"
           />
 
-          <p className="text-sm text-[#849282]">{vendor}</p>
+          <p className="line-clamp-1 text-sm text-[#849282]">{vendor}</p>
         </div>
 
         {/* Buttons */}

@@ -1,10 +1,12 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import {
   ArrowRight,
   CalendarPlus,
   Sparkles,
+  Store,
   Trophy,
   Users,
 } from "lucide-react";
@@ -18,34 +20,25 @@ export default function HeroEvent() {
       <Image
         src="/images/events/hero.jpg"
         alt="CosFit Events"
-        width={1800}
-        height={900}
-        className="h-[560px] w-full object-cover"
+        fill
+        className="object-cover"
       />
 
       {/* Gradient */}
 
-      <div className="absolute inset-0 bg-gradient-to-r from-[#8E332F]/90 via-[#B14744]/75 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-r from-[#8E332F] via-[#B14744] to-[#D89C73]" />
 
       {/* Decoration */}
 
       <div className="absolute right-16 top-12 h-56 w-56 rounded-full bg-white/10 blur-3xl" />
 
-      <div className="absolute left-14 top-14">
-
-        <span className="rounded-full border border-white/20 bg-white/10 px-5 py-2 text-xs font-semibold tracking-widest text-white backdrop-blur-xl">
-
-          COMMUNITY · CREATIVITY · COSPLAY
-
-        </span>
-
-      </div>
+      <Trophy className="pointer-events-none absolute -bottom-10 right-72 hidden h-72 w-72 text-white/5 lg:block" />
 
       {/* Content */}
 
-      <div className="absolute inset-0 flex items-center">
+      <div className="relative z-10 flex flex-col gap-10 px-14 py-14 lg:flex-row lg:items-center lg:gap-14 lg:py-20">
 
-        <div className="max-w-2xl px-14">
+        <div className="lg:flex-1">
 
           <div className="mb-5 flex items-center gap-3 text-[#FFD28F]">
 
@@ -59,7 +52,7 @@ export default function HeroEvent() {
 
           </div>
 
-          <h1 className="max-w-xl text-6xl font-bold leading-[1.05] text-white">
+          <h1 className="text-7xl font-bold leading-[1.05] text-white">
 
             Join the
 
@@ -69,7 +62,7 @@ export default function HeroEvent() {
 
           </h1>
 
-          <p className="mt-7 max-w-lg text-lg leading-8 text-white/90">
+          <p className="mt-7 max-w-xl text-xl leading-8 text-white/90">
 
             Participate in cosplay competitions,
             fashion design contests,
@@ -83,13 +76,16 @@ export default function HeroEvent() {
 
           <div className="mt-10 flex gap-5">
 
-            <button className="primary-btn flex items-center gap-3 px-8 py-4 shadow-soft hover:scale-[1.02]">
+            <Link
+              href="/events/all"
+              className="primary-btn flex items-center gap-3 px-8 py-4 shadow-soft hover:scale-[1.02]"
+            >
 
               Explore Events
 
               <ArrowRight size={18} />
 
-            </button>
+            </Link>
 
             <button className="rounded-2xl border border-white/30 bg-white/10 px-8 py-4 font-medium text-white backdrop-blur-xl transition hover:bg-white/20">
 
@@ -105,29 +101,35 @@ export default function HeroEvent() {
 
           </div>
 
-          {/* Stats */}
+        </div>
 
-          <div className="mt-14 flex gap-5">
+        {/* Stats sidebar */}
 
-            <StatCard
-              icon={<Trophy size={20} />}
-              title="120+"
-              subtitle="Events"
-            />
+        <div className="grid grid-cols-2 gap-6 lg:w-[460px] lg:flex-shrink-0">
 
-            <StatCard
-              icon={<Users size={20} />}
-              title="48K+"
-              subtitle="Participants"
-            />
+          <StatCard
+            icon={<Trophy size={24} />}
+            title="120+"
+            subtitle="Events"
+          />
 
-            <StatCard
-              icon={<Sparkles size={20} />}
-              title="250+"
-              subtitle="Winners"
-            />
+          <StatCard
+            icon={<Users size={24} />}
+            title="48K+"
+            subtitle="Participants"
+          />
 
-          </div>
+          <StatCard
+            icon={<Sparkles size={24} />}
+            title="250+"
+            subtitle="Winners"
+          />
+
+          <StatCard
+            icon={<Store size={24} />}
+            title="80+"
+            subtitle="Vendors"
+          />
 
         </div>
 
@@ -147,24 +149,15 @@ function StatCard({
   subtitle: string;
 }) {
   return (
-    <div
-      className="
-      rounded-3xl
-      border
-      border-white/20
-      bg-white/10
-      px-6
-      py-5
-      backdrop-blur-xl
-      "
-    >
-      <div className="mb-3 text-[#FFD28F]">
+    <div className="rounded-2xl border border-white/20 bg-white/10 px-6 py-6 backdrop-blur-xl transition">
+
+      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-[#FFD28F]">
 
         {icon}
 
       </div>
 
-      <h3 className="text-3xl font-bold text-white">
+      <h3 className="mt-4 text-2xl font-bold leading-tight text-white">
 
         {title}
 
