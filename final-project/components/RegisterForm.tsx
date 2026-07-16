@@ -2,6 +2,7 @@
 
 import errorHandler from "@/app/helpers/errorHandler";
 import { User, Mail, Lock, Eye, Sparkles } from "lucide-react";
+import { redirect } from "next/navigation";
 import { SubmitEvent, useState } from "react";
 
 export default function RegisterForm() {
@@ -32,7 +33,7 @@ export default function RegisterForm() {
       setUsername("")
       setConfirmPass("")
 
-      return data
+      redirect("/login")
 
     } catch (error) {
       errorHandler(error)

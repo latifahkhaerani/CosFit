@@ -1,8 +1,6 @@
-"use client";
-
-import { useState } from "react";
 import Link from "next/link";
-import { Menu, X, Sparkles } from "lucide-react";
+import { Sparkles } from "lucide-react";
+import { cookies } from "next/headers";
 
 export interface NavLink {
   id: string;
@@ -16,6 +14,7 @@ export interface NavbarProps {
   links?: NavLink[];
   loginLabel?: string;
   registerLabel?: string;
+  profileLabel?: string;
   onLoginClick?: () => void;
   onRegisterClick?: () => void;
 }
@@ -26,19 +25,21 @@ const defaultLinks: NavLink[] = [
   { id: "marketplace", label: "Marketplace", href: "/marketplace" },
   { id: "forum", label: "Forum", href: "/forum" },
   { id: "events", label: "Events", href: "/events" },
-  { id: "vendor", label: "Become a Vendor", href: "/become-a-vendor" },
+  { id: "vendor", label: "Become a Vendor", href: "/vendor/register" },
 ];
 
-export default function Navbar({
+export default async function Navbar({
   brandName = "CosFit",
   brandTagline = "AI Virtual Fitting",
   links = defaultLinks,
   loginLabel = "Login",
   registerLabel = "Register",
+  profileLabel="Profile",
   onLoginClick,
   onRegisterClick,
 }: NavbarProps) {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const cookieStore = await cookies();
+  const isLoggedIn = cookieStore.get("Authorization") ? true : false;
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-surface/90 backdrop-blur">
@@ -67,69 +68,40 @@ export default function Navbar({
         </ul>
 
         {/* Auth buttons */}
-        <div className="hidden items-center gap-3 md:flex">
-          <button
-            type="button"
-            onClick={onLoginClick}
-            className="rounded-full border border-border px-5 py-2 text-sm font-medium text-text transition hover:bg-cream/40"
-          >
-            {loginLabel}
-          </button>
-          <button
-            type="button"
-            onClick={onRegisterClick}
-            className="rounded-full bg-gradient-to-r from-primary to-secondary px-5 py-2 text-sm font-medium text-white transition hover:brightness-105"
-          >
-            {registerLabel}
-          </button>
-        </div>
-
-        {/* Mobile toggle */}
-        <button
-          type="button"
-          aria-label="Toggle menu"
-          onClick={() => setIsMenuOpen((open) => !open)}
-          className="flex h-9 w-9 items-center justify-center rounded-full border border-border text-text md:hidden"
-        >
-          {isMenuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
-        </button>
-      </nav>
-
-      {/* Mobile menu */}
-      {isMenuOpen && (
-        <div className="border-t border-border px-6 py-4 md:hidden">
-          <ul className="flex flex-col gap-3">
-            {links.map((link) => (
-              <li key={link.id}>
+        {isLoggedIn? (
+              <div>
                 <Link
-                  href={link.href}
-                  onClick={() => setIsMenuOpen(false)}
-                  className="block text-sm font-medium text-text hover:text-primary"
+                  type="button"
+                  href={"/profile"}
+                  className="flex-1 rounded-full bg-gradient-to-r from-primary to-secondary px-5 py-2 text-sm font-medium text-white hover:brightness-105"
                 >
-                  {link.label}
+                  {profileLabel}
                 </Link>
-              </li>
-            ))}
-          </ul>
-
-          <div className="mt-4 flex gap-3">
-            <button
-              type="button"
-              onClick={onLoginClick}
-              className="flex-1 rounded-full border border-border px-5 py-2 text-sm font-medium text-text hover:bg-cream/40"
-            >
-              {loginLabel}
-            </button>
-            <button
-              type="button"
-              onClick={onRegisterClick}
-              className="flex-1 rounded-full bg-gradient-to-r from-primary to-secondary px-5 py-2 text-sm font-medium text-white hover:brightness-105"
-            >
-              {registerLabel}
-            </button>
+              </div>
+            ):(
+          <div className="hidden items-center gap-3 md:flex">
+            <Link href={"/login"}>
+              <button
+                type="button"
+                onClick={onLoginClick}
+                className="rounded-full border border-border px-5 py-2 text-sm font-medium text-text transition hover:bg-cream/40"
+              >
+                {loginLabel}
+              </button>
+            </Link>
+            <Link href={"/register"}>
+              <button
+                type="button"
+                onClick={onRegisterClick}
+                className="rounded-full bg-gradient-to-r from-primary to-secondary px-5 py-2 text-sm font-medium text-white transition hover:brightness-105"
+              >
+                {registerLabel}
+              </button>
+            </Link>
           </div>
-        </div>
-      )}
+
+            )}
+      </nav>
     </header>
   );
 }
