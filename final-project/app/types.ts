@@ -32,7 +32,7 @@ export interface GetWishlist {
 
 export interface GetUserProfile {
   _id: string;
-  userId: string;
+  userId: [GetUser];
   address: string;
   photo: string;
 }
@@ -164,11 +164,13 @@ export interface PostUserDesign {
   vote: number;
 }
 export interface PostVendor {
-  NamaToko: string;
-  Alamat: string;
+  namaToko: string;
+  alamat: string;
   email: string;
   password: string;
-  norek: string;
+  no_rek?: [string];
+  no_phone: string;
+  webUrl?: string
 }
 
 export interface PostMonthlySales {

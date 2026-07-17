@@ -33,7 +33,7 @@ export default function LoginPage() {
 
       setEmail('')
       setPassword('')
-      redirect("/")
+      window.location.reload();
     } catch (error) {
       errorHandler(error)
     }

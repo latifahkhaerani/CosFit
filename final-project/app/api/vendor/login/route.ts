@@ -23,7 +23,7 @@ export async function POST(req: Request) {
       throw { message: "Invalid email or password", status: 401 };
     }
     const token = sign(
-      { id: vendor._id, email: vendor.email },
+      { id: vendor._id, email: vendor.email, role: "Admin" },
       process.env.JWT_SECRET as string,
     );
 

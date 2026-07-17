@@ -34,7 +34,7 @@ const defaultLinks: NavLink[] = [
   { id: "events", label: "Events", href: "/events" },
   { id: "wishlist", label: "Wishlist", href: "/wishlist" },
   { id: "try-on", label: "Try On", href: "/try-on" },
-  { id: "vendor", label: "Become a Vendor", href: "/vendor/login" },
+  { id: "vendor", label: "Become a Vendor", href: "/vendor/register" },
 ];
 
 /** "/" only matches exactly; every other route also matches its sub-paths. */
@@ -64,7 +64,7 @@ export default function Navbar({
     }
 
     checkLogin()
-  }, [])
+  }, [isLoggedIn])
 
   // const cookieStore = await cookies();
   // const isLoggedIn = cookieStore.get("Authorization") ? true : false;
