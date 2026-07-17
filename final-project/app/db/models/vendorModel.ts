@@ -3,13 +3,12 @@ import { hashSync } from "bcryptjs";
 import { database } from "@/app/db/config/mongoDb";
 
 const VendorSchema = z.object({
-  NamaToko: z.string().min(1, { message: "Nama Toko is required" }),
-  Alamat: z.string(),
+  namaToko: z.string().min(1, { message: "Nama Toko is required" }),
+  alamat: z.string(),
   email: z.email({ message: "Invalid email address" }),
   password: z
     .string()
     .min(6, { message: "Password must be at least 6 characters long" }),
-  norek: z.string(),
 });
 
 export default class VendorModel {
