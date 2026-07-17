@@ -1,4 +1,4 @@
-import ForumModel from "@/app/db/models/forumModel";
+import ForumModel from "@/db/models/forumModel";
 import errorHandler from "@/app/helpers/errorHandler";
 
 export async function GET(){

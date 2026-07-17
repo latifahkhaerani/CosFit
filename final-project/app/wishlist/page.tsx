@@ -93,7 +93,7 @@ const wishlist = [
     sizeMatch: "good",
     isWishlisted: true,
   },
-];
+] as const;
 
 export default function WishlistPage() {
   return (

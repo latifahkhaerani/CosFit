@@ -1,8 +1,6 @@
 import * as z from "zod";
 import { hashSync } from "bcryptjs";
-import { database } from "@/app/db/config/mongoDb";
-import { ObjectId } from "mongodb";
-import { GetVendor, PostVendor } from "@/app/types";
+import { database } from "@/db/config/mongoDb";
 
 const VendorSchema = z.object({
   namaToko: z.string().min(1, { message: "Nama Toko is required" }),

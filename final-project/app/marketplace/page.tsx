@@ -15,6 +15,10 @@ const allProducts: GetProduct[] = Array.from({ length: 8 }, (_, i) => ({
   theme: "",
   title: "",
   OriginalPrice: 0,
+  vendorId: "",
+  discount: 0,
+  finalPrice: 0,
+  stock: 0,
 }));
 
 export default async function MarketplacePage({ searchParams }: MarketplacePageProps) {
