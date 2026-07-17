@@ -1,7 +1,10 @@
 'use client'
 
+import errorHandler from "@/app/helpers/errorHandler";
 import { ArrowRight, Building2, Eye, Globe, Lock, Mail, MapPin, Phone,  } from "lucide-react";
-import { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { SubmitEvent, useState } from "react";
 
 export default function RegisterVendorForm()
 {
@@ -9,13 +12,36 @@ export default function RegisterVendorForm()
     const [alamat, setAlamat] = useState("")
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
-    const [confirmPassword, setConfirmPassword] = useState("")
+    const [confirmedPass, setConfirmedPass] = useState("")
     const [no_phone, setNoPhone] = useState("")
     const [webUrl, setWebUrl] = useState("")
+    const router = useRouter()
 
+    const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
+        e.preventDefault()
+        try {
+            if(password !== confirmedPass)
+            {
+                throw new Error("Password isnt match")
+            }
+
+            await fetch("http://localhost:3000/api/vendor/register", {
+                method: "POST",
+                headers: {
+                    'Content-Type':'application/json'
+                },
+                body: JSON.stringify({namaToko, alamat, email, password, no_phone, webUrl})
+            })
+
+            router.push("/vendor/login")
+            
+        } catch (error) {
+           errorHandler(error) 
+        }
+    }
 
     return(
-        <form className="mt-12 space-y-7">
+        <form className="mt-12 space-y-7" onSubmit={handleSubmit}>
 
               <div className="grid md:grid-cols-2 gap-6">
 
@@ -73,8 +99,8 @@ export default function RegisterVendorForm()
                 <PasswordInput
                   label="Confirm Password"
                   placeholder="Confirm your password"
-                  value={confirmPassword}
-                  onChange={(e) => {setConfirmPassword(e.target.value)}}
+                  value={confirmedPass}
+                  onChange={(e) => {setConfirmedPass(e.target.value)}}
                 />
 
               </div>
@@ -85,23 +111,23 @@ export default function RegisterVendorForm()
 
                 <span className="text-gray-600">
                   I agree to the CosFit
-                  <span className="text-red-600">
+                  <span className="text-primary">
                     {" "}Vendor Terms of Service
                   </span>
                   {" "}and{" "}
-                  <span className="text-red-600">
+                  <span className="text-primary">
                     Privacy Policy
                   </span>
                 </span>
 
               </label>
 
-              <button className="w-full h-16 bg-(--primary) rounded-xl text-white font-semibold text-xl flex justify-center items-center gap-3">
+              <button className="w-full h-16 bg-(--primary) rounded-xl text-white font-semibold text-xl flex justify-center items-center gap-3" type="submit">
                 Create Vendor Account
                 <ArrowRight />
               </button>
 
-              <div className="flex items-center gap-4">
+              {/* <div className="flex items-center gap-4">
 
                 <div className="flex-1 h-px bg-gray-200" />
 
@@ -118,19 +144,21 @@ export default function RegisterVendorForm()
                 className="w-full h-16 rounded-xl border text-lg"
               >
                 Continue with Google
-              </button>
+              </button> */}
 
               <p className="text-center text-gray-600">
 
                 Already have a Vendor Account?
 
-                <button
-                  type="button"
-                  className="ml-2 text-red-600 font-semibold inline-flex items-center gap-2"
-                >
-                  Login
-                  <ArrowRight className="w-4 h-4" />
-                </button>
+                <Link href={"/vendor/login"} >
+                  <button
+                    type="button"
+                    className="ml-2 text-primary font-semibold inline-flex items-center gap-2"
+                  >
+                    Login
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                </Link>
 
               </p>
 

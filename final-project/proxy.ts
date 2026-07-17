@@ -23,11 +23,15 @@ export async function proxy(request: Request) {
         };
 
         if (pathname.startsWith("/api/vendor")) {
-            if (decoded.role !== "vendor") {
-                throw {
-                    message: "Forbidden",
-                    status: 403,
-                };
+            if(!pathname.endsWith("/register") || !pathname.endsWith("/login"))
+            {
+                console.log("masuk");
+                if (decoded.role !== "vendor") {
+                    throw {
+                        message: "Forbidden",
+                        status: 403,
+                    };
+                }
             }
         }
 
