@@ -113,8 +113,8 @@ export default function VendorDashboard() {
                     character={el.title}
                     series={el.theme}
                     price={+el.originalPrice}
-                    views={1200}
-                    wishlist={234}
+                    views={el.views?? 0}
+                    wishlist={el.wishlists.length}
                     />
                   )
                 })}
