@@ -1,0 +1,18 @@
+version: "3.8"
+
+services:
+  web:
+    build:
+      context: .
+    ports:
+      - "3000:3000"
+    volumes:
+      # Sinkronisasi kode lokal ke dalam container (Hot Reload)
+      - .:/app
+      # Melindungi node_modules Alpine Linux agar tidak tertimpa node_modules lokal
+      - /app/node_modules
+      # (Opsional) Mencegah folder build lokal bentrok dengan build di dalam Docker
+      - /app/.next
+    env_file:
+      # Membaca file .env yang ada di level yang sama
+      - .env
