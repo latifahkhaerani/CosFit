@@ -11,10 +11,10 @@ export interface EventCardProps {
 
 export default function EventCard({ event, joinLabel = "Join Event" }: EventCardProps) {
   return (
-    <article className="card group overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-soft">
+    <article className="card group flex h-full flex-col overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-soft">
       <Link
         href={`/events/${event._id}`}
-        className="relative block aspect-video w-full overflow-hidden bg-[#FCFBFA]"
+        className="relative block aspect-video w-full flex-shrink-0 overflow-hidden bg-[#FCFBFA]"
       >
         {event.imgUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
@@ -36,20 +36,20 @@ export default function EventCard({ event, joinLabel = "Join Event" }: EventCard
         ) : null}
       </Link>
 
-      <div className="p-6">
+      <div className="flex flex-1 flex-col p-8">
         <Link href={`/events/${event._id}`}>
-          <h3 className="text-xl font-semibold leading-snug transition-colors group-hover:text-[var(--primary)]">
+          <h3 className="line-clamp-2 text-xl font-semibold leading-snug transition-colors group-hover:text-[var(--primary)]">
             {event.eventName || "Event Name"}
           </h3>
         </Link>
 
-        <p className="mt-3 line-clamp-2 text-sm text-[var(--muted)]">
+        <p className="mb-6 mt-3 line-clamp-2 text-sm text-[var(--muted)]">
           {event.description || "Short description of this event."}
         </p>
 
         <Link
           href={`/events/${event._id}`}
-          className="secondary-btn mt-6 flex w-full items-center justify-center gap-2 hover:bg-[var(--primary)] hover:text-white"
+          className="secondary-btn mt-auto flex w-full items-center justify-center gap-2 hover:bg-[var(--primary)] hover:text-white"
         >
           {joinLabel}
           <ArrowRight size={16} />
