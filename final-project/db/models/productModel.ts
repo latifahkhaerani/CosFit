@@ -58,8 +58,21 @@ export default class ProductModel {
       vendorId: new ObjectId(vendorId),
     };
 
+    const agg = {
+      $lookup: {
+        from: "wishlists",
+        localField: "_id",
+        foreignField: "productId",
+        as: "wishlists",
+      },
+    };
+
+    const match = {
+      $match: filter,
+    };
+
     const products = await this.collection()
-      .find(filter).skip(skip).limit(limit).toArray();
+      .aggregate([agg, match]).skip(skip).limit(limit).toArray();
     
     const total = await this.collection().countDocuments(filter);
 
@@ -98,5 +111,17 @@ export default class ProductModel {
       { $set: { imgUrl: blob.url } },
     );
     return `Product image of ${product.upsertedId} updated successfully`;
+  }
+
+  static async addViews(id: string)
+  {
+    await this.collection().updateOne(
+      { _id: new ObjectId(id) },
+      {
+        $inc: {
+          views: 1,
+        },
+      }
+    );
   }
 }

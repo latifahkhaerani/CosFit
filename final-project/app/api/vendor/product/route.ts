@@ -1,5 +1,5 @@
-import ProductModel from "@/app/db/models/productModel";
 import errorHandler from "@/app/helpers/errorHandler";
+import ProductModel from "@/db/models/productModel";
 import { put } from "@vercel/blob";
 
 export async function GET(req: Request) {

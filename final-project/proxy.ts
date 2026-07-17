@@ -31,8 +31,6 @@ export async function proxy(request: Request) {
             email: string;
             role: string;
         };
-        console.log(decoded);
-
 
         if (pathname.startsWith("/api/vendor") || pathname.startsWith("/vendor")) {
             if (decoded.role !== "Vendor") {

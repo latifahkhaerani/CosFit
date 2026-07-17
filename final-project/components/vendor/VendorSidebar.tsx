@@ -1,15 +1,13 @@
 "use client";
 import Link from "next/link";
-import Image from "next/image";
 import {
   LayoutDashboard,
-  Shirt,
-  ShoppingBag,
-  Users,
   Calendar,
   MessageSquare,
-  Settings,
+  LogOut,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { handleDeleteCookies } from "@/action";
 
 const menus = [
   {
@@ -18,39 +16,27 @@ const menus = [
     icon: LayoutDashboard,
   },
   {
-    title: "Costume Management",
-    href: "/vendor/costumes",
-    icon: Shirt,
-  },
-  {
-    title: "Orders",
-    href: "/vendor/orders",
-    icon: ShoppingBag,
-  },
-  {
-    title: "Customers",
-    href: "/vendor/customers",
-    icon: Users,
-  },
-  {
     title: "Events",
-    href: "/vendor/events",
+    href: "/events",
     icon: Calendar,
   },
   {
-    title: "Messages",
-    href: "/vendor/messages",
+    title: "Forum",
+    href: "/forum",
     icon: MessageSquare,
-    badge: 5,
-  },
-  {
-    title: "Settings",
-    href: "/vendor/settings",
-    icon: Settings,
   },
 ];
 
 export default function VendorSidebar() {
+
+  const route = useRouter()
+    
+  const handleLogout = async () => {
+    // logout logic
+    await handleDeleteCookies()
+    route.push("/")
+  };
+
   return (
     <aside className="sticky top-0 flex h-screen w-70 flex-col border-r border-(--border) bg-white">
       {/* Logo */}
@@ -82,15 +68,19 @@ export default function VendorSidebar() {
 
                 <span className="font-medium">{menu.title}</span>
               </div>
-
-              {menu.badge && (
-                <div className="flex h-6 w-6 items-center justify-center rounded-full bg-(--primary) text-xs text-white">
-                  {menu.badge}
-                </div>
-              )}
             </Link>
           );
         })}
+        <button
+          className={`flex items-center justify-between rounded-2xl px-5 py-4 transition`}
+          onClick={handleLogout}
+        >
+          <div className="flex items-center gap-4">
+            <LogOut size={20} />
+
+            <span className="font-medium">Log Out</span>
+          </div>
+        </button>
       </nav>
     </aside>
   );
