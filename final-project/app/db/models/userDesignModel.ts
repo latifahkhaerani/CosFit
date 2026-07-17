@@ -13,7 +13,7 @@ export default class UserDesignModel{
     }
 
     static async createUserDesign(userDesignData: PostUserDesign, userId: string){
-        const result = await this.collection().insertOne({...userDesignData, userId})
+        const result = await this.collection().insertOne({...userDesignData, userId: new ObjectId(userId)})
         return "User Design created with ID: " + result.insertedId
     }
 
