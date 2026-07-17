@@ -1,6 +1,8 @@
 import * as z from "zod";
 import { hashSync } from "bcryptjs";
 import { database } from "@/app/db/config/mongoDb";
+import { ObjectId } from "mongodb";
+import { GetVendor, PostVendor } from "@/app/types";
 
 const VendorSchema = z.object({
   NamaToko: z.string().min(1, { message: "Nama Toko is required" }),
@@ -36,5 +38,38 @@ export default class VendorModel {
 
     const result = await this.collection().insertOne(parsedData);
     return "Vendor created with ID: " + result.insertedId;
+  }
+
+  static async getProfile(vendorId: string) {
+    const agg = [
+      {
+        $match: {
+          vendorId: new ObjectId(vendorId),
+        },
+      },
+      {
+        $lookup: {
+          from: "vendors",
+          localField: "vendorId",
+          foreignField: "_id",
+          as: "vendor",
+        },
+      },
+      {
+        $project: {
+          "vendor.password": false,
+        },
+      },
+    ];
+    const profile = await this.collection().aggregate(agg).toArray();
+    return profile[0];
+  }
+
+  static async putProfile(profileData: GetVendor, vendorId: string) {
+    const result = await this.collection().updateOne(
+      { vendorId: new ObjectId(vendorId) },
+      { $set: profileData },
+    );
+    return "Profile updated with ID: " + result.upsertedId;
   }
 }
