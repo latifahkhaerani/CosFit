@@ -1,5 +1,4 @@
 "use client";
-import QuickAction from "@/components/vendor/QuickAction";
 import RecentRentalCard from "@/components/vendor/RecentRentalCard";
 import UpcomingEventCard from "@/components/vendor/UpcomingEventCard";
 import VendorProductRow from "@/components/vendor/VendorProductRow";
@@ -14,8 +13,26 @@ import {
   Search,
   Plus,
 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { GetProduct, GetVendor } from "../types";
+import Link from "next/link";
 
 export default function VendorDashboard() {
+
+  const [vendor, setVendor] = useState<GetVendor>()
+  const [vendorProd, setVendorProd] = useState<GetProduct>()
+
+  useEffect(() => {
+    const fetching = async () => {
+      const response = await fetch("http://localhost:3000/api/vendor/profile");
+      const dataVendor: GetVendor = await response.json();
+      setVendor(dataVendor)
+    }
+
+    fetching()
+  }, [])
+  
+
   return (
     <main className="flex min-h-screen bg-(--background)">
       <VendorSidebar />
@@ -47,10 +64,12 @@ export default function VendorDashboard() {
           <div className="flex items-center gap-5">
             <Bell />
 
-            <button className="primary-btn flex items-center gap-2">
-              <Plus size={18} />
-              Add Costume
-            </button>
+            <Link href={"/vendor/create-prod"}>
+              <button className="primary-btn flex items-center gap-2">
+                <Plus size={18} />
+                Add Costume
+              </button>
+            </Link>
           </div>
         </div>
 
@@ -60,7 +79,7 @@ export default function VendorDashboard() {
           <div>
             <h1 className="text-5xl font-bold">
               Welcome Back,
-              <span className="text-(--primary)"> Starlight Cosplay</span>
+              <span className="text-(--primary)">{vendor?.namaToko}</span>
               👋
             </h1>
 

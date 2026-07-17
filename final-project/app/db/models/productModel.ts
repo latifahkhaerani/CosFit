@@ -1,4 +1,4 @@
-import { PostInputImage, PostProduct } from "@/app/types";
+import { PostProduct } from "@/app/types";
 import { database } from "../config/mongoDb";
 import { ObjectId } from "mongodb";
 import { put } from "@vercel/blob";
@@ -65,6 +65,7 @@ export default class ProductModel {
       ...productData,
       vendorId: new ObjectId(vendorId),
     });
+    console.log(result);
     return "Product created with ID: " + result.insertedId;
   }
 
