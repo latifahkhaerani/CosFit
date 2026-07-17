@@ -23,8 +23,6 @@ export default function VendorProductRow({
   character,
   series,
   price,
-  availability,
-  rental,
   views,
   wishlist,
 }: Props) {
@@ -37,13 +35,15 @@ export default function VendorProductRow({
 
         <div className="flex items-center gap-4">
 
-          <Image
-            src={image}
-            alt={character}
-            width={82}
-            height={82}
-            className="rounded-3xl object-cover transition duration-300 group-hover:scale-105"
-          />
+          <div className="relative h-20 w-20 overflow-hidden rounded-3xl">
+            <Image
+              src={image}
+              alt={character}
+              width={82}
+              height={82}
+              className="rounded-3xl object-cover transition duration-300 group-hover:scale-105"
+            />
+          </div>
 
           <div>
 
@@ -83,25 +83,7 @@ export default function VendorProductRow({
 
       </td>
 
-      {/* Availability */}
-
-      <td>
-
-        <StatusBadge
-          type={availability}
-        />
-
-      </td>
-
-      {/* Rental */}
-
-      <td>
-
-        <StatusBadge
-          type={rental}
-        />
-
-      </td>
+      
 
       {/* Views */}
 

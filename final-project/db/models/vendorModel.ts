@@ -41,20 +41,12 @@ export default class VendorModel {
     const agg = [
       {
         $match: {
-          vendorId: new ObjectId(vendorId),
-        },
-      },
-      {
-        $lookup: {
-          from: "vendors",
-          localField: "vendorId",
-          foreignField: "_id",
-          as: "vendor",
+          _id: new ObjectId(vendorId),
         },
       },
       {
         $project: {
-          "vendor.password": false,
+          "password": false,
         },
       },
     ];
