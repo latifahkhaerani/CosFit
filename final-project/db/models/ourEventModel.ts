@@ -1,5 +1,5 @@
 import { PostOurEvent } from "@/app/types";
-import { database } from "../config/mongoDb";
+import { database } from "../config/mongodb";
 import { ObjectId } from "mongodb";
 
 export default class OurEventModel{

@@ -1,7 +1,7 @@
 import { GetUserProfile, PostUserProfile } from "@/app/types"
-import { database } from "../config/mongoDb"
 import { ObjectId } from "mongodb"
 import { put } from "@vercel/blob"
+import { database } from "../config/mongodb";
 
 export default class ProfileModel{
     static collection(){

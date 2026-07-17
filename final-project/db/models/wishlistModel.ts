@@ -1,5 +1,5 @@
 import { PostWishlist } from "@/app/types";
-import { database } from "@/db/config/mongoDb";
+import { database } from "@/db/config/mongodb";
 import { ObjectId } from "mongodb";
 
 export default class WishlistModel {

@@ -20,18 +20,18 @@ export async function proxy(request: Request) {
 
         const cookieStore = await cookies();
         const authToken = cookieStore.get("Authorization");
-        console.log(authToken);
         
         if (!authToken) throw { message: "please login first", status: 401 };
         const [type, token] = authToken.value.split(" ");
         if (type !== "Bearer" || !token)
             throw { message: "please login first", status: 401 };
-
+        
         const decoded = verify(token, process.env.JWT_SECRET as string) as {
             id: string;
             email: string;
             role: string;
         };
+        console.log(decoded);
 
 
         if (pathname.startsWith("/api/vendor") || pathname.startsWith("/vendor")) {
@@ -66,6 +66,6 @@ export async function proxy(request: Request) {
 }
 
 export const config = {
-    matcher: ["/profile", "/vendor/:path*", "/api/vendor/:path*", "/api/user/profile", "/vendor"],
+    matcher: ["/profile", "/vendor/:path*", "/api/vendor/:path*", "/api/user/profile", "/vendor", "/api/forum"],
 };
     

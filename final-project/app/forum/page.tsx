@@ -1,6 +1,5 @@
 "use client"
 
-
 import ForumCTA from "@/components/forum/ForumCTA";
 
 import DiscussionFilter from "@/components/forum/DiscussionFilter";
@@ -33,7 +32,6 @@ interface creatorType {
 
 export default function ForumPage() { 
 
-  // FIX: Menambahkan explicit type pada useState agar sesuai interface TypeScript
   const [data, setData] = useState<forumType[]>([]); 
 
   useEffect(() => {

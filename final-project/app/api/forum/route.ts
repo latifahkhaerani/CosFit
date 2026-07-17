@@ -13,7 +13,6 @@ export async function GET(req: Request){
 
 export async function POST(req: Request){
     try {
-        console.log("salah masuk");
         const formData = await req.formData();
     const img = formData.get("Image") as File;
     const nameForum = formData.get("nameForum") as string;
