@@ -15,7 +15,7 @@ export default function NewDiscussionPage() {
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  async function handleSubmit(event: FormEvent) {
+async function handleSubmit(event: FormEvent) {
     event.preventDefault();
     if (!imageFile) {
       setError("Please choose an image for your discussion.");
@@ -27,34 +27,15 @@ export default function NewDiscussionPage() {
 
     try {
       const formData = new FormData();
-      formData.append("file", imageFile);
 
-      const uploadRes = await fetch("/api/forum/upload", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!uploadRes.ok) {
-        const data = await uploadRes.json().catch(() => null);
-        throw new Error(data?.message || "Failed to upload your image.");
-      }
-
-      const { url } = await uploadRes.json();
-
-      const tagList = tags
-        .split(",")
-        .map((tag) => tag.trim())
-        .filter(Boolean);
+      formData.append("Image", imageFile); 
+      formData.append("nameForum", nameForum);
+      formData.append("desc", desc);
+      formData.append("tag", tags); 
 
       const res = await fetch("/api/forum", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          nameForum,
-          desc,
-          img: url,
-          tag: tagList,
-        }),
+        body: formData, 
       });
 
       if (!res.ok) {
@@ -135,7 +116,7 @@ export default function NewDiscussionPage() {
               label="Tags"
               htmlFor="tag"
               icon={<Tags size={17} />}
-              hint="Separate multiple tags with commas."
+              hint="Separate multiple tags with commas. ex: Anime, Cosplay, Girl..."
             >
               <input
                 id="tag"

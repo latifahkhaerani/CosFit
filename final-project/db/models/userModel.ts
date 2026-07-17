@@ -1,6 +1,7 @@
 import * as z from "zod";
 import { hashSync } from "bcryptjs";
-import { database } from "@/db/config/mongoDb";
+import { database } from "../config/mongodb";
+
 
 const UserSchema = z.object({
     email: z.email({ message: "Invalid email address" }),
