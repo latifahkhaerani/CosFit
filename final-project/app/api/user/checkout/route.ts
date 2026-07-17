@@ -1,4 +1,4 @@
-import CheckoutModel from "@/app/db/models/checkoutModel";
+import CheckoutModel from "@/db/models/checkoutModel";
 import errorHandler from "@/app/helpers/errorHandler";
 
 export async function GET(req: Request)

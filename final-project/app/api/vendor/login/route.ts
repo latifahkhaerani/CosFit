@@ -1,4 +1,4 @@
-import VendorModel from "@/app/db/models/vendorModel";
+import VendorModel from "@/db/models/vendorModel";
 import errorHandler from "@/app/helpers/errorHandler";
 import { compareSync } from "bcryptjs";
 import { sign } from "jsonwebtoken";

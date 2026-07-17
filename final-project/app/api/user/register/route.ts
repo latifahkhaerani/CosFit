@@ -1,5 +1,5 @@
-import ProfileModel from "@/app/db/models/profileModel";
-import UserModel from "@/app/db/models/userModel";
+import ProfileModel from "@/db/models/profileModel";
+import UserModel from "@/db/models/userModel";
 import errorHandler from "@/app/helpers/errorHandler";
 import { PostUserProfile } from "@/app/types";
 

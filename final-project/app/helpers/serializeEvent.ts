@@ -7,7 +7,7 @@ export default function serializeEvent(doc: Record<string, unknown>): GetOurEven
     eventName: (doc.eventName as string) ?? "",
     category: (doc.category as string) ?? "",
     imgUrl: (doc.imgUrl as string) ?? "",
-    forumId: (doc.forumId as string) ?? "",
+    forumId: doc.forumId ? String(doc.forumId) : "",
     description: (doc.description as string) ?? "",
   };
 }

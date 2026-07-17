@@ -1,6 +1,6 @@
 import Link from "next/link";
 import AllEventsClient from "@/components/events/AllEventsClient";
-import OurEventModel from "@/app/db/models/ourEventModel";
+import OurEventModel from "@/db/models/ourEventModel";
 import serializeEvent from "@/app/helpers/serializeEvent";
 
 export const dynamic = "force-dynamic";

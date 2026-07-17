@@ -9,6 +9,7 @@ export default function RegisterVendorForm()
     const [alamat, setAlamat] = useState("")
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
+    const [confirmPassword, setConfirmPassword] = useState("")
     const [no_phone, setNoPhone] = useState("")
     const [webUrl, setWebUrl] = useState("")
 
@@ -65,12 +66,15 @@ export default function RegisterVendorForm()
                 <PasswordInput
                   label="Password"
                   placeholder="Create a strong password"
-                  
+                  value={password}
+                  onChange={(e) => {setPassword(e.target.value)}}
                 />
 
                 <PasswordInput
                   label="Confirm Password"
                   placeholder="Confirm your password"
+                  value={confirmPassword}
+                  onChange={(e) => {setConfirmPassword(e.target.value)}}
                 />
 
               </div>
@@ -190,6 +194,8 @@ function PasswordInput({
           type="password"
           className="flex-1 outline-none"
           placeholder={placeholder}
+          value={value}
+          onChange={onChange}
         />
 
         <Eye className="w-5 h-5 text-gray-400" />

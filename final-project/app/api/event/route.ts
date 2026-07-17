@@ -1,4 +1,4 @@
-import eventModel from "@/app/db/models/ourEventModel";
+import eventModel from "@/db/models/ourEventModel";
 import errorHandler from "@/app/helpers/errorHandler";
 
 export async function GET(){

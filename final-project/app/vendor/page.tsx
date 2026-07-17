@@ -192,7 +192,16 @@ export default function VendorDashboard() {
           <div className="col-span-4 space-y-6">
             <RecentRentalCard />
 
-            <UpcomingEventCard />
+            <UpcomingEventCard
+              image="/images/events/event1.jpg"
+              category="Convention"
+              title="CosFit Annual Convention"
+              date="Jul 05, 2025"
+              location="ICE BSD"
+              participants="2,500+"
+              price="$5,000"
+              status="Upcoming"
+            />
 
             <div className="card card-hover p-7">
               <div className="mb-5">

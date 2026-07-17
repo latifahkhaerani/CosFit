@@ -97,7 +97,7 @@ export default function DiscussionDetail() {
           <div className="mb-4 flex items-center gap-2">
             <Sparkles size={18} className="text-[var(--primary)]" />
 
-            <span className="font-semibold">I've tried so far</span>
+            <span className="font-semibold">I&apos;ve tried so far</span>
           </div>
 
           <ol className="space-y-3 text-sm leading-7">
