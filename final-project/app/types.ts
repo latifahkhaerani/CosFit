@@ -17,7 +17,7 @@ export interface GetProduct {
   theme: string;
   title: string;
   OriginalPrice: number;
-  vendorId: string;
+  vendorId: [GetVendor];
   discount: number;
   finalPrice: number;
   stock: number;
@@ -25,7 +25,7 @@ export interface GetProduct {
 
 export interface GetWishlist {
   _id: string;
-  productId: string;
+  productId: [GetProduct];
   aiImgUrl: string;
   userId: string;
 }
@@ -170,7 +170,7 @@ export interface PostVendor {
   password: string;
   no_rek?: [string];
   no_phone: string;
-  webUrl?: string
+  webUrl?: string;
 }
 
 export interface PostMonthlySales {
