@@ -5,7 +5,13 @@ import { put } from "@vercel/blob";
 export async function GET(req: Request) {
   try {
     const vendorId = req.headers.get("x-user-id") as string;
-    const result = ProductModel.getProductByVendorId(vendorId);
+
+    const { searchParams } = new URL(req.url);
+
+    const page = Number(searchParams.get("page")) || 1;
+    const limit = Number(searchParams.get("limit")) || 4;
+
+    const result = await ProductModel.getProductByVendorId(vendorId, page, limit);
     return Response.json(result);
   } catch (error) {
     return errorHandler(error);

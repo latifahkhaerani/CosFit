@@ -32,7 +32,8 @@ export async function proxy(request: Request) {
             role: string;
         };
 
-        if (pathname.startsWith("/api/vendor")) {
+
+        if (pathname.startsWith("/api/vendor") || pathname.startsWith("/vendor")) {
             if (decoded.role !== "Vendor") {
                 throw {
                     message: "Forbidden",
@@ -63,6 +64,6 @@ export async function proxy(request: Request) {
 }
 
 export const config = {
-    matcher: ["/profile", "/vendor/:path*", "/api/vendor/:path*", "/api/user/profile"],
+    matcher: ["/profile", "/vendor/:path*", "/api/vendor/:path*", "/api/user/profile", "/vendor"],
 };
     

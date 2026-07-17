@@ -92,42 +92,6 @@ export default function VendorSidebar() {
           );
         })}
       </nav>
-
-      <div className="mt-auto p-5">
-        <div className="card card-hover p-6">
-          <div className="flex items-center gap-4">
-            <Image
-              src="/images/vendor-avatar.jpg"
-              alt=""
-              width={54}
-              height={54}
-              className="rounded-full"
-            />
-
-            <div>
-              <h4 className="font-semibold">Starlight Cosplay</h4>
-
-              <span className="badge-warning">Premium Vendor</span>
-            </div>
-          </div>
-
-          <div className="mt-6">
-            <div className="mb-2 flex justify-between text-sm">
-              <span>Store Completeness</span>
-
-              <span>85%</span>
-            </div>
-
-            <div className="h-2 overflow-hidden rounded-full bg-[#F5E7DE]">
-              <div className="h-full w-[85%] rounded-full bg-(--primary)" />
-            </div>
-          </div>
-
-          <button className="secondary-btn hover-scale mt-6 w-full">
-            View Profile
-          </button>
-        </div>
-      </div>
     </aside>
   );
 }

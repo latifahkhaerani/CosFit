@@ -51,13 +51,24 @@ export default class ProductModel {
     return product;
   }
 
-  static async getProductByVendorId(vendorId: string) {
+  static async getProductByVendorId(vendorId: string, page: number, limit: number) {
+    const skip = (page - 1) * limit;
+
+    const filter = {
+      vendorId: new ObjectId(vendorId),
+    };
+
     const products = await this.collection()
-      .find({
-        vendorId: new ObjectId(vendorId),
-      })
-      .toArray();
-    return products;
+      .find(filter).skip(skip).limit(limit).toArray();
+    
+    const total = await this.collection().countDocuments(filter);
+
+    return {
+      data: products,
+      total,
+      page,
+      totalPages: Math.ceil(total / limit),
+    };
   }
 
   static async postProduct(productData: PostProduct, vendorId: string) {
