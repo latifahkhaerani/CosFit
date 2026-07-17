@@ -30,31 +30,31 @@ export default function HeroSection({
   onSecondaryCtaClick,
 }: HeroSectionProps) {
   return (
-    <section className="relative overflow-hidden bg-gradient-to-b from-cream/50 via-gold/10 to-background">
+    <section className="relative overflow-hidden bg-background">
       <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-6 py-16 md:grid-cols-2 md:py-24 lg:px-8">
         {/* Left: copy */}
         <div className="flex flex-col justify-center">
-          <h1 className="font-serif text-4xl font-bold leading-tight text-foreground sm:text-5xl">
+          <h1 className="font-serif text-5xl font-bold leading-tight text-foreground sm:text-6xl">
             {headline}
             <span className="text-primary">{highlightWord}</span>{" "}
             Before You Rent.
           </h1>
 
-          <p className="mt-5 max-w-md text-base text-muted">{subtext}</p>
+          <p className="mt-5 max-w-md text-lg text-muted">{subtext}</p>
 
           <div className="mt-8 flex flex-wrap gap-3">
             <button
               type="button"
               onClick={onPrimaryCtaClick}
-              className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-primary to-secondary px-6 py-3 text-sm font-medium text-white shadow-sm transition hover:brightness-105 active:brightness-95"
+              className="inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-3 text-base font-medium text-white transition hover:bg-secondary"
             >
               {primaryCtaLabel}
-              <ArrowRight className="h-4 w-4" />
+              <ArrowRight className="h-5 w-5" />
             </button>
             <button
               type="button"
               onClick={onSecondaryCtaClick}
-              className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-surface px-6 py-3 text-sm font-medium text-secondary transition hover:bg-cream/40"
+              className="inline-flex items-center gap-2 rounded-xl border border-primary bg-surface px-6 py-3 text-base font-medium text-primary transition hover:bg-cream/40"
             >
               {secondaryCtaLabel}
             </button>
@@ -64,9 +64,9 @@ export default function HeroSection({
             {defaultFeatures.map(({ icon: Icon, label }) => (
               <li
                 key={label}
-                className="flex items-center gap-2 text-xs font-medium text-muted"
+                className="flex items-center gap-2 text-sm font-medium text-muted"
               >
-                <Icon className="h-4 w-4 text-accent" />
+                <Icon className="h-5 w-5 text-accent" />
                 {label}
               </li>
             ))}
@@ -75,28 +75,28 @@ export default function HeroSection({
 
         {/* Right: placeholder visual area */}
         <div className="relative flex min-h-[380px] items-center justify-center">
-          <div className="absolute inset-0 flex items-center justify-center rounded-3xl border border-dashed border-gold/40 bg-surface/50">
-            <span className="text-sm text-muted">Hero illustration placeholder</span>
+          <div className="absolute inset-0 flex items-center justify-center rounded-3xl border border-dashed border-border bg-surface">
+            <span className="text-base text-muted">Hero illustration placeholder</span>
           </div>
 
           {/* "Your Photo" mini card */}
           <div className="absolute left-2 top-2 w-32 rounded-xl border border-border bg-surface p-2 shadow-sm sm:left-6 sm:top-6">
-            <p className="mb-1 text-[10px] font-medium text-muted">Your Photo</p>
+            <p className="mb-1 text-xs font-medium text-muted">Your Photo</p>
             <div className="flex h-20 items-center justify-center rounded-lg bg-cream/30">
-              <span className="text-[10px] text-muted">Photo</span>
+              <span className="text-xs text-muted">Photo</span>
             </div>
           </div>
 
           {/* AI Virtual Try-On pill */}
-          <div className="absolute left-1/2 top-[42%] -translate-x-1/2 rounded-full bg-gradient-to-r from-primary to-accent px-4 py-1.5 text-[11px] font-medium text-white shadow sm:top-[38%]">
+          <div className="absolute left-1/2 top-[42%] -translate-x-1/2 rounded-full bg-primary px-4 py-1.5 text-sm font-medium text-white shadow sm:top-[38%]">
             AI Virtual Try-On
           </div>
 
           {/* Cosplay preview mini card */}
           <div className="absolute bottom-2 left-2 w-32 rounded-xl border border-border bg-surface p-2 shadow-sm sm:bottom-6 sm:left-6">
-            <p className="mb-1 text-[10px] font-medium text-muted">Cosplay Preview</p>
+            <p className="mb-1 text-xs font-medium text-muted">Cosplay Preview</p>
             <div className="flex h-24 items-center justify-center rounded-lg bg-cream/30">
-              <span className="text-[10px] text-muted">Preview</span>
+              <span className="text-xs text-muted">Preview</span>
             </div>
           </div>
         </div>

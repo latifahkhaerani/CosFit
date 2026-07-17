@@ -2,12 +2,12 @@ import Footer from "@/components/Footer";
 import CategoryCard from "@/components/events/CategoryCard";
 import CommunityGallery from "@/components/events/CommunityGallery";
 import EventNewsletter from "@/components/events/EventNewsletter";
-import FeaturedEvent from "@/components/events/FeaturedEvent";
+import FeaturedEventCard from "@/components/events/FeaturedEventCard";
 import FeaturedWinnerCard from "@/components/events/FeaturedWinnerCard";
 
 import HeroEvent from "@/components/events/HeroEvent";
 import PastEventCard from "@/components/events/PastEventCard";
-import UpcomingEventCard from "@/components/vendor/UpcomingEventCard";
+import EventsClient from "@/components/events/EventsClient";
 import { Trophy, Shirt, Scissors, Camera, Ticket, Users } from "lucide-react";
 
 export default function EventsPage() {
@@ -16,62 +16,10 @@ export default function EventsPage() {
       <main className="page-container space-y-14">
         <HeroEvent />
 
-        <FeaturedEvent />
+        <FeaturedEventCard />
 
-        {/* upcoming events */}
-        <section>
-          <div className="mb-8 flex items-center justify-between">
-            <h2 className="card-title">Upcoming Events</h2>
-
-            <button className="secondary-btn">View All Events</button>
-          </div>
-
-          <div className="grid gap-7 md:grid-cols-2 xl:grid-cols-4">
-            <UpcomingEventCard
-              image="/images/events/event1.jpg"
-              category="Workshop"
-              title="Wig Styling Workshop"
-              date="Jun 01, 2025"
-              location="Jakarta"
-              participants="120+"
-              price="Free"
-              status="Upcoming"
-            />
-
-            <UpcomingEventCard
-              image="/images/events/event2.jpg"
-              category="Fashion Design"
-              title="Cosplay Design Challenge"
-              date="Jun 15, 2025"
-              location="Online"
-              participants="320+"
-              price="$2,000"
-              status="Upcoming"
-            />
-
-            <UpcomingEventCard
-              image="/images/events/event3.jpg"
-              category="Convention"
-              title="CosFit Annual Convention"
-              date="Jul 05, 2025"
-              location="ICE BSD"
-              participants="2,500+"
-              price="$5,000"
-              status="Ongoing"
-            />
-
-            <UpcomingEventCard
-              image="/images/events/event4.jpg"
-              category="Photoshoot"
-              title="Sunset Cosplay Gathering"
-              date="Jun 20, 2025"
-              location="Jakarta"
-              participants="80+"
-              price="Free"
-              status="Upcoming"
-            />
-          </div>
-        </section>
+        {/* upcoming events (join event flow) */}
+        <EventsClient />
 
         {/* category */}
         <section>

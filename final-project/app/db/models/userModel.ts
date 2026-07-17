@@ -7,7 +7,6 @@ const UserSchema = z.object({
     username: z
         .string()
         .min(3, { message: "Username must be at least 3 characters long" }),
-    name: z.string().min(1, { message: "Name is required" }),
     password: z
         .string()
         .min(6, { message: "Password must be at least 6 characters long" }),
@@ -41,6 +40,6 @@ export default class UserModel {
         parsedData.password = hashSync(parsedData.password, 10)
 
         const result = await this.collection().insertOne(parsedData)
-        return "User created with ID: " + result.insertedId
+        return {msg: "User created with ID: " + result.insertedId, insertedId: result.insertedId}
     }
 }
