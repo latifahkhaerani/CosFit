@@ -51,6 +51,15 @@ export default class ProductModel {
     return product;
   }
 
+  static async getProductByVendorId(vendorId: string) {
+    const products = await this.collection()
+      .find({
+        vendorId: new ObjectId(vendorId),
+      })
+      .toArray();
+    return products;
+  }
+
   static async postProduct(productData: PostProduct, vendorId: string) {
     const result = await this.collection().insertOne(productData);
     return "Product created with ID: " + result.insertedId;
