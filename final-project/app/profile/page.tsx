@@ -1,3 +1,4 @@
+'use client'
 
 import Image from "next/image";
 import {
@@ -15,10 +16,29 @@ import {
 } from "lucide-react";
 import { CheckCircle2, Circle, LogOut } from "lucide-react";
 import SidebarItem from "@/components/profile/sidebarButton";
+import { GetUserProfile } from "../types";
+import { useEffect, useState } from "react";
+import errorHandler from "../helpers/errorHandler";
 
 export default function ProfilePage() {
 
-  
+  const [profile, setProfile] = useState<GetUserProfile>()
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await fetch("http://localhost:3000/api/user/profile")
+        const userProfile: GetUserProfile = await data.json()
+
+        setProfile(userProfile)
+      } catch (error) {
+        errorHandler(error)
+      }
+    }
+
+    fetchData()
+  }, [])
+
 
   const savedLooks = [
     {
@@ -158,26 +178,22 @@ export default function ProfilePage() {
                 <div className="relative">
                   <div className="relative h-28 w-28 overflow-hidden rounded-full border-4 border-[#F7D8C4]">
                     <Image
-                      src="/images/avatar.png"
+                      src={profile? profile.photo : ""}
                       alt="avatar"
                       fill
                       className="object-cover"
                     />
                   </div>
-
-                  <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 rounded-full bg-[#FFF4EE] px-3 py-1 text-xs font-medium text-primary">
-                    Cosplayer
-                  </div>
                 </div>
 
-                <h2 className="mt-6 text-2xl font-bold">Yuna</h2>
+                <h2 className="mt-6 text-2xl font-bold">{profile? profile.userId[0].username : "username"}</h2>
 
                 <p className="text-muted">@yunacos</p>
               </div>
 
               {/* XP */}
 
-              <div className="mt-8">
+              {/* <div className="mt-8">
                 <div className="mb-2 flex justify-between text-sm">
                   <span>Level 12</span>
 
@@ -187,7 +203,7 @@ export default function ProfilePage() {
                 <div className="h-2 overflow-hidden rounded-full bg-[#EFEAE4]">
                   <div className="h-full w-1/2 rounded-full bg-primary" />
                 </div>
-              </div>
+              </div> */}
             </div>
 
             {/* Menu */}
@@ -250,7 +266,7 @@ export default function ProfilePage() {
             <div className="card flex items-center justify-between rounded-2xl border p-6 shadow-sm">
               <div>
                 <h1 className="flex items-center gap-2 text-3xl font-bold">
-                  Welcome back, Yuna!
+                  Welcome back, {profile? profile.userId[0].username : "You"}
                   <Sparkles size={20} className="text-accent" />
                 </h1>
 

@@ -24,7 +24,7 @@ export async function POST(req: Request)
             throw { message: "Invalid email or password", status: 401 };
         }
         const token = sign(
-            { id: user._id, email: user.email },
+            { id: user._id, email: user.email, role: "User" },
             process.env.JWT_SECRET as string,
         );
 

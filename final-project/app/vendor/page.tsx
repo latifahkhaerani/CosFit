@@ -14,7 +14,6 @@ import {
   Search,
   Plus,
 } from "lucide-react";
-import { CalendarDays, MessageSquare } from "lucide-react";
 
 export default function VendorDashboard() {
   return (
