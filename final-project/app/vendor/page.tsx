@@ -115,6 +115,7 @@ export default function VendorDashboard() {
                     price={+el.originalPrice}
                     views={el.views?? 0}
                     wishlist={el.wishlists.length}
+                    id={el._id}
                     />
                   )
                 })}

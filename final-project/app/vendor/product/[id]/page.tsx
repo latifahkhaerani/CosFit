@@ -10,7 +10,6 @@ import ProductReviewCard from "@/components/vendor/ProductReviewCard";
 export default function VendorProductDetail() {
   return (
     <main className="flex min-h-screen bg-[var(--background)]">
-      <VendorSidebar />
 
       <section className="page-container flex-1">
         {/* Header */}
