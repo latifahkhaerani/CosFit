@@ -7,6 +7,16 @@ export async function proxy(request: Request) {
     try {
         console.log("Proxy function called");
         const pathname = new URL(request.url).pathname;
+        console.log("pathname:", pathname);
+        if (
+            pathname === "/api/vendor/login" ||
+            pathname === "/api/vendor/register" ||
+            pathname === "/vendor/register" ||
+            pathname === "/vendor/login"
+
+        ) {
+            return NextResponse.next();
+        }
 
         const cookieStore = await cookies();
         const authToken = cookieStore.get("Authorization");
@@ -22,16 +32,13 @@ export async function proxy(request: Request) {
             role: string;
         };
 
-        if (pathname.startsWith("/api/vendor")) {
-            if(!pathname.endsWith("/register") || !pathname.endsWith("/login"))
-            {
-                console.log("masuk");
-                if (decoded.role !== "vendor") {
-                    throw {
-                        message: "Forbidden",
-                        status: 403,
-                    };
-                }
+
+        if (pathname.startsWith("/api/vendor") || pathname.startsWith("/vendor")) {
+            if (decoded.role !== "Vendor") {
+                throw {
+                    message: "Forbidden",
+                    status: 403,
+                };
             }
         }
 
@@ -57,6 +64,6 @@ export async function proxy(request: Request) {
 }
 
 export const config = {
-    matcher: ["/profile", "/vendor", "/api/vendor", "/api/user/profile"],
+    matcher: ["/profile", "/vendor/:path*", "/api/vendor/:path*", "/api/user/profile", "/vendor"],
 };
     

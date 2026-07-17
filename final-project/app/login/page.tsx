@@ -14,11 +14,13 @@ import {
 } from "lucide-react";
 import { SubmitEvent, useState } from "react";
 import errorHandler from "../helpers/errorHandler";
-import { redirect } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const route = useRouter()
 
   const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -31,9 +33,8 @@ export default function LoginPage() {
         body: JSON.stringify({email, password})
       })
 
-      setEmail('')
-      setPassword('')
-      window.location.reload();
+      route.push("/")
+      
     } catch (error) {
       errorHandler(error)
     }
@@ -43,7 +44,7 @@ export default function LoginPage() {
     <main className="grid min-h-screen lg:grid-cols-2">
       {/* ================= LEFT ================= */}
 
-      <section className="relative hidden overflow-hidden bg-background lg:flex lg:sticky lg:top-16 lg:h-[calc(100vh-4rem)]">
+      <section className="relative hidden overflow-hidden bg-background lg:flex h-screen">
         {/* Character — full-bleed background photo */}
 
         <div className="pointer-events-none absolute inset-0">
