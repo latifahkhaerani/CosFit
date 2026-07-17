@@ -7,8 +7,25 @@ export default class WishlistModel {
     return database.collection("wishlists");
   }
 
-  static getWishlistByUserId(userId: string) {
-    return this.collection().find({ userId }).toArray();
+  static async getWishlistByUserId(userId: string) {
+    return await this.collection()
+      .aggregate([
+        {
+          $match: {
+            userId,
+          },
+        },
+        {
+          $lookup: {
+            from: "products",
+            localField: "productId",
+            foreignField: "_id",
+            as: "productId",
+          },
+        },
+      ])
+      .toArray();
+    // return this.collection().find({ userId }).toArray();
   }
 
   static getWishlistById(id: string) {
