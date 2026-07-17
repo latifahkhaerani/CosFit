@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import Image from "next/image";
 import {
@@ -12,7 +12,6 @@ import {
   Crown,
   Pencil,
   Sparkles,
-  
 } from "lucide-react";
 import { CheckCircle2, Circle, LogOut } from "lucide-react";
 import SidebarItem from "@/components/profile/sidebarButton";
@@ -21,24 +20,22 @@ import { useEffect, useState } from "react";
 import errorHandler from "../helpers/errorHandler";
 
 export default function ProfilePage() {
-
-  const [profile, setProfile] = useState<GetUserProfile>()
+  const [profile, setProfile] = useState<GetUserProfile>();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await fetch("http://localhost:3000/api/user/profile")
-        const userProfile: GetUserProfile = await data.json()
+        const data = await fetch("http://localhost:3000/api/user/profile");
+        const userProfile: GetUserProfile = await data.json();
 
-        setProfile(userProfile)
+        setProfile(userProfile);
       } catch (error) {
-        errorHandler(error)
+        errorHandler(error);
       }
-    }
+    };
 
-    fetchData()
-  }, [])
-
+    fetchData();
+  }, []);
 
   const savedLooks = [
     {
@@ -178,7 +175,7 @@ export default function ProfilePage() {
                 <div className="relative">
                   <div className="relative h-28 w-28 overflow-hidden rounded-full border-4 border-[#F7D8C4]">
                     <Image
-                      src={profile? profile.photo : ""}
+                      src={profile ? profile.photo : ""}
                       alt="avatar"
                       fill
                       className="object-cover"
@@ -186,7 +183,9 @@ export default function ProfilePage() {
                   </div>
                 </div>
 
-                <h2 className="mt-6 text-2xl font-bold">{profile? profile.userId[0].username : "username"}</h2>
+                <h2 className="mt-6 text-2xl font-bold">
+                  {profile ? profile.userId[0].username : "username"}
+                </h2>
 
                 <p className="text-muted">@yunacos</p>
               </div>
@@ -209,11 +208,18 @@ export default function ProfilePage() {
             {/* Menu */}
 
             <div className="card p-3">
-              <SidebarItem active icon={<Home size={18} />} title={"Overview"} />
+              <SidebarItem
+                active
+                icon={<Home size={18} />}
+                title={"Overview"}
+              />
 
               <SidebarItem icon={<User size={18} />} title={"Body Profile"} />
 
-              <SidebarItem icon={<Sparkles size={18} />} title={"Saved Looks"} />
+              <SidebarItem
+                icon={<Sparkles size={18} />}
+                title={"Saved Looks"}
+              />
 
               <SidebarItem icon={<Heart size={18} />} title="Wishlist" />
 
@@ -232,7 +238,6 @@ export default function ProfilePage() {
               <SidebarItem icon={<Settings size={18} />} title="Settings" />
 
               <SidebarItem icon={<LogOut size={18} />} title="Logout" />
-
             </div>
 
             {/* Premium */}
@@ -266,7 +271,7 @@ export default function ProfilePage() {
             <div className="card flex items-center justify-between rounded-2xl border p-6 shadow-sm">
               <div>
                 <h1 className="flex items-center gap-2 text-3xl font-bold">
-                  Welcome back, {profile? profile.userId[0].username : "You"}
+                  Welcome back, {profile ? profile.userId[0].username : "You"}
                   <Sparkles size={20} className="text-accent" />
                 </h1>
 

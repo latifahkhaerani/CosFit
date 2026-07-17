@@ -4,24 +4,48 @@ import ProductGrid from "@/components/marketplace/ProductGrid";
 import type { GetProduct } from "@/app/types";
 
 interface MarketplacePageProps {
-  searchParams: Promise<{ search?: string; theme?: string; size?: string; sort?: string }>;
+  searchParams: Promise<{
+    search?: string;
+    theme?: string;
+    size?: string;
+    sort?: string;
+  }>;
 }
 
-const allProducts: GetProduct[] = Array.from({ length: 8 }, (_, i) => ({
-  _id: `product-${i}`,
-  imgUrl: "",
-  desc: "",
-  size: "",
-  theme: "",
-  title: "",
-  OriginalPrice: 0,
-}));
+async function getProducts(search: string) {
+  const res = await fetch(
+    `http://localhost:3000/api/user/product?search=${encodeURIComponent(search)}`,
+    {
+      cache: "no-store",
+    },
+  );
 
-export default async function MarketplacePage({ searchParams }: MarketplacePageProps) {
-  const { search = "", theme = "", size = "", sort = "title-asc" } = await searchParams;
+  if (!res.ok) {
+    throw new Error("Failed to fetch products");
+  }
 
-  const themeOptions = Array.from(new Set(allProducts.map((p) => p.theme).filter(Boolean))).sort();
-  const sizeOptions = Array.from(new Set(allProducts.map((p) => p.size).filter(Boolean))).sort();
+  const data: GetProduct[] = await res.json();
+  return data;
+}
+
+export default async function MarketplacePage({
+  searchParams,
+}: MarketplacePageProps) {
+  const {
+    search = "",
+    theme = "",
+    size = "",
+    sort = "title-asc",
+  } = await searchParams;
+
+  const allProducts = await getProducts(search);
+
+  const themeOptions = Array.from(
+    new Set(allProducts.map((p) => p.theme).filter(Boolean)),
+  ).sort();
+  const sizeOptions = Array.from(
+    new Set(allProducts.map((p) => p.size).filter(Boolean)),
+  ).sort();
 
   let products = allProducts.filter((product) => {
     const matchesSearch = search
@@ -41,7 +65,10 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
   return (
     <div className="mx-auto max-w-7xl px-6 py-10 lg:px-8">
       <MarketplaceHeader />
-      <MarketplaceFilters themeOptions={themeOptions} sizeOptions={sizeOptions} />
+      <MarketplaceFilters
+        themeOptions={themeOptions}
+        sizeOptions={sizeOptions}
+      />
       <ProductGrid products={products} />
     </div>
   );
