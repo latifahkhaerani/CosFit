@@ -35,8 +35,8 @@ export default class ProductModel {
         },
       },
     ];
-
-    return await this.collection().aggregate(agg).toArray();
+    const data = await this.collection().aggregate(agg).toArray();
+    return data
   }
 
   static async getById(id: string) {
