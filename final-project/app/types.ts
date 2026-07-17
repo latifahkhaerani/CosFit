@@ -147,8 +147,7 @@ export interface PostChat {
 export interface PostRoom {
   nameForum: string;
   desc: string;
-  img: string;
-  tag: [string];
+  tag: string[];
 }
 
 export interface PostOurEvent {

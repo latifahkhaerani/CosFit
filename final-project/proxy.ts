@@ -10,7 +10,8 @@ export async function proxy(request: Request) {
 
         const cookieStore = await cookies();
         const authToken = cookieStore.get("Authorization");
-
+        console.log(authToken);
+        
         if (!authToken) throw { message: "please login first", status: 401 };
         const [type, token] = authToken.value.split(" ");
         if (type !== "Bearer" || !token)
@@ -21,7 +22,7 @@ export async function proxy(request: Request) {
             email: string;
             role: string;
         };
-
+        
         if (pathname.startsWith("/api/vendor")) {
             if(!pathname.endsWith("/register") || !pathname.endsWith("/login"))
             {
@@ -34,13 +35,14 @@ export async function proxy(request: Request) {
                 }
             }
         }
-
+        
         // Clone the request headers and set a new header `x-hello-from-proxy1`
         const requestHeaders = new Headers(request.headers);
         requestHeaders.set("x-user-email", decoded.email);
         requestHeaders.set("x-user-id", decoded.id);
         requestHeaders.set("x-user-role", decoded.role);
 
+        
         // You can also set request headers in NextResponse.next
         const response = NextResponse.next({
             request: {
@@ -48,7 +50,7 @@ export async function proxy(request: Request) {
                 headers: requestHeaders,
             },
         });
-
+        
         return response;
 
     } catch (err) {
@@ -57,6 +59,6 @@ export async function proxy(request: Request) {
 }
 
 export const config = {
-    matcher: ["/profile", "/vendor", "/api/vendor", "/api/user/profile"],
+    matcher: ["/profile", "/vendor", "/api/vendor", "/api/user/profile", "/api/forum"],
 };
     

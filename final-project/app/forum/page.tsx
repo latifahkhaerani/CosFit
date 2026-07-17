@@ -13,7 +13,12 @@ import OnlineMembers from "@/components/forum/OnlineMembers";
 import { Plus } from "lucide-react";
 import ForumSidebar from "@/components/forum/ ForumSidebar";
 
-export default function ForumPage() {
+
+export default async function ForumPage() {
+  const res = await fetch(`http://localhost:3000/api/forum`)
+  const data = await res.json()
+  console.log(data, "<<<<< data");
+
   return (
     <>
       <main className="page-container">
