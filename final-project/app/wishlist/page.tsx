@@ -3,99 +3,23 @@ import ChibiCTA from "@/components/ChibiCTA";
 import NeedHelp from "@/components/NeedHelp";
 import WishlistCard from "@/components/WishlistCard";
 import { Heart, ShoppingBag, ShoppingCart, ArrowRight } from "lucide-react";
+import { GetWishlist } from "../types";
 
-const wishlist = [
-  {
-    image: "/images/yaemiko.jpg",
-    character: "Yae Miko",
-    series: "Genshin Impact",
-    vendor: "Starlight Cosplay",
-    vendorAvatar: "/images/vendor1.jpg",
-    price: 450000,
-    duration: "3 days",
-    sizeMatch: "good",
-    isWishlisted: true,
-  },
-  {
-    image: "/images/rei.jpg",
-    character: "Rei Ayanami",
-    series: "Neon Genesis Evangelion",
-    vendor: "Cosplay House",
-    vendorAvatar: "/images/vendor2.jpg",
-    price: 400000,
-    duration: "3 days",
-    sizeMatch: "good",
-    isWishlisted: true,
-  },
-  {
-    image: "/images/hutao.jpg",
-    character: "Hu Tao",
-    series: "Genshin Impact",
-    vendor: "Starlight Cosplay",
-    vendorAvatar: "/images/vendor1.jpg",
-    price: 450000,
-    duration: "3 days",
-    sizeMatch: "good",
-    isWishlisted: true,
-  },
-  {
-    image: "/images/rem.jpg",
-    character: "Rem",
-    series: "Re:Zero",
-    vendor: "Otaku Rentals",
-    vendorAvatar: "/images/vendor3.jpg",
-    price: 350000,
-    duration: "3 days",
-    sizeMatch: "good",
-    isWishlisted: true,
-  },
-  {
-    image: "/images/2b.jpg",
-    character: "2B",
-    series: "NieR:Automata",
-    vendor: "Cosplay House",
-    vendorAvatar: "/images/vendor2.jpg",
-    price: 500000,
-    duration: "3 days",
-    sizeMatch: "good",
-    isWishlisted: true,
-  },
-  {
-    image: "/images/saber.jpg",
-    character: "Saber",
-    series: "Fate/Stay Night",
-    vendor: "Universe Rental",
-    vendorAvatar: "/images/vendor4.jpg",
-    price: 450000,
-    duration: "3 days",
-    sizeMatch: "good",
-    isWishlisted: true,
-  },
-  {
-    image: "/images/raiden.jpg",
-    character: "Raiden Shogun",
-    series: "Genshin Impact",
-    vendor: "Starlight Cosplay",
-    vendorAvatar: "/images/vendor1.jpg",
-    price: 450000,
-    duration: "3 days",
-    sizeMatch: "good",
-    isWishlisted: true,
-  },
-  {
-    image: "/images/zerotwo.jpg",
-    character: "Zero Two",
-    series: "Darling in the Franxx",
-    vendor: "Cosplay House",
-    vendorAvatar: "/images/vendor2.jpg",
-    price: 400000,
-    duration: "3 days",
-    sizeMatch: "good",
-    isWishlisted: true,
-  },
-];
+export default async function WishlistPage() {
+  async function getWishlist() {
+    const res = await fetch("http://localhost:3000/api/user/wishlist", {
+      cache: "no-store",
+    });
 
-export default function WishlistPage() {
+    if (!res.ok) {
+      throw new Error("Failed to fetch wishlist");
+    }
+
+    return res.json() as Promise<GetWishlist[]>;
+  }
+
+  const wishlist = await getWishlist();
+
   return (
     <main className="min-h-screen bg-background">
       <BackgroundDecoration />
@@ -153,7 +77,10 @@ export default function WishlistPage() {
                 <h2 className="text-2xl font-bold sm:text-3xl">
                   Rp{" "}
                   {wishlist
-                    .reduce((a, b) => a + b.price, 0)
+                    .reduce(
+                      (total, item) => total + item.productId[0].OriginalPrice,
+                      0,
+                    )
                     .toLocaleString("id-ID")}
                 </h2>
               </div>
@@ -178,9 +105,24 @@ export default function WishlistPage() {
         {/* Grid */}
 
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {wishlist.map((item) => (
-            <WishlistCard key={item.character} {...item} />
-          ))}
+          {wishlist.map((item) => {
+            const product = item.productId[0];
+
+            return (
+              <WishlistCard
+                key={item._id}
+                image={item.aiImgUrl || product.imgUrl}
+                character={product.title}
+                series={product.theme}
+                vendor="Unknown Vendor"
+                vendorAvatar="/images/default-vendor.png"
+                price={product.OriginalPrice}
+                duration="3 days"
+                sizeMatch="unknown"
+                isWishlisted
+              />
+            );
+          })}
         </div>
 
         <NeedHelp />
