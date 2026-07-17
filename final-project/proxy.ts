@@ -1,11 +1,12 @@
 import { cookies } from "next/headers";
-import errorHandler from "./helpers/errorHandler";
+import errorHandler from "./app/helpers/errorHandler";
 import { verify } from "jsonwebtoken";
 import { NextResponse } from "next/server";
 
 export async function proxy(request: Request) {
     try {
         console.log("Proxy function called");
+        const pathname = new URL(request.url).pathname;
 
         const cookieStore = await cookies();
         const authToken = cookieStore.get("Authorization");
@@ -18,12 +19,23 @@ export async function proxy(request: Request) {
         const decoded = verify(token, process.env.JWT_SECRET as string) as {
             id: string;
             email: string;
+            role: string;
         };
+
+        if (pathname.startsWith("/api/vendor")) {
+            if (decoded.role !== "vendor") {
+                throw {
+                    message: "Forbidden",
+                    status: 403,
+                };
+            }
+        }
 
         // Clone the request headers and set a new header `x-hello-from-proxy1`
         const requestHeaders = new Headers(request.headers);
         requestHeaders.set("x-user-email", decoded.email);
         requestHeaders.set("x-user-id", decoded.id);
+        requestHeaders.set("x-user-role", decoded.role);
 
         // You can also set request headers in NextResponse.next
         const response = NextResponse.next({
@@ -41,5 +53,6 @@ export async function proxy(request: Request) {
 }
 
 export const config = {
-    matcher: [""],
+    matcher: ["/profile", "/api/vendor/:path*", "/api/user/profile"],
 };
+    
