@@ -62,6 +62,8 @@ export default class ForumModel{
 
         const image= blob.url
 
+        console.log(image);
+
         const result = await this.collection().insertOne({...forumData, creatorId: new ObjectId(UserId), image, createdAt: new Date()})
         return "Forum created with ID: " + result.insertedId
     }
