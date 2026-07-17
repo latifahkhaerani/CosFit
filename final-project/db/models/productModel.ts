@@ -112,4 +112,16 @@ export default class ProductModel {
     );
     return `Product image of ${product.upsertedId} updated successfully`;
   }
+
+  static async addViews(id: string)
+  {
+    await this.collection().updateOne(
+      { _id: new ObjectId(id) },
+      {
+        $inc: {
+          views: 1,
+        },
+      }
+    );
+  }
 }
