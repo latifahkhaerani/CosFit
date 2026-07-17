@@ -1,17 +1,14 @@
 import Link from "next/link";
 import AllEventsClient from "@/components/events/AllEventsClient";
-import type { GetOurEvent } from "@/app/types";
+import OurEventModel from "@/db/models/ourEventModel";
+import serializeEvent from "@/app/helpers/serializeEvent";
 
-const allEvents: GetOurEvent[] = Array.from({ length: 20 }, (_, i) => ({
-  _id: `event-${i}`,
-  eventName: "",
-  category: "",
-  imgUrl: "",
-  forumId: "",
-  description: "",
-}));
+export const dynamic = "force-dynamic";
 
-export default function AllEventsPage() {
+export default async function AllEventsPage() {
+  const events = await OurEventModel.getAllEvents();
+  const serializedEvents = events.map(serializeEvent);
+
   return (
     <main className="page-container">
       <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
@@ -21,7 +18,7 @@ export default function AllEventsPage() {
         </Link>
       </div>
 
-      <AllEventsClient events={allEvents} />
+      <AllEventsClient events={serializedEvents} />
     </main>
   );
 }

@@ -2,6 +2,7 @@
 
 import errorHandler from "@/app/helpers/errorHandler";
 import { ArrowRight, Eye, Lock, Mail } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { SubmitEvent, useState } from "react";
 
@@ -111,13 +112,15 @@ export default function LoginVendorForm()
                     Don&apos;t have a vendor account?
                 </p>
 
-                <button
-                  type="button"
-                  className="text-(--primary) font-semibold mt-2 inline-flex items-center gap-2"
-                >
-                  Register as Vendor
-                  <ArrowRight className="w-4 h-4" />
-                </button>
+                <Link href={"/vendor/register"}>
+                    <button
+                    type="button"
+                    className="text-(--primary) font-semibold mt-2 inline-flex items-center gap-2"
+                    >
+                    Register as Vendor
+                    <ArrowRight className="w-4 h-4" />
+                    </button>
+                </Link>
               </div>
             </form>
     )

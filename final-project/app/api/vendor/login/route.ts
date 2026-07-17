@@ -1,4 +1,4 @@
-import VendorModel from "@/app/db/models/vendorModel";
+import VendorModel from "@/db/models/vendorModel";
 import errorHandler from "@/app/helpers/errorHandler";
 import { compareSync } from "bcryptjs";
 import { sign } from "jsonwebtoken";
@@ -23,7 +23,7 @@ export async function POST(req: Request) {
       throw { message: "Invalid email or password", status: 401 };
     }
     const token = sign(
-      { id: vendor._id, email: vendor.email, role: "Admin" },
+      { id: vendor._id, email: vendor.email, role: "Vendor" },
       process.env.JWT_SECRET as string,
     );
 

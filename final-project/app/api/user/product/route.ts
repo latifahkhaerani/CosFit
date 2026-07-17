@@ -1,4 +1,5 @@
-import ProductModel from "@/app/db/models/productModel";
+import { NextRequest } from "next/server";
+import ProductModel from "@/db/models/productModel";
 import errorHandler from "@/app/helpers/errorHandler";
 
 export async function GET(req: Request) {

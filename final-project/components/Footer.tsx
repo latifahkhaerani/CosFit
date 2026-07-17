@@ -88,32 +88,32 @@ export default function Footer({
 }: FooterProps) {
   return (
     <footer className="border-t border-border bg-surface">
-      <div className="mx-auto max-w-7xl px-6 py-12 lg:px-8">
+      <div className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
         <div className="grid grid-cols-2 gap-10 sm:grid-cols-3 lg:grid-cols-5">
           {/* Brand column */}
           <div className="col-span-2 lg:col-span-2">
             <Link href="/" className="flex flex-col leading-none">
-              <span className="flex items-center gap-1 font-serif text-xl font-bold text-primary">
+              <span className="flex items-center gap-1.5 font-serif text-2xl font-bold text-primary">
                 {brandName}
-                <Sparkles className="h-3.5 w-3.5" />
+                <Sparkles className="h-4 w-4" />
               </span>
-              <span className="mt-0.5 text-[10px] tracking-wide text-muted">
+              <span className="mt-1 text-xs tracking-wide text-muted">
                 {brandTagline}
               </span>
             </Link>
-            <p className="mt-4 max-w-xs text-sm text-muted">{brandDescription}</p>
+            <p className="mt-5 max-w-xs text-base text-muted">{brandDescription}</p>
           </div>
 
           {/* Link columns */}
           {columns.map((column) => (
             <div key={column.id}>
-              <p className="text-sm font-semibold text-text">{column.title}</p>
-              <ul className="mt-4 flex flex-col gap-3">
+              <p className="text-base font-semibold text-text">{column.title}</p>
+              <ul className="mt-5 flex flex-col gap-3.5">
                 {column.links.map((link) => (
                   <li key={link.id}>
                     <Link
                       href={link.href}
-                      className="text-sm text-muted transition hover:text-primary"
+                      className="text-base text-muted transition hover:text-primary"
                     >
                       {link.label}
                     </Link>
@@ -125,24 +125,24 @@ export default function Footer({
 
           {/* Social column */}
           <div>
-            <p className="text-sm font-semibold text-text">Follow Us</p>
-            <div className="mt-4 flex flex-wrap gap-2">
+            <p className="text-base font-semibold text-text">Follow Us</p>
+            <div className="mt-5 flex flex-wrap gap-3">
               {socialLinks.map(({ id, label, href, icon: Icon }) => (
                 <Link
                   key={id}
                   href={href}
                   aria-label={label}
-                  className="flex h-8 w-8 items-center justify-center rounded-full border border-border text-muted transition hover:border-primary/50 hover:text-primary"
+                  className="flex h-10 w-10 items-center justify-center rounded-full border border-border text-muted transition hover:border-primary/50 hover:text-primary"
                 >
-                  <Icon className="h-3.5 w-3.5" />
+                  <Icon className="h-4 w-4" />
                 </Link>
               ))}
             </div>
           </div>
         </div>
 
-        <div className="mt-10 border-t border-border pt-6">
-          <p className="text-xs text-muted">{copyrightText}</p>
+        <div className="mt-12 border-t border-border pt-6">
+          <p className="text-sm text-muted">{copyrightText}</p>
         </div>
       </div>
     </footer>

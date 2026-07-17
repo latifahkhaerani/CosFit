@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
+import { useSearchParams } from "next/navigation";
 import type { GetProduct, GetWishlist } from "@/app/types";
 import MarketplaceHeader from "./MarketplaceHeader";
 import MarketplaceFilters, { type SortOption } from "./MarketplaceFilters";
@@ -23,10 +24,11 @@ export default function MarketplaceClient({
   currency = "USD",
   onToggleFavorite,
 }: MarketplaceClientProps) {
-  const [search, setSearch] = useState("");
-  const [theme, setTheme] = useState("");
-  const [size, setSize] = useState("");
-  const [sort, setSort] = useState<SortOption>("title-asc");
+  const searchParams = useSearchParams();
+  const search = searchParams.get("search") ?? "";
+  const theme = searchParams.get("theme") ?? "";
+  const size = searchParams.get("size") ?? "";
+  const sort = (searchParams.get("sort") as SortOption) ?? "title-asc";
 
   const themeOptions = useMemo(
     () => Array.from(new Set(products.map((p) => p.theme).filter(Boolean))).sort(),
@@ -60,24 +62,7 @@ export default function MarketplaceClient({
     <div className="mx-auto max-w-7xl px-6 py-10 lg:px-8">
       <MarketplaceHeader title={title} description={description} />
 
-      <MarketplaceFilters
-        searchValue={search}
-        onSearchChange={setSearch}
-        themeOptions={themeOptions}
-        selectedTheme={theme}
-        onThemeChange={setTheme}
-        sizeOptions={sizeOptions}
-        selectedSize={size}
-        onSizeChange={setSize}
-        sortValue={sort}
-        onSortChange={setSort}
-        resultCount={filteredProducts.length}
-        onClearFilters={() => {
-          setSearch("");
-          setTheme("");
-          setSize("");
-        }}
-      />
+      <MarketplaceFilters themeOptions={themeOptions} sizeOptions={sizeOptions} />
 
       <ProductGrid
         products={filteredProducts}

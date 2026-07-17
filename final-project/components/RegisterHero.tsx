@@ -11,7 +11,7 @@ import {
 export default function RegisterHero() {
   const newLocal = "ml-2 inline text-[var(--accent)]";
   return (
-    <section className="relative flex h-full flex-col overflow-hidden bg-background px-12 py-8 lg:sticky lg:top-16 lg:h-[calc(100vh-4rem)]">
+    <section className="relative flex flex-col overflow-hidden bg-background px-12 py-8 lg:sticky lg:top-0 lg:h-screen">
       {/* Character — full-bleed background photo */}
 
       <div className="pointer-events-none absolute inset-0">

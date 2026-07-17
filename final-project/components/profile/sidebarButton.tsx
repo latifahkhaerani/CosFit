@@ -2,12 +2,16 @@
 
 import { handleDeleteCookies } from "@/action";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function SidebarItem({ title, icon, active }: SidebarItemProps) {
+
+  const route = useRouter()
+  
   const handleLogout = async () => {
     // logout logic
     await handleDeleteCookies()
-    window.location.reload();
+    route.push("/")
   };
 
   return title === "Logout" ? (

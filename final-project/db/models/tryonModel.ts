@@ -1,5 +1,5 @@
 import { PostInputImage } from "@/app/types";
-import { database } from "@/db/config/mongodb";
+import { database } from "@/db/config/mongoDb";
 import { put } from '@vercel/blob';
 
 

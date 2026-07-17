@@ -16,7 +16,7 @@ export interface GetProduct {
   size: string;
   theme: string;
   title: string;
-  OriginalPrice: number;
+  originalPrice: number;
   vendorId: string;
   discount: number;
   finalPrice: number;
@@ -83,8 +83,8 @@ export interface GetUserDesign {
 
 export interface GetVendor {
   _id: string;
-  NamaToko: string;
-  Alamat: string;
+  namaToko: string;
+  alamat: string;
   email: string;
   password: string;
   norek: string;
@@ -109,11 +109,10 @@ export interface PostProduct {
   size: string;
   theme: string;
   title: string;
-  OriginalPrice: number;
-  vendorId: string;
-  discount: number;
-  finalPrice: number;
-  stock: number;
+  originalPrice: string;
+  discount?: string;
+  finalPrice?: string;
+  stock: string;
 }
 
 export interface PostWishlist {

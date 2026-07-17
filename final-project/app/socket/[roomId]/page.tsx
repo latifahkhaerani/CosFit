@@ -38,6 +38,7 @@ export default function SocketPage({ params }: { params: Promise<{ roomId: strin
   };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- initial chat history fetch on mount, not a render loop
     fetchChat();
 
     if (socket.connected) {

@@ -1,7 +1,5 @@
 "use client"
 
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
 
 import ForumCTA from "@/components/forum/ForumCTA";
 
@@ -15,6 +13,7 @@ import OnlineMembers from "@/components/forum/OnlineMembers";
 import { Plus } from "lucide-react";
 import ForumSidebar from "@/components/forum/ ForumSidebar"; // FIX: Menghapus spasi typo pada path import
 import { useEffect, useState } from "react"; 
+import Link from "next/link";
 
 interface forumType {
   "_id": string,
@@ -68,10 +67,13 @@ export default function ForumPage() {
             </p>
           </div>
 
-          <button className=" primary-btn shadow-soft transition-all duration-300 hover:-translate-y-1 hover:scale-[1.02] ">
+          <Link
+            href="/forum/new"
+            className="primary-btn inline-flex items-center gap-2 shadow-soft transition-all duration-300 hover:-translate-y-1 hover:scale-[1.02]"
+          >
             <Plus size={18} />
             New Discussion
-          </button>
+          </Link>
         </section>
 
         {/* Layout */}

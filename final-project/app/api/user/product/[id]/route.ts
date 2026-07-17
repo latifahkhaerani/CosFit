@@ -1,4 +1,4 @@
-import ProductModel from "@/app/db/models/productModel";
+import ProductModel from "@/db/models/productModel";
 import errorHandler from "@/app/helpers/errorHandler";
 
 export async function GET(
