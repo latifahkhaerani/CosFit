@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-
 import {
   ShoppingBag,
   Sparkles,
@@ -10,6 +9,7 @@ import {
   CircleHelp,
 } from "lucide-react";
 import WishlistButton from "./WishlistButton";
+import { useRouter } from "next/navigation";
 
 type WishlistCardProps = {
   image: string;
@@ -24,7 +24,7 @@ type WishlistCardProps = {
   onWishlist?: () => void;
   onTryOn?: () => void;
   onCheckout?: () => void;
-  onRemove?: () => void;
+  wishlistId: string;
 };
 
 export default function WishlistCard({
@@ -40,8 +40,18 @@ export default function WishlistCard({
   onWishlist,
   onTryOn,
   onCheckout,
-  onRemove,
+  wishlistId,
 }: WishlistCardProps) {
+  const router = useRouter();
+
+  async function handleRemove() {
+    await fetch(`/api/user/wishlist/${wishlistId}`, {
+      method: "DELETE",
+    });
+
+    router.refresh();
+  }
+
   return (
     <div className="group overflow-hidden rounded-3xl border border-orange-100 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
       {/* IMAGE */}
@@ -137,7 +147,7 @@ export default function WishlistCard({
         </div>
 
         <button
-          onClick={onRemove}
+          onClick={handleRemove}
           className="flex w-full items-center justify-center gap-2 rounded-xl border border-red-100 py-2 text-sm text-red-500 transition hover:bg-red-50"
         >
           <Trash2 size={15} />
