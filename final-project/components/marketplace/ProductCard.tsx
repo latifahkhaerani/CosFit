@@ -35,7 +35,10 @@ export default function ProductCard({
   return (
     <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-surface transition hover:shadow-md">
       <div className="relative aspect-[4/5] w-full overflow-hidden bg-cream/30">
-        <Link href={`/marketplace/products/${product._id}`} className="block h-full w-full">
+        <Link
+          href={`/marketplace/products/${product._id}`}
+          className="block h-full w-full"
+        >
           {product.imgUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
@@ -55,7 +58,9 @@ export default function ProductCard({
           onClick={() => onToggleFavorite?.(product._id)}
           className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-surface shadow-sm transition hover:bg-cream/40"
         >
-          <Heart className={`h-5 w-5 ${isFavorited ? "fill-primary text-primary" : "text-muted"}`} />
+          <Heart
+            className={`h-5 w-5 ${isFavorited ? "fill-primary text-primary" : "text-muted"}`}
+          />
         </button>
       </div>
 
@@ -64,10 +69,12 @@ export default function ProductCard({
           <p className="line-clamp-1 text-lg font-semibold text-foreground">
             {product.title || "Product Title"}
           </p>
-          <p className="mt-0.5 line-clamp-1 text-sm text-muted">{product.theme || "Series"}</p>
+          <p className="mt-0.5 line-clamp-1 text-sm text-muted">
+            {product.theme || "Series"}
+          </p>
         </div>
         <p className="text-2xl font-bold text-primary">
-          {formatProductPrice(product.OriginalPrice, currency)}
+          {formatProductPrice(product.originalPrice, currency)}
         </p>
 
         <Link

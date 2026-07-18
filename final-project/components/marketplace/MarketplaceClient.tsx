@@ -29,12 +29,14 @@ export default function MarketplaceClient({
   const [sort, setSort] = useState<SortOption>("title-asc");
 
   const themeOptions = useMemo(
-    () => Array.from(new Set(products.map((p) => p.theme).filter(Boolean))).sort(),
-    [products]
+    () =>
+      Array.from(new Set(products.map((p) => p.theme).filter(Boolean))).sort(),
+    [products],
   );
   const sizeOptions = useMemo(
-    () => Array.from(new Set(products.map((p) => p.size).filter(Boolean))).sort(),
-    [products]
+    () =>
+      Array.from(new Set(products.map((p) => p.size).filter(Boolean))).sort(),
+    [products],
   );
 
   const filteredProducts = useMemo(() => {
@@ -48,8 +50,8 @@ export default function MarketplaceClient({
     });
 
     result = [...result].sort((a, b) => {
-      if (sort === "price-asc") return a.OriginalPrice - b.OriginalPrice;
-      if (sort === "price-desc") return b.OriginalPrice - a.OriginalPrice;
+      if (sort === "price-asc") return a.originalPrice - b.originalPrice;
+      if (sort === "price-desc") return b.originalPrice - a.originalPrice;
       return a.title.localeCompare(b.title);
     });
 
