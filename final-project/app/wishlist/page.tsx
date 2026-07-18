@@ -1,10 +1,10 @@
-import BackgroundDecoration from "@/components/BackgroundDecoration";
-import ChibiCTA from "@/components/ChibiCTA";
-import NeedHelp from "@/components/NeedHelp";
-import WishlistCard from "@/components/WishlistCard";
+import BackgroundDecoration from "@/components/wishlist/BackgroundDecoration";
+import ChibiCTA from "@/components/wishlist/ChibiCTA";
+import NeedHelp from "@/components/wishlist/NeedHelp";
 import { Heart, ShoppingBag, ShoppingCart, ArrowRight } from "lucide-react";
 import { cookies } from "next/headers";
 import { GetWishlist } from "../types";
+import WishlistCard from "@/components/wishlist/WishlistCard";
 
 export default async function WishlistPage() {
   async function getWishlist(): Promise<GetWishlist[]> {
@@ -129,6 +129,7 @@ export default async function WishlistPage() {
                 duration="3 days"
                 sizeMatch="unknown"
                 isWishlisted
+                wishlistId={item._id}
               />
             );
           })}
