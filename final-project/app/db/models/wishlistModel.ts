@@ -20,8 +20,11 @@ export default class WishlistModel {
             from: "products",
             localField: "productId",
             foreignField: "_id",
-            as: "productId",
+            as: "product",
           },
+        },
+        {
+          $unwind: "$product",
         },
       ])
       .toArray();
