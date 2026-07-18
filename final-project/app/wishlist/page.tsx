@@ -3,19 +3,27 @@ import ChibiCTA from "@/components/ChibiCTA";
 import NeedHelp from "@/components/NeedHelp";
 import WishlistCard from "@/components/WishlistCard";
 import { Heart, ShoppingBag, ShoppingCart, ArrowRight } from "lucide-react";
+import { cookies } from "next/headers";
 import { GetWishlist } from "../types";
 
 export default async function WishlistPage() {
-  async function getWishlist() {
+  async function getWishlist(): Promise<GetWishlist[]> {
+    const cookieStore = await cookies();
+
+    const auth = cookieStore.get("Authorization");
+
     const res = await fetch("http://localhost:3000/api/user/wishlist", {
       cache: "no-store",
+      headers: {
+        Cookie: `Authorization=${auth?.value}`,
+      },
     });
 
     if (!res.ok) {
       throw new Error("Failed to fetch wishlist");
     }
 
-    return res.json() as Promise<GetWishlist[]>;
+    return res.json();
   }
 
   const wishlist = await getWishlist();
