@@ -61,5 +61,6 @@ export const config = {
     "/api/vendor",
     "/api/user/profile",
     "/api/user/wishlist",
+    "/api/user/checkout",
   ],
 };
