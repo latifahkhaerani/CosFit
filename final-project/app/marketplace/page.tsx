@@ -57,8 +57,8 @@ export default async function MarketplacePage({
   });
 
   products = [...products].sort((a, b) => {
-    if (sort === "price-asc") return a.OriginalPrice - b.OriginalPrice;
-    if (sort === "price-desc") return b.OriginalPrice - a.OriginalPrice;
+    if (sort === "price-asc") return a.originalPrice - b.originalPrice;
+    if (sort === "price-desc") return b.originalPrice - a.originalPrice;
     return a.title.localeCompare(b.title);
   });
 

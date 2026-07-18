@@ -78,7 +78,8 @@ export default async function WishlistPage() {
                   Rp{" "}
                   {wishlist
                     .reduce(
-                      (total, item) => total + item.productId[0].OriginalPrice,
+                      (total, item) =>
+                        total + Number(item.product.originalPrice),
                       0,
                     )
                     .toLocaleString("id-ID")}
@@ -106,7 +107,7 @@ export default async function WishlistPage() {
 
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {wishlist.map((item) => {
-            const product = item.productId[0];
+            const product = item.product;
 
             return (
               <WishlistCard
@@ -116,7 +117,7 @@ export default async function WishlistPage() {
                 series={product.theme}
                 vendor="Unknown Vendor"
                 vendorAvatar="/images/default-vendor.png"
-                price={product.OriginalPrice}
+                price={Number(product.originalPrice)}
                 duration="3 days"
                 sizeMatch="unknown"
                 isWishlisted
