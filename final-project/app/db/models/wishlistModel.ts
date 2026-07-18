@@ -38,6 +38,7 @@ export default class WishlistModel {
   static async addWishlist(wishlistData: PostWishlist, userId: string) {
     const result = await this.collection().insertOne({
       ...wishlistData,
+      productId: new ObjectId(wishlistData.productId),
       userId,
     });
     return "Wishlist created with ID: " + result.insertedId;
