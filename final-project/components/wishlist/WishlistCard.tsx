@@ -25,6 +25,7 @@ type WishlistCardProps = {
   onTryOn?: () => void;
   onCheckout?: () => void;
   wishlistId: string;
+  productId: string;
 };
 
 export default function WishlistCard({
@@ -39,8 +40,8 @@ export default function WishlistCard({
   isWishlisted,
   onWishlist,
   onTryOn,
-  onCheckout,
   wishlistId,
+  productId,
 }: WishlistCardProps) {
   const router = useRouter();
 
@@ -50,6 +51,21 @@ export default function WishlistCard({
     });
 
     router.refresh();
+  }
+
+  async function handleCheckout() {
+    await fetch("/api/user/checkout", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        productId,
+        status: "pending",
+      }),
+    });
+
+    router.push("/checkout");
   }
 
   return (
@@ -138,7 +154,7 @@ export default function WishlistCard({
           </button>
 
           <button
-            onClick={onCheckout}
+            onClick={handleCheckout}
             className="flex items-center justify-center gap-2 rounded-xl bg-[#B14744] py-2 font-medium text-white transition hover:bg-[#9A3B39]"
           >
             <ShoppingBag size={16} />

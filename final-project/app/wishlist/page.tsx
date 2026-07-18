@@ -130,6 +130,7 @@ export default async function WishlistPage() {
                 sizeMatch="unknown"
                 isWishlisted
                 wishlistId={item._id}
+                productId={item.productId}
               />
             );
           })}
