@@ -15,29 +15,26 @@ async function getProductById(id: string): Promise<GetProduct> {
     size: "",
     theme: "",
     title: "",
-    OriginalPrice: 0,
-    vendorId: "",
-    discount: 0,
-    finalPrice: 0,
-    stock: 0,
+    originalPrice: 0,
   };
 }
 
-const placeholderRelatedProducts: GetProduct[] = Array.from({ length: 4 }, (_, i) => ({
-  _id: `related-${i}`,
-  imgUrl: "",
-  desc: "",
-  size: "",
-  theme: "",
-  title: "",
-  OriginalPrice: 0,
-  vendorId: "",
-  discount: 0,
-  finalPrice: 0,
-  stock: 0,
-}));
+const placeholderRelatedProducts: GetProduct[] = Array.from(
+  { length: 4 },
+  (_, i) => ({
+    _id: `related-${i}`,
+    imgUrl: "",
+    desc: "",
+    size: "",
+    theme: "",
+    title: "",
+    originalPrice: 0,
+  }),
+);
 
-export default async function ProductDetailPage({ params }: ProductDetailPageProps) {
+export default async function ProductDetailPage({
+  params,
+}: ProductDetailPageProps) {
   const { id } = await params;
   const product = await getProductById(id);
 

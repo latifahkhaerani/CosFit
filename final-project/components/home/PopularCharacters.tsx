@@ -14,19 +14,22 @@ export interface PopularCharactersProps {
   onTryOn?: (productId: string) => void;
 }
 
-const placeholderCharacters: GetProduct[] = Array.from({ length: 4 }, (_, i) => ({
-  _id: `character-${i}`,
-  imgUrl: "",
-  desc: "",
-  size: "",
-  theme: "",
-  title: "",
-  OriginalPrice: 0,
-  vendorId: "",
-  discount: 0,
-  finalPrice: 0,
-  stock: 0,
-}));
+const placeholderCharacters: GetProduct[] = Array.from(
+  { length: 4 },
+  (_, i) => ({
+    _id: `character-${i}`,
+    imgUrl: "",
+    desc: "",
+    size: "",
+    theme: "",
+    title: "",
+    originalPrice: 0,
+    vendorId: "",
+    discount: 0,
+    finalPrice: 0,
+    stock: 0,
+  }),
+);
 
 function CharacterCard({
   character,

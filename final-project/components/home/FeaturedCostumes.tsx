@@ -6,7 +6,7 @@ import type { GetProduct, GetWishlist } from "@/app/types";
 export interface FeaturedCostumesProps {
   title?: string;
   viewAllLabel?: string;
-  /** Products rendered as costume cards (imgUrl, title, theme -> series, OriginalPrice). */
+  /** Products rendered as costume cards (imgUrl, title, theme -> series, originalPrice). */
   costumes?: GetProduct[];
   /** Current user's wishlist entries, used to derive each costume's favorited state. */
   wishlist?: GetWishlist[];
@@ -24,8 +24,8 @@ const placeholderCostumes: GetProduct[] = Array.from({ length: 4 }, (_, i) => ({
   size: "",
   theme: "",
   title: "",
-  OriginalPrice: 0,
-  vendorId: '',
+  originalPrice: 0,
+  vendorId: "",
   discount: 0,
   finalPrice: 0,
   stock: 0,
@@ -86,7 +86,9 @@ function CostumeCard({
           onClick={() => onToggleFavorite?.(costume._id)}
           className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full bg-surface shadow-sm transition hover:bg-cream/40"
         >
-          <Heart className={`h-5 w-5 ${isFavorited ? "fill-primary text-primary" : "text-muted"}`} />
+          <Heart
+            className={`h-5 w-5 ${isFavorited ? "fill-primary text-primary" : "text-muted"}`}
+          />
         </button>
       </div>
 
@@ -98,7 +100,7 @@ function CostumeCard({
           <p className="text-base text-muted">{costume.theme || "Series"}</p>
         </div>
         <p className="text-xl font-bold text-primary">
-          {formatPrice(costume.OriginalPrice, currency)}
+          {formatPrice(costume.originalPrice, currency)}
         </p>
 
         <button

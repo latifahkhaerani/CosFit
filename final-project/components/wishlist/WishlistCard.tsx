@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-
 import {
   ShoppingBag,
   Sparkles,
@@ -10,6 +9,7 @@ import {
   CircleHelp,
 } from "lucide-react";
 import WishlistButton from "./WishlistButton";
+import { useRouter } from "next/navigation";
 
 type WishlistCardProps = {
   image: string;
@@ -24,7 +24,8 @@ type WishlistCardProps = {
   onWishlist?: () => void;
   onTryOn?: () => void;
   onCheckout?: () => void;
-  onRemove?: () => void;
+  wishlistId: string;
+  productId: string;
 };
 
 export default function WishlistCard({
@@ -39,9 +40,34 @@ export default function WishlistCard({
   isWishlisted,
   onWishlist,
   onTryOn,
-  onCheckout,
-  onRemove,
+  wishlistId,
+  productId,
 }: WishlistCardProps) {
+  const router = useRouter();
+
+  async function handleRemove() {
+    await fetch(`/api/user/wishlist/${wishlistId}`, {
+      method: "DELETE",
+    });
+
+    router.refresh();
+  }
+
+  async function handleCheckout() {
+    await fetch("/api/user/checkout", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        productId,
+        status: "pending",
+      }),
+    });
+
+    router.push("/checkout");
+  }
+
   return (
     <div className="group overflow-hidden rounded-3xl border border-orange-100 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
       {/* IMAGE */}
@@ -128,7 +154,7 @@ export default function WishlistCard({
           </button>
 
           <button
-            onClick={onCheckout}
+            onClick={handleCheckout}
             className="flex items-center justify-center gap-2 rounded-xl bg-[#B14744] py-2 font-medium text-white transition hover:bg-[#9A3B39]"
           >
             <ShoppingBag size={16} />
@@ -137,7 +163,7 @@ export default function WishlistCard({
         </div>
 
         <button
-          onClick={onRemove}
+          onClick={handleRemove}
           className="flex w-full items-center justify-center gap-2 rounded-xl border border-red-100 py-2 text-sm text-red-500 transition hover:bg-red-50"
         >
           <Trash2 size={15} />

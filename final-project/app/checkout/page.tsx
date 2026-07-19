@@ -1,5 +1,3 @@
-"use client";
-
 import Image from "next/image";
 import {
   Check,
@@ -8,8 +6,44 @@ import {
   CalendarDays,
   ArrowRight,
 } from "lucide-react";
+import { cookies } from "next/headers";
+import { GetCheckout, GetProduct } from "../types";
 
-export default function CheckoutPage() {
+export default async function CheckoutPage() {
+  async function getCheckout() {
+    const cookieStore = await cookies();
+
+    const auth = cookieStore.get("Authorization");
+
+    const res = await fetch("http://localhost:3000/api/user/checkout", {
+      cache: "no-store",
+      headers: {
+        Cookie: `Authorization=${auth?.value}`,
+      },
+    });
+
+    if (!res.ok) {
+      throw new Error("Failed to fetch checkout");
+    }
+
+    return res.json() as Promise<GetCheckout[]>;
+  }
+  const checkout = await getCheckout();
+  const vendor = checkout[0].vendor;
+
+  const products = checkout.map((item) => item.product);
+
+  const subtotal = products.reduce(
+    (total, product) => total + Number(product.originalPrice),
+    0,
+  );
+
+  const protection = 25000;
+  const serviceFee = 22500;
+  const shipping = 15000;
+
+  const total = subtotal + protection + serviceFee + shipping;
+
   return (
     <main className="min-h-screen bg-background pb-20">
       {/* STEP */}
@@ -52,60 +86,57 @@ export default function CheckoutPage() {
           <section className="space-y-5">
             {/* Costume */}
 
-            <div className="card p-5">
-              <div className="mb-5 flex items-center gap-3">
-                <CircleNumber number={1} />
+            {products.map((product, index) => (
+              <div key={product._id} className="card p-5">
+                <div className="mb-5 flex items-center gap-3">
+                  <CircleNumber number={index + 1} />
+                  <h3 className="text-xl font-semibold">Selected Costume</h3>
+                </div>
 
-                <h3 className="text-xl font-semibold">Selected Costume</h3>
-              </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex gap-5">
+                    <div className="relative h-28 w-24 overflow-hidden rounded-xl">
+                      <Image
+                        src={product.imgUrl}
+                        alt={product.title}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
 
-              <div className="flex items-center justify-between">
-                <div className="flex gap-5">
-                  <div className="relative h-28 w-24 overflow-hidden rounded-xl">
-                    <Image
-                      src="/images/hutao-card.jpg"
-                      alt=""
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
+                    <div className="flex flex-col justify-center">
+                      <h4 className="text-2xl font-semibold">
+                        {product.title}
+                      </h4>
+                      <p>{product.theme}</p>
 
-                  <div className="flex flex-col justify-center">
-                    <h4 className="text-2xl font-semibold">Hu Tao</h4>
+                      <p className="mt-2 text-sm">
+                        Vendor{" "}
+                        <span className="font-medium">{vendor.namaToko}</span>
+                      </p>
 
-                    <p className="text-muted">Genshin Impact</p>
+                      <div className="mt-3 flex gap-2">
+                        <span className="rounded-full bg-orange-50 px-3 py-1 text-xs">
+                          Size {product.size}
+                        </span>
 
-                    <p className="mt-2 text-sm">
-                      Vendor
-                      <span className="ml-1 font-medium">
-                        Starlight Cosplay
-                      </span>
-                    </p>
-
-                    <div className="mt-3 flex gap-2">
-                      <span className="rounded-full bg-orange-50 px-3 py-1 text-xs">
-                        Size M
-                      </span>
-
-                      <span className="rounded-full bg-green-100 px-3 py-1 text-xs text-green-700">
-                        Good Match
-                      </span>
+                        <span className="rounded-full bg-green-100 px-3 py-1 text-xs text-green-700">
+                          Good Match
+                        </span>
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                <div className="text-right">
-                  <h3 className="text-3xl font-bold text-primary">Rp450.000</h3>
+                  <div className="text-right">
+                    <h3 className="text-3xl font-bold text-primary">
+                      Rp {Number(product.originalPrice).toLocaleString("id-ID")}
+                    </h3>
 
-                  <p className="text-muted">/ 3 Days</p>
-
-                  <button className="mt-5 flex items-center gap-2 rounded-xl border border-primary px-4 py-2 text-primary transition hover:bg-primary hover:text-white">
-                    <Pencil size={15} />
-                    Edit
-                  </button>
+                    <p className="text-muted">/ 3 Days</p>
+                  </div>
                 </div>
               </div>
-            </div>
+            ))}
 
             {/* Rental */}
 
@@ -152,14 +183,12 @@ export default function CheckoutPage() {
                   />
 
                   <div>
-                    <h4 className="font-semibold text-lg">Starlight Cosplay</h4>
+                    <h4 className="font-semibold text-lg">{vendor.namaToko}</h4>
 
-                    <p className="text-sm text-muted">
-                      Professional Cosplay Studio
-                    </p>
+                    <p>{vendor.alamat}</p>
 
                     <div className="mt-2 flex items-center gap-4 text-sm">
-                      <span>⭐ 4.9 (128)</span>
+                      <span>⭐ 4.9 (128) | no rating yet</span>
 
                       <span className="text-green-600">98% Positive</span>
                     </div>
@@ -326,25 +355,32 @@ export default function CheckoutPage() {
             <div className="card p-5">
               <h3 className="mb-5 text-xl font-semibold">Order Summary</h3>
 
-              <div className="flex gap-4">
-                <div className="relative h-24 w-20 overflow-hidden rounded-xl">
-                  <Image
-                    src="/images/hutao-card.jpg"
-                    alt=""
-                    fill
-                    className="object-cover"
-                  />
-                </div>
+              <div className="space-y-4">
+                {products.map((product) => (
+                  <div key={product._id} className="flex gap-4">
+                    <div className="relative h-24 w-20 overflow-hidden rounded-xl">
+                      <Image
+                        src={product.imgUrl}
+                        alt={product.title}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
 
-                <div className="flex-1">
-                  <h4 className="font-semibold text-lg">Hu Tao</h4>
+                    <div className="flex-1">
+                      <h4 className="text-lg font-semibold">{product.title}</h4>
 
-                  <p className="text-sm text-muted">Genshin Impact</p>
+                      <p className="text-sm text-muted">{product.theme}</p>
 
-                  <p className="mt-3 text-primary font-semibold">Rp450.000</p>
+                      <h3 className="text-lg font-bold text-primary">
+                        Rp{" "}
+                        {Number(product.originalPrice).toLocaleString("id-ID")}
+                      </h3>
 
-                  <p className="text-sm text-muted">3 Days Rental</p>
-                </div>
+                      <p className="text-sm text-muted">Size {product.size}</p>
+                    </div>
+                  </div>
+                ))}
               </div>
 
               <div className="my-5 border-t border-border" />
@@ -352,26 +388,22 @@ export default function CheckoutPage() {
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between">
                   <span className="text-muted">Costume Rental</span>
-
-                  <span>Rp450.000</span>
+                  <span>Rp {subtotal.toLocaleString("id-ID")}</span>
                 </div>
 
                 <div className="flex justify-between">
                   <span className="text-muted">Rental Protection</span>
-
-                  <span>Rp25.000</span>
+                  <span>Rp {protection.toLocaleString("id-ID")}</span>
                 </div>
 
                 <div className="flex justify-between">
                   <span className="text-muted">Service Fee</span>
-
-                  <span>Rp22.500</span>
+                  <span>Rp {serviceFee.toLocaleString("id-ID")}</span>
                 </div>
 
                 <div className="flex justify-between">
                   <span className="text-muted">Shipping</span>
-
-                  <span>Rp15.000</span>
+                  <span>Rp {shipping.toLocaleString("id-ID")}</span>
                 </div>
               </div>
 
@@ -381,7 +413,7 @@ export default function CheckoutPage() {
                 <span className="font-semibold">Total</span>
 
                 <span className="text-3xl font-bold text-primary">
-                  Rp512.500
+                  Rp {total.toLocaleString("id-ID")}
                 </span>
               </div>
             </div>

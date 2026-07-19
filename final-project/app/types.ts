@@ -30,6 +30,7 @@ export interface GetWishlist {
   productId: string;
   aiImgUrl: string;
   userId: string;
+  product: GetProduct;
 }
 
 export interface GetUserProfile {
@@ -44,6 +45,8 @@ export interface GetCheckout {
   productId: string;
   userId: string;
   status: string;
+  product: GetProduct; //added this to aggregate
+  vendor: GetVendor; //added this to aggregate
 }
 
 export interface GetInputImage {
@@ -170,7 +173,7 @@ export interface PostVendor {
   password: string;
   no_rek?: [string];
   no_phone: string;
-  webUrl?: string
+  webUrl?: string;
 }
 
 export interface PostMonthlySales {
