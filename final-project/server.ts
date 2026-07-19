@@ -6,7 +6,6 @@ const dev = process.env.NODE_ENV !== "production";
 const hostname = "localhost";
 const port = 3000;
 
-// Ketika menggunakan middleware, `hostname` dan `port` harus disediakan di bawah
 const app = next({ dev, hostname, port });
 const handler = app.getRequestHandler();
 
@@ -22,29 +21,12 @@ app.prepare().then(() => {
       console.log(`User ${socket.id} joined room: ${roomId}`);
     });
 
-    socket.on("send_msg", async (payload) => {
-      const { roomId, message } = payload;
-
-      try {
-        const res = await fetch(`http://${hostname}:${port}/api/chat/${roomId}`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ message }),
-        });
-
-        if (!res.ok) {
-          throw new Error(`HTTP error! status: ${res.status}`);
-        }
-
-        const data = await res.json();
-
-        io.to(roomId).emit("receive_msg", data.message);
-      } catch (error) {
-        console.error("Gagal menyimpan atau mengirim pesan:", error);
-        io.to(roomId).emit("receive_msg", payload);
-      }
+    // REVISI DI SINI: Server hanya meneruskan pesan, tidak perlu fetch API
+    socket.on("send_msg", (payload) => {
+      const { roomId, chatData } = payload;
+      
+      // Kirim chatData ke semua user yang ada di roomId yang sama
+      io.to(roomId).emit("receive_msg", chatData);
     });
 
     socket.on("disconnect", () => {

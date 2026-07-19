@@ -3,7 +3,6 @@ import errorHandler from "@/app/helpers/errorHandler";
 
 export async function GET(req: Request){
     try {
-        console.log(true);
         const result = await ForumModel.getAllForums()
         return Response.json(result)
     } catch (error) {
@@ -19,14 +18,16 @@ export async function POST(req: Request){
     const desc = formData.get("desc") as string;
     const tagRaw = formData.get("tag") as string;
     const tag = tagRaw ? tagRaw.split(", ").map(t => t.trim()) : [];
-
+    const slug = nameForum.replaceAll(" ", "-")
+    const chatId = null
 const body = {
+    slug,
     nameForum,
     desc,
-    tag
+    tag,
+    chatId
 };
         const userId = req.headers.get("x-user-id") as string;
-        console.log(userId);
         if(!userId){
             throw {message: `Please Login First`}
         }

@@ -83,56 +83,6 @@ export default function ForumSidebar() {
     <aside className="sticky top-6 space-y-6">
       {/* Menu */}
 
-      <section className="card p-6">
-        <p className="mb-5 text-xs font-semibold uppercase tracking-wider text-[var(--muted)]">
-          Forum
-        </p>
-
-        <div className="space-y-2">
-          {menus.map((menu) => {
-            const Icon = menu.icon;
-
-            return (
-              <Link
-                key={menu.title}
-                href={menu.href}
-                className={`group flex items-center justify-between rounded-2xl px-4 py-3 transition-all duration-300
-
-                ${
-                  menu.active
-                    ? "bg-[#FFF4EF] text-[var(--primary)]"
-                    : "hover:bg-[#FCFBFA]"
-                }
-                `}
-              >
-                <div className="flex items-center gap-3">
-                  <div
-                    className={`flex h-10 w-10 items-center justify-center rounded-xl transition
-
-                    ${
-                      menu.active
-                        ? "bg-white shadow-sm"
-                        : "bg-[#FAFAFA] group-hover:bg-white"
-                    }
-                    `}
-                  >
-                    <Icon size={18} />
-                  </div>
-
-                  <span className="font-medium">{menu.title}</span>
-                </div>
-
-                {menu.badge && (
-                  <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[var(--primary)] text-xs text-white">
-                    {menu.badge}
-                  </div>
-                )}
-              </Link>
-            );
-          })}
-        </div>
-      </section>
-
       {/* Categories */}
 
       <section className="card p-6">
