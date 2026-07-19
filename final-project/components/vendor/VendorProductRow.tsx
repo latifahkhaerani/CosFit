@@ -3,9 +3,8 @@
 import Image from "next/image";
 import {
   Eye,
-  Pencil,
-  Trash2,
 } from "lucide-react";
+import Link from "next/link";
 
 type Props = {
   image: string;
@@ -16,6 +15,7 @@ type Props = {
   rental: "Available" | "Rented";
   views: number;
   wishlist: number;
+  id: string
 };
 
 export default function VendorProductRow({
@@ -23,10 +23,9 @@ export default function VendorProductRow({
   character,
   series,
   price,
-  availability,
-  rental,
   views,
   wishlist,
+  id,
 }: Props) {
   return (
     <tr className="group border-t border-[#F5EEE8] transition hover:bg-[#FCFBFA]">
@@ -37,13 +36,15 @@ export default function VendorProductRow({
 
         <div className="flex items-center gap-4">
 
-          <Image
-            src={image}
-            alt={character}
-            width={82}
-            height={82}
-            className="rounded-3xl object-cover transition duration-300 group-hover:scale-105"
-          />
+          <div className="relative h-20 w-20 overflow-hidden rounded-3xl">
+            <Image
+              src={image}
+              alt={character}
+              width={82}
+              height={82}
+              className="rounded-3xl object-cover transition duration-300 group-hover:scale-105"
+            />
+          </div>
 
           <div>
 
@@ -83,25 +84,7 @@ export default function VendorProductRow({
 
       </td>
 
-      {/* Availability */}
-
-      <td>
-
-        <StatusBadge
-          type={availability}
-        />
-
-      </td>
-
-      {/* Rental */}
-
-      <td>
-
-        <StatusBadge
-          type={rental}
-        />
-
-      </td>
+      
 
       {/* Views */}
 
@@ -153,21 +136,9 @@ export default function VendorProductRow({
 
         <div className="flex gap-3">
 
-          <ActionButton>
+          <ActionButton href={`/vendor/product/${id}`} >
 
             <Eye size={18} />
-
-          </ActionButton>
-
-          <ActionButton>
-
-            <Pencil size={18} />
-
-          </ActionButton>
-
-          <ActionButton danger>
-
-            <Trash2 size={18} />
 
           </ActionButton>
 
@@ -179,51 +150,20 @@ export default function VendorProductRow({
   );
 }
 
-function StatusBadge({
-  type,
-}: {
-  type: string;
-}) {
-  let className =
-    "bg-green-100 text-green-700";
-
-  if (type === "Low Stock")
-    className =
-      "bg-orange-100 text-orange-700";
-
-  if (type === "Out of Stock")
-    className =
-      "bg-red-100 text-red-700";
-
-  if (type === "Rented")
-    className =
-      "bg-blue-100 text-blue-700";
-
-  return (
-    <span
-      className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${className}`}
-    >
-      {type}
-    </span>
-  );
-}
 
 function ActionButton({
   children,
-  danger = false,
+  href
 }: {
   children: React.ReactNode;
-  danger?: boolean;
+  href: string
 }) {
   return (
-    <button
-      className={`flex h-11 w-11 items-center justify-center rounded-2xl border border-[var(--border)] bg-white transition hover:-translate-y-0.5 hover:shadow-card ${
-        danger
-          ? "text-red-500 hover:bg-red-50"
-          : "text-[var(--text)] hover:bg-[#FFF8F5]"
-      }`}
+    <Link 
+    href={href}
+      className={`flex h-11 w-11 items-center justify-center rounded-2xl border border-[var(--border)] bg-white transition hover:-translate-y-0.5 hover:shadow-card`}
     >
       {children}
-    </button>
+    </Link>
   );
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { MessagesSquare, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import type { GetOurEvent } from "@/app/types";
 
 export default function EventDetailInfo({ event }: { event: GetOurEvent }) {
@@ -14,16 +14,6 @@ export default function EventDetailInfo({ event }: { event: GetOurEvent }) {
       </p>
 
       <div className="mt-8 flex flex-wrap gap-4 border-t border-[var(--border)] pt-8">
-        {event.forumId ? (
-          <Link
-            href={`/forum/${event.forumId}`}
-            className="primary-btn flex items-center gap-2"
-          >
-            <MessagesSquare size={18} />
-            Join Discussion
-          </Link>
-        ) : null}
-
         <Link href="/events" className="secondary-btn flex items-center gap-2">
           Back to Events
           <ArrowRight size={16} />

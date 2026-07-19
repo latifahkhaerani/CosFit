@@ -1,4 +1,4 @@
-import ProfileModel from "@/app/db/models/profileModel";
+import ProfileModel from "@/db/models/profileModel";
 import errorHandler from "@/app/helpers/errorHandler";
 
 export async function GET(req: Request)

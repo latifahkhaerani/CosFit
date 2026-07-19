@@ -1,21 +1,38 @@
-import ForumModel from "@/app/db/models/forumModel";
+import ForumModel from "@/db/models/forumModel";
 import errorHandler from "@/app/helpers/errorHandler";
 
-export async function GET(){
+export async function GET(req: Request){
     try {
+        console.log(true);
         const result = await ForumModel.getAllForums()
         return Response.json(result)
     } catch (error) {
-        errorHandler(error)
+        return errorHandler(error)
     }
 }
 
 export async function POST(req: Request){
-    const body = await req.json();
     try {
-        const result = await ForumModel.createForum(body);
+        const formData = await req.formData();
+    const img = formData.get("Image") as File;
+    const nameForum = formData.get("nameForum") as string;
+    const desc = formData.get("desc") as string;
+    const tagRaw = formData.get("tag") as string;
+    const tag = tagRaw ? tagRaw.split(", ").map(t => t.trim()) : [];
+
+const body = {
+    nameForum,
+    desc,
+    tag
+};
+        const userId = req.headers.get("x-user-id") as string;
+        console.log(userId);
+        if(!userId){
+            throw {message: `Please Login First`}
+        }
+        const result = await ForumModel.createForum(body, userId, img);
         return Response.json({ message: result }, { status: 201 });
     } catch (error) {
-        errorHandler(error);
+       return errorHandler(error);
     }
 }

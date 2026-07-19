@@ -25,10 +25,10 @@ export default function ProfilePage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await fetch("http://localhost:3000/api/user/profile");
-        const userProfile: GetUserProfile = await data.json();
-
-        setProfile(userProfile);
+        const data = await fetch("http://localhost:3000/api/user/profile")
+        const userProfile: GetUserProfile = await data.json()
+        
+        setProfile(userProfile)
       } catch (error) {
         errorHandler(error);
       }

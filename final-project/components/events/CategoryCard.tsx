@@ -17,6 +17,8 @@ export default function CategoryCard({
       card
       group
       flex
+      h-full
+      w-full
       flex-col
       items-center
       justify-center
@@ -53,7 +55,7 @@ export default function CategoryCard({
 
       <div>
 
-        <h3 className="text-lg font-semibold">
+        <h3 className="line-clamp-1 text-lg font-semibold">
 
           {title}
 

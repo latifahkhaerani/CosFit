@@ -1,15 +1,13 @@
 "use client";
 import Link from "next/link";
-import Image from "next/image";
 import {
   LayoutDashboard,
-  Shirt,
-  ShoppingBag,
-  Users,
   Calendar,
   MessageSquare,
-  Settings,
+  LogOut,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { handleDeleteCookies } from "@/action";
 
 const menus = [
   {
@@ -18,39 +16,27 @@ const menus = [
     icon: LayoutDashboard,
   },
   {
-    title: "Costume Management",
-    href: "/vendor/costumes",
-    icon: Shirt,
-  },
-  {
-    title: "Orders",
-    href: "/vendor/orders",
-    icon: ShoppingBag,
-  },
-  {
-    title: "Customers",
-    href: "/vendor/customers",
-    icon: Users,
-  },
-  {
     title: "Events",
-    href: "/vendor/events",
+    href: "/events",
     icon: Calendar,
   },
   {
-    title: "Messages",
-    href: "/vendor/messages",
+    title: "Forum",
+    href: "/forum",
     icon: MessageSquare,
-    badge: 5,
-  },
-  {
-    title: "Settings",
-    href: "/vendor/settings",
-    icon: Settings,
   },
 ];
 
 export default function VendorSidebar() {
+
+  const route = useRouter()
+    
+  const handleLogout = async () => {
+    // logout logic
+    await handleDeleteCookies()
+    route.push("/")
+  };
+
   return (
     <aside className="sticky top-0 flex h-screen w-70 flex-col border-r border-(--border) bg-white">
       {/* Logo */}
@@ -82,52 +68,20 @@ export default function VendorSidebar() {
 
                 <span className="font-medium">{menu.title}</span>
               </div>
-
-              {menu.badge && (
-                <div className="flex h-6 w-6 items-center justify-center rounded-full bg-(--primary) text-xs text-white">
-                  {menu.badge}
-                </div>
-              )}
             </Link>
           );
         })}
-      </nav>
-
-      <div className="mt-auto p-5">
-        <div className="card card-hover p-6">
+        <button
+          className={`flex items-center justify-between rounded-2xl px-5 py-4 transition`}
+          onClick={handleLogout}
+        >
           <div className="flex items-center gap-4">
-            <Image
-              src="/images/vendor-avatar.jpg"
-              alt=""
-              width={54}
-              height={54}
-              className="rounded-full"
-            />
+            <LogOut size={20} />
 
-            <div>
-              <h4 className="font-semibold">Starlight Cosplay</h4>
-
-              <span className="badge-warning">Premium Vendor</span>
-            </div>
+            <span className="font-medium">Log Out</span>
           </div>
-
-          <div className="mt-6">
-            <div className="mb-2 flex justify-between text-sm">
-              <span>Store Completeness</span>
-
-              <span>85%</span>
-            </div>
-
-            <div className="h-2 overflow-hidden rounded-full bg-[#F5E7DE]">
-              <div className="h-full w-[85%] rounded-full bg-(--primary)" />
-            </div>
-          </div>
-
-          <button className="secondary-btn hover-scale mt-6 w-full">
-            View Profile
-          </button>
-        </div>
-      </div>
+        </button>
+      </nav>
     </aside>
   );
 }

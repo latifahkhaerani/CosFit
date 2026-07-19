@@ -1,4 +1,4 @@
-import ProductModel from "@/app/db/models/productModel";
+import ProductModel from "@/db/models/productModel";
 import errorHandler from "@/app/helpers/errorHandler";
 
 export async function GET(
@@ -11,5 +11,18 @@ export async function GET(
     return Response.json(result);
   } catch (error) {
     return errorHandler(error);
+  }
+}
+
+export async function PATCH(
+  req: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await params;
+    const result = await ProductModel.addViews(id)
+    return Response.json(result)
+  } catch (error) {
+    return errorHandler(error)
   }
 }

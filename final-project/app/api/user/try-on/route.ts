@@ -1,4 +1,4 @@
-import TryOnModel from "@/app/db/models/tryonModel";
+import TryOnModel from "@/db/models/tryonModel";
 
 export async function POST(req: Request)
 {

@@ -1,5 +1,5 @@
-import { PostInputImage, PostProduct } from "@/app/types";
-import { database } from "../config/mongoDb";
+import { PostProduct } from "@/app/types";
+import { database } from "../config/mongodb";
 import { ObjectId } from "mongodb";
 import { put } from "@vercel/blob";
 
@@ -51,13 +51,37 @@ export default class ProductModel {
     return product;
   }
 
-  static async getProductByVendorId(vendorId: string) {
+  static async getProductByVendorId(vendorId: string, page: number, limit: number) {
+    const skip = (page - 1) * limit;
+
+    const filter = {
+      vendorId: new ObjectId(vendorId),
+    };
+
+    const agg = {
+      $lookup: {
+        from: "wishlists",
+        localField: "_id",
+        foreignField: "productId",
+        as: "wishlists",
+      },
+    };
+
+    const match = {
+      $match: filter,
+    };
+
     const products = await this.collection()
-      .find({
-        vendorId: new ObjectId(vendorId),
-      })
-      .toArray();
-    return products;
+      .aggregate([agg, match]).skip(skip).limit(limit).toArray();
+    
+    const total = await this.collection().countDocuments(filter);
+
+    return {
+      data: products,
+      total,
+      page,
+      totalPages: Math.ceil(total / limit),
+    };
   }
 
   static async postProduct(productData: PostProduct, vendorId: string) {
@@ -65,6 +89,7 @@ export default class ProductModel {
       ...productData,
       vendorId: new ObjectId(vendorId),
     });
+    console.log(result);
     return "Product created with ID: " + result.insertedId;
   }
 
@@ -86,5 +111,17 @@ export default class ProductModel {
       { $set: { imgUrl: blob.url } },
     );
     return `Product image of ${product.upsertedId} updated successfully`;
+  }
+
+  static async addViews(id: string)
+  {
+    await this.collection().updateOne(
+      { _id: new ObjectId(id) },
+      {
+        $inc: {
+          views: 1,
+        },
+      }
+    );
   }
 }

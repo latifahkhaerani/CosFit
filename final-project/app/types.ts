@@ -22,7 +22,7 @@ export interface GetProduct {
   finalPrice: number;
   stock: number;
   views: number;
-  wishlists: [GetWishlist];
+  wishlists: [GetWishlist]
 }
 
 export interface GetWishlist {

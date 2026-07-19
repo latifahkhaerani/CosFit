@@ -1,8 +1,8 @@
 import * as z from "zod";
 import { hashSync } from "bcryptjs";
-import { database } from "@/app/db/config/mongoDb";
+import { database } from "@/db/config/mongodb";
 import { ObjectId } from "mongodb";
-import { GetVendor, PostVendor } from "@/app/types";
+import { GetVendor } from "@/app/types";
 
 const VendorSchema = z.object({
   namaToko: z.string().min(1, { message: "Nama Toko is required" }),
@@ -43,20 +43,12 @@ export default class VendorModel {
     const agg = [
       {
         $match: {
-          vendorId: new ObjectId(vendorId),
-        },
-      },
-      {
-        $lookup: {
-          from: "vendors",
-          localField: "vendorId",
-          foreignField: "_id",
-          as: "vendor",
+          _id: new ObjectId(vendorId),
         },
       },
       {
         $project: {
-          "vendor.password": false,
+          "password": false,
         },
       },
     ];

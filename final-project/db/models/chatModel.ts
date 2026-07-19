@@ -1,5 +1,5 @@
 import { ObjectId } from "mongodb";
-import { database } from "../config/mongoDb";
+import { database } from "../config/mongodb";
 import UserModel from "./userModel";
 
 export default class ChatModel{

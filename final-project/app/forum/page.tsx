@@ -1,5 +1,4 @@
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+"use client"
 
 import ForumCTA from "@/components/forum/ForumCTA";
 
@@ -11,9 +10,46 @@ import PopularTags from "@/components/forum/PopularTags";
 import OnlineMembers from "@/components/forum/OnlineMembers";
 
 import { Plus } from "lucide-react";
-import ForumSidebar from "@/components/forum/ ForumSidebar";
+import ForumSidebar from "@/components/forum/ ForumSidebar"; // FIX: Menghapus spasi typo pada path import
+import { useEffect, useState } from "react"; 
+import Link from "next/link";
 
-export default function ForumPage() {
+interface forumType {
+  "_id": string,
+  "nameForum": string,
+  "desc": string,
+  "tag": string[],
+  "creatorId": string
+  "image": string,
+  "createdAt": Date,
+  "creator": creatorType
+}
+
+interface creatorType {
+  "_id": string,
+  "username": string
+} 
+
+export default function ForumPage() { 
+
+  const [data, setData] = useState<forumType[]>([]); 
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await fetch(`/api/forum`);
+        const dataJson = await res.json();
+        if (Array.isArray(dataJson)) {
+          setData(dataJson);
+        }
+        console.log(dataJson, "<<<<< data");
+      } catch (error) {
+        console.error("Gagal mengambil data forum:", error);
+      }
+    };
+    fetchData();
+  }, []);
+
   return (
     <>
       <main className="page-container">
@@ -29,10 +65,13 @@ export default function ForumPage() {
             </p>
           </div>
 
-          <button className=" primary-btn shadow-soft transition-all duration-300 hover:-translate-y-1 hover:scale-[1.02] ">
+          <Link
+            href="/forum/new"
+            className="primary-btn inline-flex items-center gap-2 shadow-soft transition-all duration-300 hover:-translate-y-1 hover:scale-[1.02]"
+          >
             <Plus size={18} />
             New Discussion
-          </button>
+          </Link>
         </section>
 
         {/* Layout */}
@@ -52,49 +91,29 @@ export default function ForumPage() {
             <DiscussionFilter />
 
             <div className="space-y-5">
-              <DiscussionCard
-                avatar="/images/avatar1.jpg"
-                author="Hikari Cos"
-                verified
-                time="4 hours ago"
-                title="How do I style a wig without damaging it?"
-                description="I'm preparing for my first cosplay event and I'm worried about styling synthetic wigs. Does anyone have beginner-friendly tips?"
-                tag="Cosplay Tips"
-                tagColor="#F97316"
-                comments={28}
-                likes={152}
-                views={1234}
-                pinned
-                preview="/images/forum1.jpg"
-              />
-
-              <DiscussionCard
-                avatar="/images/avatar2.jpg"
-                author="Akira"
-                time="6 hours ago"
-                title="Best place to rent Genshin costumes?"
-                description="Looking for premium quality costumes around Jakarta. Any recommendations?"
-                tag="Costume Discussion"
-                tagColor="#EC4899"
-                comments={19}
-                likes={84}
-                views={892}
-              />
-
-              <DiscussionCard
-                avatar="/images/avatar3.jpg"
-                author="Yuki"
-                verified
-                time="Yesterday"
-                title="Photography tips for indoor conventions"
-                description="Sharing some camera settings that worked really well during Comic Frontier."
-                tag="Photography"
-                tagColor="#06B6D4"
-                comments={35}
-                likes={201}
-                views={1870}
-                preview="/images/forum2.jpg"
-              />
+              {/* Jika data kosong, tampilkan pesan loading atau fallback */}
+              {data.length === 0 ? (
+                <p className="text-center text-[var(--muted)] py-10">Loading discussions...</p>
+              ) : (
+                data.map((item, index) => (
+                  <DiscussionCard
+                    key={item._id || index}
+                    avatar={"/images/avatar1.jpg"} // Fallback avatar jika kosong
+                    author={item.creator?.username || "Anonymous"} // FIX: Menggunakan optional chaining (?.) agar tidak crash
+                    verified={false}
+                    time={item.createdAt ? new Date(item.createdAt).toLocaleDateString("id-ID") : "Baru saja"} // FIX: Konversi Date ke string
+                    title={item.nameForum}
+                    description={item.desc}
+                    tag={item.tag && item.tag.length > 0 ? item.tag[0] : "General"} // FIX: Ambil tag pertama karena component meminta string, bukan array
+                    tagColor="#06B6D4"
+                    comments={10} // Mengubah ke tipe number asli
+                    likes={10}     // Mengubah ke tipe number asli
+                    views={10}     // Mengubah ke tipe number asli
+                    pinned={false} // Mengubah ke tipe boolean asli
+                    preview={item.image}
+                  />
+                ))
+              )}
             </div>
           </section>
 
@@ -109,8 +128,6 @@ export default function ForumPage() {
           </div>
         </div>
       </main>
-
-      
     </>
   );
 }

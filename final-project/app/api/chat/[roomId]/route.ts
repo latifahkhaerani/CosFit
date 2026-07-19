@@ -1,4 +1,4 @@
-import ChatModel from "@/app/db/models/chatModel";
+import ChatModel from "@/db/models/chatModel";
 import errorHandler from "@/app/helpers/errorHandler";
 
 export async function GET(req: Request, { params }: { params: Promise<{ roomId: string }> }) {
@@ -9,8 +9,8 @@ export async function GET(req: Request, { params }: { params: Promise<{ roomId: 
             throw {message: `invalid`, status: 500}
         }
         const response = await ChatModel.getChatRoomId(roomId, userId)
-        
-        return response
+
+        return Response.json(response)
     } catch (error) {
         errorHandler(error)
     }

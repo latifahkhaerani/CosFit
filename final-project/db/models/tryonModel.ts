@@ -1,6 +1,6 @@
-import { PostInputImage } from "@/app/types";
-import { database } from "@/db/config/mongodb";
+
 import { put } from '@vercel/blob';
+import { database } from "../config/mongodb";
 
 
 export default class TryOnModel {
