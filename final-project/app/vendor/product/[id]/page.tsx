@@ -1,7 +1,11 @@
 import ProductGallery from "@/components/vendor/ProductGallery";
 import ProductInfoCard from "@/components/vendor/ProductInfoCard";
 
-export default function VendorProductDetail() {
+export default async function VendorProductDetail({params}: {params: Promise<{id: string}>}) {
+
+  const {id} = await params
+  const data = await fetch(`http://localhost:3000/api/user/product/${id}`)
+  const product = await data.json()
   return (
     <main className="flex min-h-screen bg-[var(--background)]">
 
@@ -18,18 +22,18 @@ export default function VendorProductDetail() {
           <span className="text-[var(--muted)]">/</span>
 
           <span className="font-medium text-[var(--text)]">
-            Crimson Valkyrie Armor
+            {product.title}
           </span>
         </nav>
 
         <div className="mb-8 flex items-start justify-between">
           <div>
             <h1 className="flex items-center gap-3 text-4xl font-bold">
-              Crimson Valkyrie Armor
+              {product.title}
             </h1>
 
             <p className="mt-2 text-sm text-[var(--muted)]">
-              Product ID: CF-PRD-2024-0815 • Updated 2 days ago
+              Product ID: {product._id} • Updated 2 days ago
             </p>
           </div>
 
@@ -39,7 +43,7 @@ export default function VendorProductDetail() {
 
         </div>
         <div className="grid grid-cols-[2.1fr_1fr] gap-7">
-          <ProductGallery />
+          <ProductGallery imgUrl={product.imgUrl}/>
 
           <div className="space-y-7">
             <ProductInfoCard />

@@ -12,8 +12,7 @@ const images = [
   "/images/costume-5.jpg",
 ];
 
-export default function ProductGallery() {
-  const [selected, setSelected] = useState(images[0]);
+export default function ProductGallery({imgUrl} : {imgUrl: string}) {
 
   return (
     <section className="card p-6">
@@ -38,7 +37,7 @@ export default function ProductGallery() {
 
         <div className="group relative overflow-hidden rounded-[26px]">
           <Image
-            src={selected}
+            src={imgUrl}
             alt="Costume"
             width={900}
             height={1100}

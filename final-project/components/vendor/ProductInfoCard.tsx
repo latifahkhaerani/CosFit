@@ -7,7 +7,6 @@ import {
   Boxes,
   BadgeCheck,
   UserCheck,
-  Ruler,
 } from "lucide-react";
 
 export default function ProductInfoCard() {
@@ -67,62 +66,6 @@ export default function ProductInfoCard() {
           icon={<UserCheck size={18} />}
           title="Currently Rented"
           value="1 Set"
-        />
-
-      </div>
-
-      {/* Divider */}
-
-      <div className="my-8 border-t border-[var(--border)]" />
-
-      {/* Size */}
-
-      <div className="mb-6 flex items-center justify-between">
-
-        <div>
-
-          <h3 className="font-semibold text-[var(--text)]">
-
-            Size Information
-
-          </h3>
-
-          <p className="mt-1 text-sm text-[var(--muted)]">
-
-            Recommended body measurements
-
-          </p>
-
-        </div>
-
-        <button className="text-sm font-medium text-[var(--primary)]">
-
-          Size Guide
-
-        </button>
-
-      </div>
-
-      <div className="space-y-4">
-
-        <SizeItem
-          label="Height"
-          value="155 - 170 cm"
-        />
-
-        <SizeItem
-          label="Bust"
-          value="80 - 92 cm"
-        />
-
-        <SizeItem
-          label="Waist"
-          value="60 - 72 cm"
-        />
-
-        <SizeItem
-          label="Hip"
-          value="85 - 96 cm"
         />
 
       </div>
@@ -194,47 +137,6 @@ function InfoItem({
 
         </div>
       )}
-    </div>
-  );
-}
-
-/* -------------------------- */
-
-function SizeItem({
-  label,
-  value,
-}: {
-  label: string;
-  value: string;
-}) {
-  return (
-    <div className="flex items-center justify-between rounded-2xl border border-[var(--border)] px-5 py-4">
-
-      <div className="flex items-center gap-3">
-
-        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#FFF5F0]">
-
-          <Ruler
-            size={16}
-            className="text-[var(--primary)]"
-          />
-
-        </div>
-
-        <span className="text-sm text-[var(--muted)]">
-
-          {label}
-
-        </span>
-
-      </div>
-
-      <span className="font-semibold">
-
-        {value}
-
-      </span>
-
     </div>
   );
 }
