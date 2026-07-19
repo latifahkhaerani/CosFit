@@ -6,7 +6,7 @@ import type { GetProduct, GetWishlist } from "@/app/types";
 export interface FeaturedCostumesProps {
   title?: string;
   viewAllLabel?: string;
-  /** Products rendered as costume cards (imgUrl, title, theme -> series, OriginalPrice). */
+  /** Products rendered as costume cards (imgUrl, title, theme -> series, originalPrice). */
   costumes?: GetProduct[];
   /** Current user's wishlist entries, used to derive each costume's favorited state. */
   wishlist?: GetWishlist[];
@@ -17,30 +17,19 @@ export interface FeaturedCostumesProps {
   currency?: string; // e.g. "USD", "IDR" — passed to Intl.NumberFormat
 }
 
-const placeholderCostumes: GetProduct[] = Array.from({ length: 4 }, (_, i) => ({
-  _id: `costume-${i}`,
-  imgUrl: "",
-  desc: "",
-  size: "",
-  theme: "",
-  title: "",
-  OriginalPrice: 0,
-  vendorId: '',
-  discount: 0,
-  finalPrice: 0,
-  stock: 0,
-}));
+const data = await fetch("http://localhost:3000/api/user/product/featured");
+const char: GetProduct[] = await data.json();
 
 function formatPrice(amount: number, currency: string) {
-  if (!amount) return "$0";
+  if (!amount) return "Rp 0";
   try {
-    return new Intl.NumberFormat("en-US", {
+    return new Intl.NumberFormat("id-ID", {
       style: "currency",
       currency,
       maximumFractionDigits: 0,
     }).format(amount);
   } catch {
-    return `$${amount}`;
+    return `Rp ${amount}`;
   }
 }
 
@@ -72,7 +61,7 @@ function CostumeCard({
             <img
               src={costume.imgUrl}
               alt={costume.title || "Costume"}
-              className="h-full w-full object-cover"
+              className="h-full w-full object-cover object-top"
             />
           ) : (
             <div className="flex h-full w-full items-center justify-center text-base text-muted">
@@ -86,7 +75,9 @@ function CostumeCard({
           onClick={() => onToggleFavorite?.(costume._id)}
           className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full bg-surface shadow-sm transition hover:bg-cream/40"
         >
-          <Heart className={`h-5 w-5 ${isFavorited ? "fill-primary text-primary" : "text-muted"}`} />
+          <Heart
+            className={`h-5 w-5 ${isFavorited ? "fill-primary text-primary" : "text-muted"}`}
+          />
         </button>
       </div>
 
@@ -98,7 +89,7 @@ function CostumeCard({
           <p className="text-base text-muted">{costume.theme || "Series"}</p>
         </div>
         <p className="text-xl font-bold text-primary">
-          {formatPrice(costume.OriginalPrice, currency)}
+          {formatPrice(costume.originalPrice, currency)}
         </p>
 
         <button
@@ -117,13 +108,13 @@ function CostumeCard({
 export default function FeaturedCostumes({
   title = "Featured Costumes",
   viewAllLabel = "View All Costumes",
-  costumes = placeholderCostumes,
+  costumes = char,
   wishlist = [],
   detailsLabel = "View Details",
   onViewAll,
   onSelectCostume,
   onToggleFavorite,
-  currency = "USD",
+  currency = "IDR",
 }: FeaturedCostumesProps) {
   const favoritedIds = new Set(wishlist.map((entry) => entry.productId));
 
@@ -137,7 +128,7 @@ export default function FeaturedCostumes({
         <button
           type="button"
           onClick={onViewAll}
-          className="text-base font-medium text-primary hover:text-secondary"
+          className="text-base font-medium text-primary hover:text-secondary hover:underline"
         >
           {viewAllLabel} &rarr;
         </button>

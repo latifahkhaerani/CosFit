@@ -7,8 +7,28 @@ export default class WishlistModel {
     return database.collection("wishlists");
   }
 
-  static getWishlistByUserId(userId: string) {
-    return this.collection().find({ userId }).toArray();
+  static async getWishlistByUserId(userId: string) {
+    return await this.collection()
+      .aggregate([
+        {
+          $match: {
+            userId: new ObjectId(userId),
+          },
+        },
+        {
+          $lookup: {
+            from: "products",
+            localField: "productId",
+            foreignField: "_id",
+            as: "product",
+          },
+        },
+        {
+          $unwind: "$product",
+        },
+      ])
+      .toArray();
+    // return this.collection().find({ userId }).toArray();
   }
 
   static getWishlistById(id: string) {
@@ -18,13 +38,21 @@ export default class WishlistModel {
   static async addWishlist(wishlistData: PostWishlist, userId: string) {
     const result = await this.collection().insertOne({
       ...wishlistData,
-      userId,
+      productId: new ObjectId(wishlistData.productId),
+      userId: new ObjectId(userId),
     });
     return "Wishlist created with ID: " + result.insertedId;
   }
 
-  static async deleteWishlist(id: string) {
-    const result = await this.collection().deleteOne({ _id: new ObjectId(id) });
+  static async deleteWishlist(id: string, userId: string) {
+    const cek = await this.collection().findOne({
+      productId: new ObjectId(id),
+      userId: new ObjectId(userId),
+    });
+    const result = await this.collection().deleteOne({
+      productId: new ObjectId(id),
+      userId: new ObjectId(userId),
+    });
     if (result.deletedCount === 0) {
       throw new Error("Wishlist not found");
     }

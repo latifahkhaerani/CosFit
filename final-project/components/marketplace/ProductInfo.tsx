@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { Heart, Sparkles, ChevronRight } from "lucide-react";
-import type { GetProduct } from "@/app/types";
+import type { GetProduct, GetWishlist } from "@/app/types";
 import { formatProductPrice } from "./ProductCard";
+import { useEffect, useState } from "react";
 
 export interface ProductInfoProps {
   product: GetProduct;
@@ -18,14 +19,84 @@ export interface ProductInfoProps {
 
 export default function ProductInfo({
   product,
-  isFavorited = false,
-  currency = "USD",
+  currency = "IDR",
   tryOnLabel = "Try On With AI",
   checkoutLabel = "Rent Now",
   onToggleFavorite,
   onTryOn,
   onCheckout,
 }: ProductInfoProps) {
+  const [isFavorited, setIsFavorited] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchWishlistStatus = async () => {
+      try {
+        const response = await fetch("/api/user/wishlist");
+        if (response.ok) {
+          const wishlist = await response.json();
+          console.log(wishlist, "<<<<<<");
+
+          // Pastikan responsnya adalah array sebelum dicocokkan
+          if (Array.isArray(wishlist)) {
+            const isExist = wishlist.some((item: any) => {
+              // Menangani kemungkinan productId berupa string biasa atau object/agregasi MongoDB
+              const targetId =
+                typeof item.productId === "object" && item.productId !== null
+                  ? item.productId._id
+                  : item.productId;
+
+              return String(targetId) === String(product._id);
+            });
+
+            setIsFavorited(isExist);
+          }
+        }
+      } catch (error) {
+        console.error("Gagal mengecek status wishlist:", error);
+      }
+    };
+
+    if (product?._id) {
+      fetchWishlistStatus();
+    }
+  }, [product?._id]);
+
+  const handleToggleFavorite = async () => {
+    if (isLoading) return;
+
+    const previousState = isFavorited;
+
+    // Optimistic Update UI
+    setIsFavorited(!isFavorited);
+    setIsLoading(true);
+
+    try {
+      if (!previousState) {
+        const response = await fetch("/api/user/wishlist", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ productId: product._id }),
+        });
+
+        if (!response.ok) throw new Error("Gagal menambah wishlist");
+      } else {
+        const response = await fetch(`/api/user/wishlist/${product._id}`, {
+          method: "DELETE",
+        });
+
+        if (!response.ok) throw new Error("Gagal menghapus wishlist");
+      }
+
+      onToggleFavorite?.(product._id);
+    } catch (error) {
+      console.error(error);
+      setIsFavorited(previousState);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="flex flex-col gap-7">
       {/* Breadcrumb */}
@@ -40,18 +111,22 @@ export default function ProductInfo({
           </>
         )}
         <ChevronRight className="h-4 w-4" />
-        <span className="line-clamp-1 text-foreground">{product.title || "Product Title"}</span>
+        <span className="line-clamp-1 text-foreground">
+          {product.title || "Product Title"}
+        </span>
       </nav>
 
       <div>
-        <p className="text-base font-medium text-muted">{product.theme || "Series"}</p>
+        <p className="text-base font-medium text-muted">
+          {product.theme || "Series"}
+        </p>
         <h1 className="mt-2 font-serif text-4xl font-bold leading-tight text-foreground sm:text-5xl">
           {product.title || "Product Title"}
         </h1>
       </div>
 
       <p className="text-4xl font-bold text-primary">
-        {formatProductPrice(product.OriginalPrice, currency)}
+        {formatProductPrice(product.originalPrice, currency)}
       </p>
 
       {product.size && (
@@ -85,13 +160,19 @@ export default function ProductInfo({
           <Sparkles className="h-5 w-5" />
           {tryOnLabel}
         </button>
+
         <button
           type="button"
           aria-label="Toggle favorite"
-          onClick={() => onToggleFavorite?.(product._id)}
-          className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-xl border border-border transition hover:bg-cream/40"
+          onClick={handleToggleFavorite}
+          disabled={isLoading}
+          className={`flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-xl border border-border transition hover:bg-cream/40 ${isLoading ? "opacity-70 cursor-not-allowed" : ""}`}
         >
-          <Heart className={`h-6 w-6 ${isFavorited ? "fill-primary text-primary" : "text-muted"}`} />
+          <Heart
+            className={`h-6 w-6 transition-colors ${
+              isFavorited ? "fill-primary text-primary" : "text-muted"
+            }`}
+          />
         </button>
       </div>
     </div>

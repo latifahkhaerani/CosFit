@@ -1,5 +1,5 @@
-import ProductModel from "@/app/db/models/productModel";
 import errorHandler from "@/app/helpers/errorHandler";
+import ProductModel from "@/db/models/productModel";
 
 // Ubah data product
 export async function PUT(

@@ -31,8 +31,6 @@ export async function proxy(request: Request) {
             email: string;
             role: string;
         };
-        console.log(decoded);
-
 
         if (pathname.startsWith("/api/vendor") || pathname.startsWith("/vendor")) {
             if (decoded.role !== "Vendor") {
@@ -66,6 +64,5 @@ export async function proxy(request: Request) {
 }
 
 export const config = {
-    matcher: ["/profile", "/vendor/:path*", "/api/vendor/:path*", "/api/user/profile", "/vendor", "/api/forum", "/api/chat/:path*", "/api/user/try-on"],
+    matcher: ["/profile", "/vendor/:path*", "/api/vendor/:path*", "/api/user/profile", "/vendor", "/api/forum", "/api/user/wishlist", "/api/user/checkout", "/api/chat/:path*", "/api/user/try-on"],
 };
-    
