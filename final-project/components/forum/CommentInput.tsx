@@ -21,8 +21,10 @@ export default function CommentInput({ forumId, chatLength }: CommentInputProps)
 
   useEffect(() => {
     const handleReceiveMsg = (newMsg: any) => {
-      if (Array.isArray(newMsg)) {
-        setCurrentChatLength(newMsg.length);
+      const actualMsg = newMsg?.chatData || newMsg?.message || newMsg;
+
+      if (Array.isArray(actualMsg)) {
+        setCurrentChatLength(actualMsg.length);
       } else {
         setCurrentChatLength((prev) => prev + 1);
       }
@@ -42,19 +44,14 @@ export default function CommentInput({ forumId, chatLength }: CommentInputProps)
     setLoading(true);
 
     try {
-      // PERBAIKAN 1: Gunakan relative path '/api/chat/...' 
-      // agar tidak ada masalah CORS/Cookie antara localhost vs 127.0.0.1
       const res = await fetch(`/api/chat/${forumId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        // PERBAIKAN 2: Bungkus state message di dalam object 
-        // Sesuaikan key-nya (biasanya { message } atau { content })
         body: JSON.stringify(message) 
       });
 
-      // Tangkap pesan error asli dari backend jika masih gagal
       if (!res.ok) {
         const errorData = await res.json().catch(() => ({}));
         throw new Error(errorData.message || `HTTP error! status: ${res.status}`);
@@ -62,18 +59,14 @@ export default function CommentInput({ forumId, chatLength }: CommentInputProps)
       
       const data = await res.json();
 
-      // 3. Jika sukses tersimpan, BROADCAST hasil datanya lewat socket ke room
-      // (Pastikan data.message berisi object chat terbaru dari backend)
       socket.emit("send_msg", { 
         roomId: forumId, 
         chatData: data.message 
       });
 
-      // 4. Kosongkan input form
       setMessage("");
     } catch (err) {
       console.error("Gagal mengirim komentar:", err);
-      // Opsional: Tampilkan alert/toast ke user agar tahu kenapa gagal
       alert(err instanceof Error ? err.message : "Gagal mengirim komentar");
     } finally {
       setLoading(false);
@@ -92,7 +85,6 @@ export default function CommentInput({ forumId, chatLength }: CommentInputProps)
       </div>
 
       <form onSubmit={handleSubmit} className="flex gap-4">
-        {/* ... (BAGIAN UI KE BAWAH TETAP SAMA PERSIS SEPERTI SEBELUMNYA) ... */}
         <div className="relative h-12 w-12 flex-shrink-0">
           <Image src="/images/avatar1.jpg" alt="My Avatar" fill className="rounded-full object-cover" />
         </div>

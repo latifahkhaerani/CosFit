@@ -15,6 +15,7 @@ static async UserTryOn(yourImg: File, cosImg: File, userId: string) {
     access: 'public',
     addRandomSuffix: true
   });
+
   const blob2 = await put(cosImg.name, cosImg, {
     access: 'public',
     addRandomSuffix: true
@@ -82,6 +83,6 @@ static async UserTryOn(yourImg: File, cosImg: File, userId: string) {
 
   await this.collection().insertOne(payload);
   
-  return AIimg;
+  return AIimg; 
 }
 }

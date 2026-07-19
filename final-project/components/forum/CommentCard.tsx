@@ -35,11 +35,13 @@ export default function CommentCard({ roomId, initialMessages, currentUser }: Co
     socket.connect();
     socket.emit("join_room", roomId);
 
-    const handleReceiveMsg = (newMsg: chatType | chatType[]) => {
-      if (Array.isArray(newMsg)) {
-        setMessages(newMsg);
+    const handleReceiveMsg = (newMsg: any) => {
+      const actualMsg = newMsg?.chatData || newMsg?.message || newMsg;
+
+      if (Array.isArray(actualMsg)) {
+        setMessages(actualMsg);
       } else {
-        setMessages((prevMessages) => [...prevMessages, newMsg]);
+        setMessages((prevMessages) => [...prevMessages, actualMsg]);
       }
     };
 
@@ -52,8 +54,7 @@ export default function CommentCard({ roomId, initialMessages, currentUser }: Co
   return (
     <div className="flex w-full flex-col gap-6 p-4">
       {messages.map((chat) => {
-        // Safe access dengan optional chaining
-        const username = chat.user?.[0]?.username || "Unknown";
+        const username = chat?.user?.[0]?.username || "Unknown";
         const isMe = username === currentUser;
         const initialLetter = username.charAt(0).toUpperCase();
         const role = isMe ? "Author" : "Member";
