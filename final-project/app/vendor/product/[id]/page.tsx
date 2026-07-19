@@ -37,16 +37,12 @@ export default async function VendorProductDetail({params}: {params: Promise<{id
             </p>
           </div>
 
-          <div>
-            <button className="secondary-btn">Edit</button>
-          </div>
-
         </div>
         <div className="grid grid-cols-[2.1fr_1fr] gap-7">
           <ProductGallery imgUrl={product.imgUrl}/>
 
           <div className="space-y-7">
-            <ProductInfoCard />
+            <ProductInfoCard product={product}/>
 
             {/* <AISizeMatchCard /> */}
 
@@ -54,15 +50,15 @@ export default async function VendorProductDetail({params}: {params: Promise<{id
           </div>
         </div>
 
-        <div className="mt-8 grid grid-cols-[2fr_1fr] gap-7">
+        {/* <div className="mt-8 grid grid-cols-[2fr_1fr] gap-7">
           <div className="space-y-7">
-            {/* <ProductDescriptionCard /> */}
+            <ProductDescriptionCard />
 
-            {/* <RentalHistoryCard /> */}
+            <RentalHistoryCard />
           </div>
 
-          {/* <ProductReviewCard /> */}
-        </div>
+          <ProductReviewCard />
+        </div> */}
       </section>
     </main>
   );

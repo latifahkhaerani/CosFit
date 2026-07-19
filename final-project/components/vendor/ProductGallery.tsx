@@ -1,16 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import { UploadCloud } from "lucide-react";
-import { useState } from "react";
-
-const images = [
-  "/images/costume-main.jpg",
-  "/images/costume-2.jpg",
-  "/images/costume-3.jpg",
-  "/images/costume-4.jpg",
-  "/images/costume-5.jpg",
-];
 
 export default function ProductGallery({imgUrl} : {imgUrl: string}) {
 
@@ -26,8 +16,6 @@ export default function ProductGallery({imgUrl} : {imgUrl: string}) {
             Showcase your costume from multiple angles.
           </p>
         </div>
-
-        <span className="badge-success">Main Photo</span>
       </div>
 
       {/* Gallery */}

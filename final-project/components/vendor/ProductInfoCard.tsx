@@ -1,18 +1,35 @@
 "use client";
 
+import { GetProduct } from "@/app/types";
 import {
   CalendarDays,
   Coins,
   Package2,
   Boxes,
-  BadgeCheck,
   UserCheck,
 } from "lucide-react";
+import { useEffect, useState } from "react";
 
-export default function ProductInfoCard() {
+export default function ProductInfoCard({product}: {product: GetProduct}) {
+
+  // const [imgUrl, setImgUrl] = useState<File | string>("")
+  const [isEdit, setIsEdit] = useState(false)
+  const [desc, setDesc] = useState(product.desc)
+  const [size, setSize] = useState(product.size)
+  const [theme, setTheme] = useState(product.theme)
+  const [title, setTitle] = useState(product.title)
+  const [originalPrice, setOriginalPrice] = useState(product.originalPrice)
+  const [stock, setStock] = useState(product.stock)
+  const [discount, setDiscount] = useState(product.discount)
+
+  useEffect(() => {
+    console.log(isEdit);
+  }, [isEdit])
+
   return (
     <section className="card p-7">
 
+      <button className="secondary-btn" onClick={() => {setIsEdit(true)}}>Edit</button>
       {/* Header */}
 
       <div className="mb-8">
@@ -28,47 +45,45 @@ export default function ProductInfoCard() {
       </div>
 
       {/* Information */}
+      {!isEdit? (
+        <div className="space-y-5">
 
-      <div className="space-y-5">
+          <InfoItem
+            icon={<Coins size={18} />}
+            title="Original Price"
+            value={originalPrice + ""}
+          />
 
-        <InfoItem
-          icon={<Coins size={18} />}
-          title="Rental Price"
-          value="Rp 350.000"
-          subtitle="/ 3 days"
-        />
+          <InfoItem
+            icon={<CalendarDays size={18} />}
+            title="Minimum Rental"
+          />
 
-        <InfoItem
-          icon={<CalendarDays size={18} />}
-          title="Minimum Rental"
-          value="3 Days"
-        />
+          <InfoItem
+            icon={<Package2 size={18} />}
+            title="Deposit"
+            value="Rp 1.000.000"
+          />
 
-        <InfoItem
-          icon={<Package2 size={18} />}
-          title="Deposit"
-          value="Rp 1.000.000"
-        />
+          <InfoItem
+            icon={<Boxes size={18} />}
+            title="Current Stock"
+            value="2 Sets"
+          />
 
-        <InfoItem
-          icon={<BadgeCheck size={18} />}
-          title="Availability"
-          badge="Available"
-        />
+          <InfoItem
+            icon={<UserCheck size={18} />}
+            title="Currently Rented"
+            value="1 Set"
+          />
 
-        <InfoItem
-          icon={<Boxes size={18} />}
-          title="Current Stock"
-          value="2 Sets"
-        />
+        </div>
 
-        <InfoItem
-          icon={<UserCheck size={18} />}
-          title="Currently Rented"
-          value="1 Set"
-        />
+      ): (
+        <div>
 
-      </div>
+        </div>
+      )}
 
     </section>
   );
