@@ -52,7 +52,7 @@ export default function ProductGallery() {
 
         {/* Thumbnail */}
 
-        <div className="grid grid-cols-2 gap-4">
+        {/* <div className="grid grid-cols-2 gap-4">
           {images.map((img) => (
             <button
               key={img}
@@ -71,11 +71,11 @@ export default function ProductGallery() {
                 className="aspect-square h-full w-full object-cover transition duration-300 group-hover:scale-110"
               />
             </button>
-          ))}
+          ))} */}
 
           {/* Upload */}
 
-          <button className="flex aspect-square flex-col items-center justify-center rounded-3xl border-2 border-dashed border-[var(--border)] bg-[#FCFBFA] transition hover:border-[var(--primary)] hover:bg-[#FFF8F5]">
+          {/* <button className="flex aspect-square flex-col items-center justify-center rounded-3xl border-2 border-dashed border-[var(--border)] bg-[#FCFBFA] transition hover:border-[var(--primary)] hover:bg-[#FFF8F5]">
             <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-card">
               <UploadCloud size={30} className="text-[var(--primary)]" />
             </div>
@@ -88,7 +88,7 @@ export default function ProductGallery() {
               up to 10 MB
             </p>
           </button>
-        </div>
+        </div> */}
       </div>
     </section>
   );
