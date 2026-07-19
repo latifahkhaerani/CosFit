@@ -61,25 +61,6 @@ export async function proxy(request: Request) {
     } catch (err) {
         return errorHandler(err);
     }
-
-    // Clone the request headers and set a new header `x-hello-from-proxy1`
-    const requestHeaders = new Headers(request.headers);
-    requestHeaders.set("x-user-email", decoded.email);
-    requestHeaders.set("x-user-id", decoded.id);
-    requestHeaders.set("x-user-role", decoded.role);
-
-    // You can also set request headers in NextResponse.next
-    const response = NextResponse.next({
-      request: {
-        // New request headers
-        headers: requestHeaders,
-      },
-    });
-
-    return response;
-  } catch (err) {
-    return errorHandler(err);
-  }
 }
 
 export const config = {
