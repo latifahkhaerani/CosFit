@@ -2,6 +2,7 @@
 
 import { Sparkles, ArrowRight } from "lucide-react";
 import type { GetProduct } from "@/app/types";
+import { useRouter } from "next/navigation";
 
 export interface PopularCharactersProps {
   title?: string;
@@ -14,22 +15,8 @@ export interface PopularCharactersProps {
   onTryOn?: (productId: string) => void;
 }
 
-const placeholderCharacters: GetProduct[] = Array.from(
-  { length: 4 },
-  (_, i) => ({
-    _id: `character-${i}`,
-    imgUrl: "",
-    desc: "",
-    size: "",
-    theme: "",
-    title: "",
-    originalPrice: 0,
-    vendorId: "",
-    discount: 0,
-    finalPrice: 0,
-    stock: 0,
-  }),
-);
+const data = await fetch("http://localhost:3000/api/user/product/popular");
+const char: GetProduct[] = await data.json();
 
 function CharacterCard({
   character,
@@ -54,7 +41,7 @@ function CharacterCard({
           <img
             src={character.imgUrl}
             alt={character.title || "Character"}
-            className="h-full w-full object-cover"
+            className="h-full w-full object-cover object-top"
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center text-base text-muted">
@@ -87,12 +74,16 @@ function CharacterCard({
 export default function PopularCharacters({
   title = "Popular Characters",
   viewAllLabel = "View All Characters",
-  characters = placeholderCharacters,
+  characters = char,
   tryOnLabel = "Try On",
   onViewAll,
   onSelectCharacter,
   onTryOn,
 }: PopularCharactersProps) {
+  const router = useRouter();
+  const handleClickAll = () => {
+    router.push("/marketplace");
+  };
   return (
     <section className="mx-auto max-w-7xl px-6 py-10 lg:px-8">
       <div className="mb-6 flex items-center justify-between">
@@ -102,8 +93,8 @@ export default function PopularCharacters({
         </h2>
         <button
           type="button"
-          onClick={onViewAll}
-          className="text-base font-medium text-primary hover:text-secondary"
+          onClick={handleClickAll}
+          className="text-base font-medium text-primary hover:text-secondary hover:underline"
         >
           {viewAllLabel} &rarr;
         </button>
