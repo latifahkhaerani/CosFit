@@ -20,6 +20,8 @@ export default function TryOnPage() {
   const [aiResult, setAiResult] = useState<string>("https://cdn.fashn.ai/0aac3b42-e9ae-4282-bfb7-c5f1ae0b5db5/try_on_0.png");
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
+  // const [history, setHistory] = useState([])
+
   const userInputRef = useRef<HTMLInputElement>(null);
   const costumeInputRef = useRef<HTMLInputElement>(null);
 
@@ -43,6 +45,16 @@ export default function TryOnPage() {
       date: "3 days ago",
     },
   ];
+
+  // const fetchHistory = async () => {
+  //   const res = await fetch(`http://localhost:3000/api/user/history`)
+  //   const data = await res.json()
+  // }
+
+  // const fetchProduct = async () => {
+  //   const res = await fetch(`http://localhost:3000/api/user/product`)
+  //   const data = await res.json()
+  // }
 
   const handleUserImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];

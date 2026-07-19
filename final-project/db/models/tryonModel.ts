@@ -1,6 +1,7 @@
 
 import { put } from '@vercel/blob';
 import { database } from "../config/mongodb";
+import { ObjectId } from 'mongodb';
 
 
 export default class TryOnModel {
@@ -85,4 +86,8 @@ static async UserTryOn(yourImg: File, cosImg: File, userId: string) {
   
   return AIimg; 
 }
+
+static async getHistory (userId: string){
+  return await this.collection().find({"_id": new ObjectId(userId)})
+  }
 }
