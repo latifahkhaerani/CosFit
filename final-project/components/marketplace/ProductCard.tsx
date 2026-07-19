@@ -15,7 +15,7 @@ export interface ProductCardProps {
 export function formatProductPrice(amount: number, currency: string) {
   if (!amount) return "$0";
   try {
-    return new Intl.NumberFormat("en-US", {
+    return new Intl.NumberFormat("id-ID", {
       style: "currency",
       currency,
       maximumFractionDigits: 0,

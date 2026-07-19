@@ -12,7 +12,7 @@ export default class WishlistModel {
       .aggregate([
         {
           $match: {
-            userId,
+            userId: new ObjectId(userId),
           },
         },
         {
@@ -39,13 +39,20 @@ export default class WishlistModel {
     const result = await this.collection().insertOne({
       ...wishlistData,
       productId: new ObjectId(wishlistData.productId),
-      userId,
+      userId: new ObjectId(userId),
     });
     return "Wishlist created with ID: " + result.insertedId;
   }
 
-  static async deleteWishlist(id: string) {
-    const result = await this.collection().deleteOne({ _id: new ObjectId(id) });
+  static async deleteWishlist(id: string, userId: string) {
+    const cek = await this.collection().findOne({
+      productId: new ObjectId(id),
+      userId: new ObjectId(userId),
+    });
+    const result = await this.collection().deleteOne({
+      productId: new ObjectId(id),
+      userId: new ObjectId(userId),
+    });
     if (result.deletedCount === 0) {
       throw new Error("Wishlist not found");
     }
