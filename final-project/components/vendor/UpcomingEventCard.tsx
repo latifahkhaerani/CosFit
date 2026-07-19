@@ -1,13 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import {
-  CalendarDays,
-  MapPin,
-  Users,
-  ArrowRight,
-  Ticket,
-} from "lucide-react";
+import { CalendarDays, MapPin, Users, ArrowRight, Ticket } from "lucide-react";
 
 type Props = {
   image: string;
@@ -52,7 +46,6 @@ export default function UpcomingEventCard({
       {/* IMAGE */}
 
       <div className="relative overflow-hidden">
-
         <Image
           src={image}
           alt={title}
@@ -73,21 +66,15 @@ export default function UpcomingEventCard({
         {/* Category */}
 
         <div className="absolute left-5 top-5">
-
           <span className="rounded-full bg-white/90 px-3 py-1 text-xs font-semibold backdrop-blur-xl">
-
             {category}
-
           </span>
-
         </div>
-
       </div>
 
       {/* CONTENT */}
 
       <div className="p-6">
-
         <h3
           className="
           text-xl
@@ -105,31 +92,17 @@ export default function UpcomingEventCard({
         {/* Date */}
 
         <div className="mt-5 flex items-center gap-3 text-sm">
-
-          <CalendarDays
-            size={16}
-            className="text-[var(--primary)]"
-          />
+          <CalendarDays size={16} className="text-[var(--primary)]" />
 
           <span>{date}</span>
-
         </div>
 
         {/* Location */}
 
         <div className="mt-3 flex items-center gap-3 text-sm">
+          <MapPin size={16} className="text-[var(--primary)]" />
 
-          <MapPin
-            size={16}
-            className="text-[var(--primary)]"
-          />
-
-          <span className="text-[var(--muted)]">
-
-            {location}
-
-          </span>
-
+          <span className="text-[var(--muted)]">{location}</span>
         </div>
 
         {/* Divider */}
@@ -139,27 +112,16 @@ export default function UpcomingEventCard({
         {/* Footer */}
 
         <div className="mb-6 flex flex-wrap gap-4">
-
           <div className="flex items-center gap-2 text-sm">
-
-            <Users
-              size={16}
-              className="text-[var(--primary)]"
-            />
+            <Users size={16} className="text-[var(--primary)]" />
 
             {participants}
-
           </div>
 
           <div className="flex items-center gap-2 text-sm">
-
-            <Ticket
-              size={16}
-              className="text-[var(--primary)]"
-            />
+            <Ticket size={16} className="text-[var(--primary)]" />
 
             {price}
-
           </div>
 
           <span
@@ -167,7 +129,6 @@ export default function UpcomingEventCard({
           >
             {status}
           </span>
-
         </div>
 
         {/* BUTTON */}
@@ -186,11 +147,8 @@ export default function UpcomingEventCard({
           "
         >
           Join Event
-
           <ArrowRight size={16} />
-
         </button>
-
       </div>
     </article>
   );

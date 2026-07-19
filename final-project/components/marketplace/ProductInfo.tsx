@@ -40,18 +40,22 @@ export default function ProductInfo({
           </>
         )}
         <ChevronRight className="h-4 w-4" />
-        <span className="line-clamp-1 text-foreground">{product.title || "Product Title"}</span>
+        <span className="line-clamp-1 text-foreground">
+          {product.title || "Product Title"}
+        </span>
       </nav>
 
       <div>
-        <p className="text-base font-medium text-muted">{product.theme || "Series"}</p>
+        <p className="text-base font-medium text-muted">
+          {product.theme || "Series"}
+        </p>
         <h1 className="mt-2 font-serif text-4xl font-bold leading-tight text-foreground sm:text-5xl">
           {product.title || "Product Title"}
         </h1>
       </div>
 
       <p className="text-4xl font-bold text-primary">
-        {formatProductPrice(product.OriginalPrice, currency)}
+        {formatProductPrice(product.originalPrice, currency)}
       </p>
 
       {product.size && (
@@ -91,7 +95,9 @@ export default function ProductInfo({
           onClick={() => onToggleFavorite?.(product._id)}
           className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-xl border border-border transition hover:bg-cream/40"
         >
-          <Heart className={`h-6 w-6 ${isFavorited ? "fill-primary text-primary" : "text-muted"}`} />
+          <Heart
+            className={`h-6 w-6 ${isFavorited ? "fill-primary text-primary" : "text-muted"}`}
+          />
         </button>
       </div>
     </div>
