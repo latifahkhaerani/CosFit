@@ -16,7 +16,7 @@ type Props = {
   verified?: boolean;
   title: string;
   description: string;
-  tag: string;
+  tag: string[];
   tagColor: string;
   comments: number;
   likes: number;
@@ -73,8 +73,8 @@ export default function DiscussionCard({
         <Image
           src={avatar}
           alt=""
-          width={58}
-          height={58}
+          width={100}
+          height={1}
           className="
           rounded-full
           transition
@@ -144,15 +144,17 @@ export default function DiscussionCard({
 
             <div className="flex items-center gap-3">
 
-              <span
+              {tag.map((e, index) => (
+                <span key={index}
                 className="rounded-full px-4 py-1.5 text-xs font-medium"
                 style={{
                   background: `${tagColor}15`,
                   color: tagColor,
                 }}
               >
-                {tag}
+                {e}
               </span>
+              ))}
 
             </div>
 
