@@ -66,6 +66,6 @@ export async function proxy(request: Request) {
 }
 
 export const config = {
-    matcher: ["/profile", "/vendor/:path*", "/api/vendor/:path*", "/api/user/profile", "/vendor", "/api/forum", "/api/chat/:path*"],
+    matcher: ["/profile", "/vendor/:path*", "/api/vendor/:path*", "/api/user/profile", "/vendor", "/api/forum", "/api/chat/:path*", "/api/user/try-on"],
 };
     

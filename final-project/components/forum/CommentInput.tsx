@@ -74,18 +74,18 @@ export default function CommentInput({ forumId, chatLength }: CommentInputProps)
   };
 
   return (
-    <section className="card p-6 bg-white border border-[var(--border)] rounded-xl">
+    <section className="card p-6 bg-white border border-border rounded-xl">
       <div className="mb-6 flex items-center justify-between">
         <h3 className="font-bold text-lg">
           Comments ({currentChatLength})
         </h3>
-        <button className="text-sm text-muted-foreground hover:text-[var(--primary)]">
+        <button className="text-sm text-muted-foreground hover:text-primary">
           Sort by Newest
         </button>
       </div>
 
       <form onSubmit={handleSubmit} className="flex gap-4">
-        <div className="relative h-12 w-12 flex-shrink-0">
+        <div className="relative h-12 w-12 shrink-0">
           <Image src="/images/avatar1.jpg" alt="My Avatar" fill className="rounded-full object-cover" />
         </div>
 
@@ -95,16 +95,16 @@ export default function CommentInput({ forumId, chatLength }: CommentInputProps)
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             placeholder="Write your reply..."
-            className="input-soft min-h-[120px] w-full resize-none rounded-xl border p-3 focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
+            className="input-soft min-h-30 w-full resize-none rounded-xl border p-3 focus:outline-none focus:ring-2 focus:ring-primary"
           />
 
           <div className="mt-3 flex items-center justify-between">
             <div className="flex gap-2">
-              <button type="button" className="flex h-10 w-10 items-center justify-center rounded-xl text-muted-foreground hover:bg-[#FCFBFA] hover:text-[var(--foreground)]">
+              <button type="button" className="flex h-10 w-10 items-center justify-center rounded-xl text-muted-foreground hover:bg-[#FCFBFA] hover:text-(--foreground)">
                 <ImagePlus size={18} />
               </button>
 
-              <button type="button" className="flex h-10 w-10 items-center justify-center rounded-xl text-muted-foreground hover:bg-[#FCFBFA] hover:text-[var(--foreground)]">
+              <button type="button" className="flex h-10 w-10 items-center justify-center rounded-xl text-muted-foreground hover:bg-[#FCFBFA] hover:text-(--foreground)">
                 <Smile size={18} />
               </button>
             </div>
@@ -112,7 +112,7 @@ export default function CommentInput({ forumId, chatLength }: CommentInputProps)
             <button 
               type="submit" 
               disabled={loading || !message.trim()}
-              className="primary-btn flex items-center gap-2 px-5 py-2.5 bg-[var(--primary)] text-white font-medium rounded-xl hover:opacity-90 disabled:opacity-50 transition-opacity"
+              className="primary-btn flex items-center gap-2 px-5 py-2.5 bg-primary text-white font-medium rounded-xl hover:opacity-90 disabled:opacity-50 transition-opacity"
             >
               <Send size={15} />
               {loading ? "Posting..." : "Post Reply"}

@@ -16,13 +16,11 @@ type Props = {
 export default async function DiscussionPage({ params }: Props) {
   const { slug } = await params;
   const cookieStore = await cookies();
-  
-  // 1. Fetch Detail Forum
+
   const res = await fetch(`http://localhost:3000/api/forum/${slug}`);
   if (!res.ok) return <main className="page-container py-20 text-center">Forum tidak ditemukan.</main>;
   const forumById = await res.json();
 
-  // 2. Fetch Data Chat (Initial load SSR)
   const res2 = await fetch(`http://localhost:3000/api/chat/${forumById._id}`, {
     headers: {
       Cookie: cookieStore.toString(),
@@ -46,14 +44,12 @@ export default async function DiscussionPage({ params }: Props) {
         <section className="space-y-8">
           <DiscussionDetail key={forumById._id} detail={forumById} />
 
-          {/* Lempar forumId & jumlah chat awal ke input */}
           <CommentInput 
             forumId={forumById._id} 
             chatLength={chatData?.message?.length || 0} 
           />
 
           <div className="space-y-5">
-            {/* Lempar data initial ke CommentCard */}
             <CommentCard 
               key={forumById._id} 
               roomId={forumById._id} 
@@ -61,7 +57,6 @@ export default async function DiscussionPage({ params }: Props) {
               currentUser={chatData?.username || ""}
             />
             
-            {/* Tampilan jika room chat masih kosong */}
             {(!chatData?.message || chatData.message.length === 0) && (
               <div className="card py-20 text-center">
                 <MessageCircle size={48} className="mx-auto mb-4 text-muted-foreground" />

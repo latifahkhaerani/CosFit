@@ -21,11 +21,9 @@ app.prepare().then(() => {
       console.log(`User ${socket.id} joined room: ${roomId}`);
     });
 
-    // PERBAIKAN: Server meneruskan langsung chatData (bukan seluruh payload)
     socket.on("send_msg", (payload) => {
       const { roomId, chatData } = payload;
       
-      // Kirim chatData ke semua user di roomId
       io.to(roomId).emit("receive_msg", chatData);
     });
 

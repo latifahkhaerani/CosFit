@@ -29,7 +29,6 @@ export default class ChatModel {
     const newChat = { roomId, userId: new ObjectId(userId), content: body, createdAt: new Date() };
     const insertResult = await this.collection().insertOne(newChat);
 
-    // Pastikan hasil kembalian memiliki struktur: { _id, content, user: [...] }
     const agg = [
         { '$match': { '_id': insertResult.insertedId } },
         {
@@ -44,6 +43,6 @@ export default class ChatModel {
     ];
 
     const result = await this.collection().aggregate(agg).toArray();
-    return result[0]; // Ini akan berisi objek lengkap dengan user
+    return result[0]; 
 }
 }

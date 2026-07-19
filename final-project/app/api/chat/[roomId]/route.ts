@@ -12,7 +12,6 @@ export async function GET(req: Request, { params }: { params: Promise<{ roomId: 
 
         return Response.json(response)
     } catch (error) {
-        // PERBAIKAN: Tambahkan kata "return" di sini
         return errorHandler(error) 
     }
 }
@@ -29,12 +28,9 @@ export async function POST(req: Request, { params }: { params: Promise<{ roomId:
 
         const response = await ChatModel.postChat(roomId, userId, body)
 
-        // PERBAIKAN UTAMA: Wajib me-return Response agar Next.js tidak 500 Error
-        // Kita letakkan data terbaru di property 'message' agar klop dengan frontend
         return Response.json({ status: 201, message: response })
 
     } catch (error) {
-        // PERBAIKAN: Tambahkan kata "return" di sini
         return errorHandler(error) 
     }
 }

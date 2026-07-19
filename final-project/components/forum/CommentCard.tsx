@@ -57,13 +57,13 @@ export default function CommentCard({ roomId, initialMessages, currentUser }: Co
         const username = chat?.user?.[0]?.username || "Unknown";
         const isMe = username === currentUser;
         const initialLetter = username.charAt(0).toUpperCase();
-        const role = isMe ? "Author" : "Member";
+        const role = isMe ? "You" : "Someone";
 
         return (
-          <div key={chat._id} className="card rounded-xl border border-[var(--border)] bg-white p-6 shadow-sm">
+          <div key={chat._id} className="card rounded-xl border border-border bg-white p-6 shadow-sm">
             <div className="flex gap-4">
               
-              <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-orange-100 font-bold text-lg text-orange-600 select-none">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-orange-100 font-bold text-lg text-orange-600 select-none">
                 {initialLetter}
               </div>
 
@@ -71,7 +71,7 @@ export default function CommentCard({ roomId, initialMessages, currentUser }: Co
                 <div className="flex items-start justify-between">
                   <div>
                     <div className="flex items-center gap-3">
-                      <h4 className="font-semibold text-[var(--foreground)]">
+                      <h4 className="font-semibold text-(--foreground)">
                         {username}
                       </h4>
 
@@ -85,7 +85,7 @@ export default function CommentCard({ roomId, initialMessages, currentUser }: Co
                         {role}
                       </span>
 
-                      <span className="text-xs text-[var(--muted)] text-muted-foreground">
+                      <span className="text-xs text-muted text-muted-foreground">
                         {chat.createdAt
                           ? new Date(chat.createdAt).toLocaleDateString()
                           : "Just now"}
@@ -93,22 +93,22 @@ export default function CommentCard({ roomId, initialMessages, currentUser }: Co
                     </div>
                   </div>
 
-                  <button className="rounded-lg p-2 text-muted-foreground transition-colors hover:bg-[#FCFBFA] hover:text-[var(--foreground)]">
+                  <button className="rounded-lg p-2 text-muted-foreground transition-colors hover:bg-[#FCFBFA] hover:text-(--foreground)">
                     <MoreHorizontal size={18} />
                   </button>
                 </div>
 
-                <p className="mt-4 whitespace-pre-line leading-8 text-[var(--text)]">
+                <p className="mt-4 whitespace-pre-line leading-8 text-(--text)">
                   {chat.content}
                 </p>
 
                 <div className="mt-5 flex gap-6 text-sm text-muted-foreground">
-                  <button className="flex items-center gap-2 transition-colors hover:text-[var(--primary)]">
+                  <button className="flex items-center gap-2 transition-colors hover:text-primary">
                     <Heart size={16} />
                     0
                   </button>
 
-                  <button className="flex items-center gap-2 transition-colors hover:text-[var(--primary)]">
+                  <button className="flex items-center gap-2 transition-colors hover:text-primary">
                     <Reply size={16} />
                     Reply
                   </button>
