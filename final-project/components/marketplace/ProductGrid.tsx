@@ -16,7 +16,7 @@ export interface ProductGridProps {
 export default function ProductGrid({
   products,
   wishlist = [],
-  currency = "USD",
+  currency = "IDR",
   emptyTitle = "No products found",
   emptyDescription = "Try adjusting your filters or search term.",
   onToggleFavorite,

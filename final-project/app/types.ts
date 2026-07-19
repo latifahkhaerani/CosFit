@@ -22,13 +22,12 @@ export interface GetProduct {
   finalPrice: number;
   stock: number;
   views: number;
-  wishlists: [GetWishlist]
+  wishlists: [GetWishlist];
 }
 
 export interface GetWishlist {
   _id: string;
   productId: string;
-  aiImgUrl: string;
   userId: string;
   product: GetProduct;
 }
@@ -122,7 +121,6 @@ export interface PostProduct {
 
 export interface PostWishlist {
   productId: string;
-  aiImgUrl: string;
 }
 
 export interface PostUserProfile {
