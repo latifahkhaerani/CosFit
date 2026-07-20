@@ -94,7 +94,7 @@ export default class ProductModel {
   static async postProduct(productData: PostProduct, vendorId: string) {
     const result = await this.collection().insertOne({
       ...productData,
-      vendorId: new ObjectId(vendorId),
+      vendorId: new ObjectId(vendorId), 
     });
     return "Product created with ID: " + result.insertedId;
   }
