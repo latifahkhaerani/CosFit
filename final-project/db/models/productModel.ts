@@ -96,7 +96,6 @@ export default class ProductModel {
       ...productData,
       vendorId: new ObjectId(vendorId),
     });
-    console.log(result);
     return "Product created with ID: " + result.insertedId;
   }
 

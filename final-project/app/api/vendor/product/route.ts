@@ -33,14 +33,26 @@ export async function POST(req: Request) {
     const originalPrice = formData.get("originalPrice") as string;
     const stock = formData.get("stock") as string;
     const finalPrice = formData.get("finalPrice") as string;
+    const galery = formData.getAll("imgGalery") as File[]
 
     const blob = await put(image.name, image, {
             access: 'public',
             addRandomSuffix: true
         });
 
+      
+    const imgGalery = await Promise.all(
+    galery.map(async (img) => {
+      const blob = await put(img.name, img, {
+        access: "public",
+        addRandomSuffix: true,
+      });
+
+      return blob.url;
+    })
+);
     const imgUrl = blob.url
-    const result = await ProductModel.postProduct({imgUrl, title, desc, size, theme, originalPrice, stock, finalPrice}, vendorId);
+    const result = await ProductModel.postProduct({imgUrl, title, desc, size, theme, originalPrice, stock, finalPrice, imgGalery}, vendorId);
     return Response.json(result);
   } catch (error) {
     return errorHandler(error);

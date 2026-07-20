@@ -9,6 +9,7 @@ export default function CreateProd(){
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [error, setError] = useState<Error>()
     const [imgUrl, setImgUrl] = useState<File | string>("")
+    const [imgGalery, setImgGalery] = useState<File[] | string[]>([])
     const [desc, setDesc] = useState("")
     const [size, setSize] = useState("")
     const [theme, setTheme] = useState("")
@@ -35,6 +36,9 @@ export default function CreateProd(){
         formData.append("originalPrice", originalPrice);
         formData.append("stock", stock);
         formData.append("finalPrice", originalPrice)
+        imgGalery.forEach((file) => {
+          formData.append("imgGalery", file);
+        });
 
         const res = await fetch("/api/vendor/product", {
             method: "POST",
@@ -75,7 +79,7 @@ export default function CreateProd(){
             <textarea id="desc" required rows={6} className="input-soft w-full resize-y" placeholder="Detail of your product, size, or materials of your product." value={desc} onChange={(e) => {setDesc(e.target.value)}} />
           </Field>
 
-          <Field label="Product image" htmlFor="img" icon={<ImageIcon size={17} />} hint="Your image will be uploaded securely and saved as a public URL.">
+          <Field label="Thumbnail image" htmlFor="img" icon={<ImageIcon size={17} />} hint="Your image will be uploaded securely and saved as a public URL.">
             <input
               id="img"
               required
@@ -84,6 +88,40 @@ export default function CreateProd(){
               className="input-soft w-full file:mr-4 file:rounded-xl file:border-0 file:bg-[#F8EEEA] file:px-3 file:py-2 file:font-semibold file:text-[var(--primary)]"
               onChange={(e) => {setImgUrl(e.target.files?.[0] ?? "")}}
             />
+          </Field>
+
+          <Field
+          label="Preview images"
+          htmlFor="img"
+          icon={<ImageIcon size={17} />}
+          hint="Your images will be uploaded securely and saved as public URLs."
+          >
+            <input
+              id="img"
+              required
+              type="file"
+              accept="image/*"
+              multiple
+              className="input-soft w-full file:mr-4 file:rounded-xl file:border-0 file:bg-[#F8EEEA] file:px-3 file:py-2 file:font-semibold file:text-[var(--primary)]"
+              onChange={(e) => {
+              if (e.target.files) {
+                setImgGalery((prev) => [
+                  ...prev,
+                  ...Array.from(e.target.files),
+                ]);
+              }
+            }}
+            />
+            <div className="flex grid-cols-6 grid">
+              {imgGalery.map((file, index) => (
+                <img
+                  key={index}
+                  src={URL.createObjectURL(file)}
+                  alt={file.name}
+                  className="w-24 h-24 object-cover rounded"
+                />
+              ))}
+            </div>
           </Field>
 
         <div className="grid md:grid-cols-2 gap-6">
