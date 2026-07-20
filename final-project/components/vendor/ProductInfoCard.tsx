@@ -1,14 +1,16 @@
 "use client";
 
+import errorHandler from "@/app/helpers/errorHandler";
 import { GetProduct } from "@/app/types";
 import {
-  CalendarDays,
   Coins,
-  Package2,
   Boxes,
-  UserCheck,
+  TypeOutline,
+  Palette,
+  Ruler,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { SubmitEvent, useEffect, useState } from "react";
 
 export default function ProductInfoCard({product}: {product: GetProduct}) {
 
@@ -21,15 +23,43 @@ export default function ProductInfoCard({product}: {product: GetProduct}) {
   const [originalPrice, setOriginalPrice] = useState(product.originalPrice)
   const [stock, setStock] = useState(product.stock)
   const [discount, setDiscount] = useState(product.discount)
+  const [finalPrice, setFinalPrice] = useState(product.finalPrice)
+
+  const route = useRouter()
+
+  const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    try {
+      if(!discount){
+        setFinalPrice(originalPrice)
+      }
+      const res =await fetch(`http://localhost:3000/api/user/product/${product._id}/edit`, {
+        method: "PATCH",  
+        headers: {
+          'Content-Type':'application/json'
+        },
+        body: JSON.stringify({desc, size, theme, originalPrice, stock, finalPrice, discount})
+      })
+      
+      setIsEdit(false)
+      route.push(`/vendor/product/${product._id}`)
+    } catch (error) {
+      errorHandler(error)
+    }
+  }
 
   useEffect(() => {
-    console.log(isEdit);
-  }, [isEdit])
+    const priceCalc = +originalPrice - (+originalPrice * +discount / 100)
+    setFinalPrice(priceCalc)
+  }, [discount])
 
   return (
     <section className="card p-7">
+      <div className="gap-5 flex">
+        <button className="secondary-btn" onClick={() => {setIsEdit(true)}}>Edit</button>
+        <button className="secondary-btn" onClick={() => {setIsEdit(false)}}>Cancel</button>
+      </div>
 
-      <button className="secondary-btn" onClick={() => {setIsEdit(true)}}>Edit</button>
       {/* Header */}
 
       <div className="mb-8">
@@ -49,39 +79,83 @@ export default function ProductInfoCard({product}: {product: GetProduct}) {
         <div className="space-y-5">
 
           <InfoItem
+            icon={<TypeOutline size={18} />}
+            title="Title"
+            value={title}
+          />
+
+          <InfoItem
+            icon={<Palette size={18} />}
+            title="Theme"
+            value={theme}
+          />
+
+          <InfoItem
+            icon={<TypeOutline size={18} />}
+            title="Description"
+            value={desc}
+          />
+
+          <InfoItem
+            icon={<Boxes size={18} />}
+            title="Stock"
+            value={stock + ""}
+          />
+
+          <InfoItem
+            icon={<Ruler size={18} />}
+            title="Size"
+            value={size}
+          />
+
+          <InfoItem
             icon={<Coins size={18} />}
             title="Original Price"
             value={originalPrice + ""}
           />
 
           <InfoItem
-            icon={<CalendarDays size={18} />}
-            title="Minimum Rental"
+            icon={<Coins size={18} />}
+            title="Discount"
+            value={(discount?? 0) + ""}
           />
 
           <InfoItem
-            icon={<Package2 size={18} />}
-            title="Deposit"
-            value="Rp 1.000.000"
+            icon={<Coins size={18} />}
+            title="Final Price"
+            value={(finalPrice ?? 0) + ""}
           />
-
-          <InfoItem
-            icon={<Boxes size={18} />}
-            title="Current Stock"
-            value="2 Sets"
-          />
-
-          <InfoItem
-            icon={<UserCheck size={18} />}
-            title="Currently Rented"
-            value="1 Set"
-          />
-
         </div>
 
       ): (
         <div>
-
+          <form onSubmit={handleSubmit}>
+            <Field label="Product Name" htmlFor="nameForum">
+            <input id="nameForum" required className="input-soft w-full" placeholder="e.g. Yae Miko XL" value={title} onChange={(e) => {setTitle(e.target.value)}}/>
+            </Field>
+            <Field label="Theme" htmlFor="Theme">
+            <input id="Theme" required className="input-soft w-full" placeholder="e.g. Yae Miko XL" value={theme} onChange={(e) => {setTheme(e.target.value)}}/>
+            </Field>
+            <Field label="Description" htmlFor="Description">
+            <input id="Description" required className="input-soft w-full" placeholder="e.g. Yae Miko XL" value={desc} onChange={(e) => {setDesc(e.target.value)}}/>
+            </Field>
+            <Field label="Stock" htmlFor="Stock">
+            <input id="Stock" required className="input-soft w-full" placeholder="e.g. Yae Miko XL" value={stock} onChange={(e) => {setStock(+e.target.value)}}/>
+            </Field>
+            <Field label="Size" htmlFor="Size">
+            <input id="Size" required className="input-soft w-full" placeholder="e.g. Yae Miko XL" value={size} onChange={(e) => {setSize(+e.target.value)}}/>
+            </Field>
+            <Field label="Original Price" htmlFor="Original Price">
+            <input id="Original Price" required className="input-soft w-full" placeholder="e.g. Yae Miko XL" value={originalPrice} onChange={(e) => {setOriginalPrice(+e.target.value)}}/>
+            </Field>
+            <Field label="Discount" htmlFor="Discount">
+            <input id="Discount" required className="input-soft w-full" placeholder="e.g. Yae Miko XL" value={discount?? 0} onChange={(e) => {setDiscount(+e.target.value)}}/>
+            </Field>
+            <Field label="Final Price" htmlFor="Final Price">
+            <input id="Final Price" required className="input-soft w-full" placeholder={(finalPrice?? 0) + ""} readOnly/>
+            </Field>
+            <button className="secondary-btn" type="submit">Submit</button>
+          </form>
         </div>
       )}
 
@@ -152,6 +226,16 @@ function InfoItem({
 
         </div>
       )}
+    </div>
+  );
+}
+
+function Field({ label, htmlFor, icon, hint, children }: { label: string; htmlFor: string; icon?: React.ReactNode; hint?: string; children: React.ReactNode }) {
+  return (
+    <div>
+      <label htmlFor={htmlFor} className="mb-2 flex items-center gap-2 font-semibold text-[var(--text)]">{icon}{label}</label>
+      {children}
+      {hint ? <p className="mt-2 text-sm text-[var(--muted)]">{hint}</p> : null}
     </div>
   );
 }

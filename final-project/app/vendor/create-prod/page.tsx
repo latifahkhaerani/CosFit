@@ -34,6 +34,7 @@ export default function CreateProd(){
         formData.append("theme", theme);
         formData.append("originalPrice", originalPrice);
         formData.append("stock", stock);
+        formData.append("finalPrice", originalPrice)
 
         const res = await fetch("/api/vendor/product", {
             method: "POST",

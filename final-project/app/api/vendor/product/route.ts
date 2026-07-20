@@ -32,6 +32,7 @@ export async function POST(req: Request) {
     const theme = formData.get("theme") as string;
     const originalPrice = formData.get("originalPrice") as string;
     const stock = formData.get("stock") as string;
+    const finalPrice = formData.get("finalPrice") as string;
 
     const blob = await put(image.name, image, {
             access: 'public',
@@ -39,7 +40,7 @@ export async function POST(req: Request) {
         });
 
     const imgUrl = blob.url
-    const result = await ProductModel.postProduct({imgUrl, title, desc, size, theme, originalPrice, stock}, vendorId);
+    const result = await ProductModel.postProduct({imgUrl, title, desc, size, theme, originalPrice, stock, finalPrice}, vendorId);
     return Response.json(result);
   } catch (error) {
     return errorHandler(error);

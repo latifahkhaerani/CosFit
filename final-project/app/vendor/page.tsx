@@ -112,7 +112,9 @@ export default function VendorDashboard() {
                     image={el.imgUrl}
                     character={el.title}
                     series={el.theme}
-                    price={+el.originalPrice}
+                    originalPrice={+el.originalPrice}
+                    finalPrice={el.finalPrice}
+                    discount={el.discount}
                     views={el.views?? 0}
                     wishlist={el.wishlists.length}
                     id={el._id}
