@@ -37,13 +37,11 @@ export default function ProductInfo({
           const wishlist = await response.json();
           console.log(wishlist, "<<<<<<");
 
-          // Pastikan responsnya adalah array sebelum dicocokkan
           if (Array.isArray(wishlist)) {
-            const isExist = wishlist.some((item: any) => {
-              // Menangani kemungkinan productId berupa string biasa atau object/agregasi MongoDB
+            const isExist = wishlist.some((item: GetWishlist) => {
               const targetId =
                 typeof item.productId === "object" && item.productId !== null
-                  ? item.productId._id
+                  ? item.product._id
                   : item.productId;
 
               return String(targetId) === String(product._id);
