@@ -12,14 +12,8 @@ export interface UpcomingEventsProps {
   onSelectEvent?: (eventId: string) => void;
 }
 
-const placeholderEvents: GetOurEvent[] = Array.from({ length: 4 }, (_, i) => ({
-  _id: `event-${i}`,
-  eventName: "",
-  category: "",
-  imgUrl: "",
-  forumId: "",
-  description: "",
-}));
+const data = await fetch("http://localhost:3000/api/event/closest");
+const Events: GetOurEvent[] = await data.json();
 
 function EventCard({
   event,
@@ -38,7 +32,7 @@ function EventCard({
           <img
             src={event.imgUrl}
             alt={event.eventName || "Event"}
-            className="h-full w-full object-cover"
+            className="h-full w-full object-cover object-top"
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center text-base text-muted">
@@ -74,7 +68,7 @@ function EventCard({
 export default function UpcomingEvents({
   title = "Upcoming Events",
   viewAllLabel = "View All Events",
-  events = placeholderEvents,
+  events = Events,
   joinLabel = "Join Event",
   onViewAll,
   onSelectEvent,
@@ -89,7 +83,7 @@ export default function UpcomingEvents({
         <button
           type="button"
           onClick={onViewAll}
-          className="text-base font-medium text-primary hover:text-secondary"
+          className="text-base font-medium text-primary hover:text-secondary hover:underline"
         >
           {viewAllLabel} &rarr;
         </button>
@@ -97,7 +91,12 @@ export default function UpcomingEvents({
 
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
         {events.map((event) => (
-          <EventCard key={event._id} event={event} joinLabel={joinLabel} onSelect={onSelectEvent} />
+          <EventCard
+            key={event._id}
+            event={event}
+            joinLabel={joinLabel}
+            onSelect={onSelectEvent}
+          />
         ))}
       </div>
     </section>

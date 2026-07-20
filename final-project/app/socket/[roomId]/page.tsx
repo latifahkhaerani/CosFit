@@ -76,7 +76,6 @@ export default function SocketPage({ params }: { params: Promise<{ roomId: strin
     };
   }, [roomId]);
 
-  // Autoscroll ke pesan paling bawah setiap kali array messages berubah
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);

@@ -9,42 +9,45 @@ export default class ForumModel{
     }
 
     static async getAllForums(){
-    const agg = [
+  const agg = [
   {
-    '$lookup': {
-      'from': 'users', 
-      'localField': 'creatorId', 
-      'foreignField': '_id', 
-      'as': 'userTemp'
+    $lookup: {
+      from: "users",
+      localField: "creatorId",
+      foreignField: "_id",
+      as: "userTemp"
     }
-  }, 
-
+  },
   {
-    '$lookup': {
-      'from': 'profiles', 
-      'localField': 'creatorId', 
-      'foreignField': '_id', 
-      'as': 'profileTemp'
+    $lookup: {
+      from: "profiles",
+      localField: "creatorId",
+      foreignField: "_id",
+      as: "profileTemp"
     }
-  }, 
-
+  },
   {
-    '$addFields': {
-      'creator': {
-        '$cond': {
-          'if': { '$gt': [{ '$size': '$userTemp' }, 0] },
-          'then': { '$arrayElemAt': ['$userTemp', 0] },   
-          'else': { '$arrayElemAt': ['$profileTemp', 0] }
+    $addFields: {
+      creator: {
+        $cond: {
+          if: { $gt: [{ $size: "$userTemp" }, 0] },
+          then: { $arrayElemAt: ["$userTemp", 0] },
+          else: { $arrayElemAt: ["$profileTemp", 0] }
         }
       }
     }
-  }, 
+  },
   {
-    '$project': {
-      'userTemp': 0,
-      'profileTemp': 0,
-      'creator.password': 0,
-      'creator.email': 0
+    $project: {
+      userTemp: 0,
+      profileTemp: 0,
+      "creator.password": 0,
+      "creator.email": 0
+    }
+  },
+  {
+    $sort: {
+      createdAt: -1
     }
   }
 ];
@@ -71,4 +74,48 @@ export default class ForumModel{
         const forum = await this.collection().findOne({_id: new ObjectId(id)})
         return forum
     }
+
+  static async getForumId(slug: string) {
+  const agg = [
+    {
+      $match: {
+        slug: slug
+      }
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "creatorId",
+        foreignField: "_id",
+        as: "creator"
+      }
+    },
+    {
+      $project: {
+        _id: 1,
+        slug: 1,
+        nameForum: 1,
+        desc: 1,
+        tag: 1,
+        image: 1,
+        createdAt: 1,
+        creatorId: 1,
+        creator: { 
+          $arrayElemAt: ["$creator", 0] 
+        }
+      }
+    },
+    {
+      $project: {
+        "creator.password": 0,
+        "creator.email": 0
+      }
+    }
+  ];
+
+  const cursor = this.collection().aggregate(agg);
+  const forums = await cursor.toArray();
+
+  return forums[0];
+}
 }

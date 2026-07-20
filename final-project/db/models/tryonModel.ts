@@ -1,6 +1,7 @@
 
 import { put } from '@vercel/blob';
 import { database } from "../config/mongodb";
+import { ObjectId } from 'mongodb';
 
 
 export default class TryOnModel {
@@ -15,6 +16,7 @@ static async UserTryOn(yourImg: File, cosImg: File, userId: string) {
     access: 'public',
     addRandomSuffix: true
   });
+
   const blob2 = await put(cosImg.name, cosImg, {
     access: 'public',
     addRandomSuffix: true
@@ -82,6 +84,10 @@ static async UserTryOn(yourImg: File, cosImg: File, userId: string) {
 
   await this.collection().insertOne(payload);
   
-  return AIimg;
+  return AIimg; 
 }
+
+static async getHistory (userId: string){
+  return await this.collection().find({"_id": new ObjectId(userId)})
+  }
 }
