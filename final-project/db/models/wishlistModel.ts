@@ -45,10 +45,6 @@ export default class WishlistModel {
   }
 
   static async deleteWishlist(id: string, userId: string) {
-    const cek = await this.collection().findOne({
-      productId: new ObjectId(id),
-      userId: new ObjectId(userId),
-    });
     const result = await this.collection().deleteOne({
       productId: new ObjectId(id),
       userId: new ObjectId(userId),
