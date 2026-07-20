@@ -31,10 +31,34 @@ export default async function CheckoutPage() {
   const checkout = await getCheckout();
   const vendor = checkout[0].vendor;
 
-  const products = checkout.map((item) => item.product);
+  const groupedProducts = Object.values(
+    checkout.reduce(
+      (acc, item) => {
+        const id = item.product._id;
 
-  const subtotal = products.reduce(
-    (total, product) => total + Number(product.originalPrice),
+        if (!acc[id]) {
+          acc[id] = {
+            product: item.product,
+            quantity: 0,
+          };
+        }
+
+        acc[id].quantity += 1;
+
+        return acc;
+      },
+      {} as Record<
+        string,
+        {
+          product: GetProduct;
+          quantity: number;
+        }
+      >,
+    ),
+  );
+
+  const subtotal = groupedProducts.reduce(
+    (total, item) => total + Number(item.product.originalPrice) * item.quantity,
     0,
   );
 
@@ -45,13 +69,24 @@ export default async function CheckoutPage() {
   const total = subtotal + protection + serviceFee + shipping;
 
   return (
-    <main className="min-h-screen bg-background pb-20">
+    <main className="min-h-screen bg-background m-5">
+      {/* Heading */}
+
+      <div className="mb-8 flex flex-col gap-2">
+        <h2 className="flex items-center gap-2 text-3xl font-bold tracking-tight lg:text-4xl">
+          Checkout
+          <Sparkles className="text-accent" size={22} />
+        </h2>
+
+        <p className="max-w-2xl text-sm leading-7 text-muted lg:text-base">
+          Almost there! Complete your rental.
+        </p>
+      </div>
+
       {/* STEP */}
 
-      <section className="border-b border-border bg-white">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-6">
-          <h1 className="text-4xl font-bold text-primary">CosFit</h1>
-
+      <section className="sticky top-0 z-40 border-b border-border/60 bg-white/90 backdrop-blur-md">
+        <div className="mx-auto flex h-20 max-w-[1440px] items-center justify-between px-4 sm:px-6 lg:px-8 xl:px-10">
           <div className="hidden items-center gap-12 lg:flex">
             <Step active number={1} title="Checkout" />
 
@@ -68,83 +103,103 @@ export default async function CheckoutPage() {
         </div>
       </section>
 
-      <div className="mx-auto mt-10 max-w-7xl px-6">
-        {/* Heading */}
-
-        <div className="mb-8">
-          <h2 className="flex items-center gap-2 text-4xl font-bold">
-            Checkout
-            <Sparkles className="text-accent" size={22} />
-          </h2>
-
-          <p className="mt-2 text-muted">Almost there! Complete your rental.</p>
-        </div>
-
-        <div className="grid gap-6 xl:grid-cols-[1.6fr_420px]">
+      <div className="mx-auto max-w-[1440px] px-4 py-8 sm:px-6 lg:px-8 xl:px-10 xl:py-10">
+        <div className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_380px]">
           {/* LEFT */}
 
           <section className="space-y-5">
             {/* Costume */}
 
-            {products.map((product, index) => (
-              <div key={product._id} className="card p-5">
-                <div className="mb-5 flex items-center gap-3">
-                  <CircleNumber number={index + 1} />
-                  <h3 className="text-xl font-semibold">Selected Costume</h3>
+            <div className="card rounded-3xl p-6">
+              <div className="mb-6 flex items-center justify-between border-b border-border pb-4">
+                <div className="flex items-center gap-3">
+                  <CircleNumber number={1} />
+
+                  <h3 className="text-lg font-semibold">Selected Costumes</h3>
                 </div>
 
-                <div className="flex items-center justify-between">
-                  <div className="flex gap-5">
-                    <div className="relative h-28 w-24 overflow-hidden rounded-xl">
-                      <Image
-                        src={product.imgUrl}
-                        alt={product.title}
-                        fill
-                        className="object-cover"
-                      />
-                    </div>
+                <span className="rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary">
+                  {groupedProducts.length} Item
+                  {groupedProducts.length > 1 && "s"}
+                </span>
+              </div>
 
-                    <div className="flex flex-col justify-center">
-                      <h4 className="text-2xl font-semibold">
-                        {product.title}
-                      </h4>
-                      <p>{product.theme}</p>
+              <div className="space-y-5">
+                {groupedProducts.map(({ product, quantity }) => (
+                  <div
+                    key={product._id}
+                    className="flex flex-col gap-5 rounded-2xl border border-border p-4 transition hover:shadow-md lg:flex-row lg:items-center lg:justify-between"
+                  >
+                    {/* LEFT */}
 
-                      <p className="mt-2 text-sm">
-                        Vendor{" "}
-                        <span className="font-medium">{vendor.namaToko}</span>
-                      </p>
+                    <div className="flex gap-4">
+                      <div className="relative h-32 w-24 overflow-hidden rounded-2xl">
+                        <Image
+                          src={product.imgUrl}
+                          alt={product.title}
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
 
-                      <div className="mt-3 flex gap-2">
-                        <span className="rounded-full bg-orange-50 px-3 py-1 text-xs">
-                          Size {product.size}
-                        </span>
+                      <div className="flex flex-col justify-between">
+                        <div>
+                          <h4 className="text-xl font-semibold">
+                            {product.title}
+                          </h4>
 
-                        <span className="rounded-full bg-green-100 px-3 py-1 text-xs text-green-700">
-                          Good Match
-                        </span>
+                          <p className="mt-1 text-sm text-muted">
+                            {product.theme}
+                          </p>
+
+                          <p className="mt-3 text-sm">
+                            Vendor{" "}
+                            <span className="font-semibold">
+                              {vendor.namaToko}
+                            </span>
+                          </p>
+                        </div>
+
+                        <div className="mt-4 flex flex-wrap gap-2">
+                          <span className="rounded-full bg-orange-50 px-3 py-1 text-xs font-medium text-orange-700">
+                            Size {product.size}
+                          </span>
+
+                          <span className="rounded-full bg-green-50 px-3 py-1 text-xs font-medium text-green-700">
+                            ✓ Good Match
+                          </span>
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  <div className="text-right">
-                    <h3 className="text-3xl font-bold text-primary">
-                      Rp {Number(product.originalPrice).toLocaleString("id-ID")}
-                    </h3>
+                    {/* RIGHT */}
 
-                    <p className="text-muted">/ 3 Days</p>
+                    <div className="flex flex-col items-end gap-3">
+                      <span className="rounded-full bg-background px-3 py-1 text-sm font-medium">
+                        Qty × {quantity}
+                      </span>
+
+                      <h3 className="text-2xl font-bold text-primary">
+                        Rp{" "}
+                        {Number(product.originalPrice).toLocaleString("id-ID")}
+                      </h3>
+
+                      <p className="text-sm text-muted">/ costume</p>
+                    </div>
                   </div>
-                </div>
+                ))}
               </div>
-            ))}
+            </div>
 
             {/* Rental */}
 
-            <div className="card p-5">
-              <div className="mb-5 flex items-center gap-3">
+            <div className="card rounded-3xl p-5 lg:p-6">
+              <div className="mb-6 flex items-center gap-3 border-b border-border pb-4">
                 <CircleNumber number={2} />
 
-                <h3 className="text-xl font-semibold">Rental Duration</h3>
+                <h3 className="text-lg font-semibold tracking-tight font-semibold">
+                  Rental Duration
+                </h3>
               </div>
 
               <div className="grid gap-4 lg:grid-cols-[1fr_auto_1fr_auto]">
@@ -165,11 +220,13 @@ export default async function CheckoutPage() {
 
             {/* Vendor Information */}
 
-            <div className="card p-5">
-              <div className="mb-5 flex items-center gap-3">
+            <div className="card rounded-3xl p-5 lg:p-6">
+              <div className="mb-6 flex items-center gap-3 border-b border-border pb-4">
                 <CircleNumber number={3} />
 
-                <h3 className="text-xl font-semibold">Vendor Information</h3>
+                <h3 className="text-lg font-semibold tracking-tight font-semibold">
+                  Vendor Information
+                </h3>
               </div>
 
               <div className="flex items-center justify-between">
@@ -209,11 +266,13 @@ export default async function CheckoutPage() {
 
             {/* Pickup / Delivery */}
 
-            <div className="card p-5">
-              <div className="mb-5 flex items-center gap-3">
+            <div className="card rounded-3xl p-5 lg:p-6">
+              <div className="mb-6 flex items-center gap-3 border-b border-border pb-4">
                 <CircleNumber number={4} />
 
-                <h3 className="text-xl font-semibold">Pickup or Delivery</h3>
+                <h3 className="text-lg font-semibold tracking-tight font-semibold">
+                  Pickup or Delivery
+                </h3>
               </div>
 
               <div className="grid gap-4 md:grid-cols-2">
@@ -274,11 +333,11 @@ export default async function CheckoutPage() {
 
             {/* Additional Information */}
 
-            <div className="card p-5">
-              <div className="mb-5 flex items-center gap-3">
+            <div className="card rounded-3xl p-5 lg:p-6">
+              <div className="mb-6 flex items-center gap-3 border-b border-border pb-4">
                 <CircleNumber number={5} />
 
-                <h3 className="text-xl font-semibold">
+                <h3 className="text-lg font-semibold tracking-tight font-semibold">
                   Additional Information
                 </h3>
               </div>
@@ -352,11 +411,13 @@ export default async function CheckoutPage() {
           <aside className="sticky top-24 h-fit space-y-5">
             {/* Order Summary */}
 
-            <div className="card p-5">
-              <h3 className="mb-5 text-xl font-semibold">Order Summary</h3>
+            <div className="card rounded-3xl p-5 lg:p-6">
+              <h3 className="mb-5 text-lg font-semibold tracking-tight font-semibold">
+                Order Summary
+              </h3>
 
               <div className="space-y-4">
-                {products.map((product) => (
+                {groupedProducts.map(({ product, quantity }) => (
                   <div key={product._id} className="flex gap-4">
                     <div className="relative h-24 w-20 overflow-hidden rounded-xl">
                       <Image
@@ -368,13 +429,25 @@ export default async function CheckoutPage() {
                     </div>
 
                     <div className="flex-1">
-                      <h4 className="text-lg font-semibold">{product.title}</h4>
+                      <div className="flex items-center justify-between">
+                        <h4 className="text-lg font-semibold">
+                          {product.title}
+                        </h4>
+
+                        <span className="rounded-full bg-background px-2 py-1 text-xs font-medium">
+                          × {quantity}
+                        </span>
+                      </div>
+
+                      {/* <h4 className="text-lg font-semibold">{product.title}</h4> */}
 
                       <p className="text-sm text-muted">{product.theme}</p>
 
                       <h3 className="text-lg font-bold text-primary">
                         Rp{" "}
-                        {Number(product.originalPrice).toLocaleString("id-ID")}
+                        {(
+                          Number(product.originalPrice) * quantity
+                        ).toLocaleString("id-ID")}
                       </h3>
 
                       <p className="text-sm text-muted">Size {product.size}</p>
@@ -420,8 +493,10 @@ export default async function CheckoutPage() {
 
             {/* Payment */}
 
-            <div className="card p-5">
-              <h3 className="mb-5 text-xl font-semibold">Payment Method</h3>
+            <div className="card rounded-3xl p-5 lg:p-6">
+              <h3 className="mb-5 text-lg font-semibold tracking-tight font-semibold">
+                Payment Method
+              </h3>
 
               <div className="space-y-3">
                 <PaymentCard active title="Credit / Debit Card" icon="💳" />
@@ -603,7 +678,7 @@ function Step({ active, number, title }: StepProps) {
 
 function CircleNumber({ number }: { number: number }) {
   return (
-    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-sm font-semibold text-white">
+    <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-xs font-semibold text-white">
       {number}
     </div>
   );
@@ -645,7 +720,7 @@ function PaymentCard({ title, icon, active }: PaymentCardProps) {
       }`}
     >
       <div className="flex items-center gap-3">
-        <span className="text-xl">{icon}</span>
+        <span className="text-lg font-semibold tracking-tight">{icon}</span>
 
         <span className="font-medium">{title}</span>
       </div>
