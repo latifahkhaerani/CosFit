@@ -2,6 +2,7 @@
 import { put } from '@vercel/blob';
 import { database } from "../config/mongodb";
 import { ObjectId } from 'mongodb';
+import UserModel from './userModel';
 
 
 export default class TryOnModel {
@@ -74,6 +75,8 @@ static async UserTryOn(yourImg: File, cosImg: File, userId: string) {
       await delay(2750); 
     }
   }
+
+  await UserModel.collection().findOneAndUpdate({"_id": new ObjectId(userId)}, { $inc: { "token": -1  } })
 
   const AIimg = result2.output[0];
 
