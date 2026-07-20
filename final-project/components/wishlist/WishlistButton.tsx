@@ -11,15 +11,18 @@ type Props = {
 export default function WishlistButton({ isWishlisted, onClick }: Props) {
   return (
     <button
+      type="button"
+      aria-label="Toggle favorite"
       onClick={onClick}
-      className={clsx(
-        "flex h-11 w-11 items-center justify-center rounded-full transition-all duration-300",
-        isWishlisted
-          ? "bg-[#B14744] text-white shadow-md"
-          : "bg-white text-[#B14744] shadow hover:bg-[#FFF3EF]",
-      )}
-    >
-      <Heart size={20} fill={isWishlisted ? "currentColor" : "none"} />
+      className="flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-sm transition-all duration-200 hover:bg-[#FFF8F3] hover:shadow-md">
+      <Heart
+        className={clsx(
+          "h-5 w-5 transition-colors duration-200",
+          isWishlisted
+            ? "fill-primary text-primary"
+            : "fill-none text-muted hover:text-primary",
+        )}
+      />
     </button>
   );
 }
