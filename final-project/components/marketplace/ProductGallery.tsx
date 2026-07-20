@@ -12,7 +12,7 @@ export default function ProductGallery({ product }: ProductGalleryProps) {
         <img
           src={product.imgUrl}
           alt={product.title || "Product"}
-          className="h-full w-full object-cover"
+          className="h-full w-full object-cover object-top"
         />
       ) : (
         <div className="flex h-full w-full items-center justify-center text-base text-muted">
