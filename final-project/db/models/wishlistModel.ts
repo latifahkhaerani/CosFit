@@ -26,9 +26,31 @@ export default class WishlistModel {
         {
           $unwind: "$product",
         },
+        {
+          $lookup: {
+            from: "vendors",
+            let: {
+              vendorId: {
+                $toObjectId: "$product.vendorId",
+              },
+            },
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $eq: ["$_id", "$$vendorId"],
+                  },
+                },
+              },
+            ],
+            as: "vendor",
+          },
+        },
+        {
+          $unwind: "$vendor",
+        },
       ])
       .toArray();
-    // return this.collection().find({ userId }).toArray();
   }
 
   static getWishlistById(id: string) {
