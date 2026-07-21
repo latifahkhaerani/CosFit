@@ -3,7 +3,7 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ChevronRight, ChevronLeft, X, Camera, Pencil, Ruler, Weight, HeartPulse, Loader2, Download } from "lucide-react";
+import { ChevronRight, ChevronLeft, X, Camera, Loader2, Download } from "lucide-react";
 import {
   ReactCompareSlider,
   ReactCompareSliderImage,
@@ -386,7 +386,7 @@ export default function TryOnPage() {
               
               <div className="space-y-4">
                 {history.length > 0 ? (
-                  history.slice(0, 4).map((item) => (
+                  history.slice(0, 3).map((item) => (
                     <div key={item._id} className="flex items-center gap-3 rounded-2xl border border-border p-3 hover:bg-gray-50 transition">
                       <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-gray-100">
                         <Image src={item.AiImgUrl} alt={item.Name} fill className="object-cover" unoptimized />
