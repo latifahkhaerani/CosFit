@@ -97,6 +97,7 @@ static async postProduct(productData: PostProduct, vendorId: string) {
 
   const result = await this.collection().insertOne({
     ...productData,
+    discount: 0,
     slug,
     vendorId: new ObjectId(vendorId),
   });

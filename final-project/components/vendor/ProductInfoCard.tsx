@@ -12,6 +12,7 @@ import {
 import { useRouter } from "next/navigation";
 import { SubmitEvent, useEffect, useState } from "react";
 import DescriptionEditor from "../DescriptionEditor";
+import ThemeCombobox from "../ThemeCombobox";
 
 export default function ProductInfoCard({product}: {product: GetProduct}) {
 
@@ -19,12 +20,20 @@ export default function ProductInfoCard({product}: {product: GetProduct}) {
   const [isEdit, setIsEdit] = useState(false)
   const [desc, setDesc] = useState(product.desc)
   const [size, setSize] = useState(product.size)
-  const [theme, setTheme] = useState(product.theme)
+  const [themes, setThemes] = useState<string[]>(product.theme ?? [])
   const [title, setTitle] = useState(product.title)
   const [originalPrice, setOriginalPrice] = useState(product.originalPrice)
   const [stock, setStock] = useState(product.stock)
   const [discount, setDiscount] = useState(product.discount)
   const [finalPrice, setFinalPrice] = useState(product.finalPrice)
+
+  const [themeOptions, setThemeOptions] = useState([
+    "Anime",
+    "Game",
+    "Maid",
+    "Fantasy",
+    "School",
+  ]);
 
   const route = useRouter()
 
@@ -39,7 +48,7 @@ export default function ProductInfoCard({product}: {product: GetProduct}) {
         headers: {
           'Content-Type':'application/json'
         },
-        body: JSON.stringify({desc, size, theme, originalPrice, stock, finalPrice, discount})
+        body: JSON.stringify({desc, size, theme: themes, originalPrice, stock, finalPrice, discount})
       })
       
       setIsEdit(false)
@@ -88,7 +97,7 @@ export default function ProductInfoCard({product}: {product: GetProduct}) {
           <InfoItem
             icon={<Palette size={18} />}
             title="Theme"
-            value={theme}
+            value={themes.join(",")}
           />
 
           <InfoItem
@@ -136,7 +145,12 @@ export default function ProductInfoCard({product}: {product: GetProduct}) {
             <input id="nameForum" required className="input-soft w-full" placeholder="e.g. Yae Miko XL" value={title} onChange={(e) => {setTitle(e.target.value)}}/>
             </Field>
             <Field label="Theme" htmlFor="Theme">
-            <input id="Theme" required className="input-soft w-full" placeholder="e.g. Yae Miko XL" value={theme} onChange={(e) => {setTheme(e.target.value)}}/>
+              <ThemeCombobox
+                value={themes}
+                onChange={setThemes}
+                options={themeOptions}
+                setOptions={setThemeOptions}
+              />
             </Field>
             <Field label="Description" htmlFor="desc">
             <DescriptionEditor
