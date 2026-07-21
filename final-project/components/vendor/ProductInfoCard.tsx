@@ -136,8 +136,8 @@ export default function ProductInfoCard({product}: {product: GetProduct}) {
             <Field label="Theme" htmlFor="Theme">
             <input id="Theme" required className="input-soft w-full" placeholder="e.g. Yae Miko XL" value={theme} onChange={(e) => {setTheme(e.target.value)}}/>
             </Field>
-            <Field label="Description" htmlFor="Description">
-            <input id="Description" required className="input-soft w-full" placeholder="e.g. Yae Miko XL" value={desc} onChange={(e) => {setDesc(e.target.value)}}/>
+            <Field label="Description" htmlFor="desc">
+            <textarea id="desc" required rows={6} className="input-soft w-full resize-y" placeholder="Detail of your product, size, or materials of your product." value={desc} onChange={(e) => {setDesc(e.target.value)}} />
             </Field>
             <Field label="Stock" htmlFor="Stock">
             <input id="Stock" required className="input-soft w-full" placeholder="e.g. Yae Miko XL" value={stock} onChange={(e) => {setStock(+e.target.value)}}/>
