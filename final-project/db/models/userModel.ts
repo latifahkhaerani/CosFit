@@ -1,6 +1,7 @@
 import * as z from "zod";
 import { hashSync } from "bcryptjs";
 import { database } from "../config/mongodb";
+import { ObjectId } from "mongodb";
 
 
 const UserSchema = z.object({
@@ -40,7 +41,55 @@ export default class UserModel {
 
         parsedData.password = hashSync(parsedData.password, 10)
 
-        const result = await this.collection().insertOne(parsedData)
+        const result = await this.collection().insertOne({...parsedData, token: 5, createdAt: new Date(), updatedAt: new Date(), claimedAt: new Date()})
         return {msg: "User created with ID: " + result.insertedId, insertedId: result.insertedId}
+    }
+
+    static async addToken (userId: string){
+        const checkToken = await this.collection().findOne({"_id": new ObjectId(userId)})
+        if (!checkToken) {
+  throw { message: "User not found", status: 404 };
+}
+        if(checkToken.token !== 0){
+            throw {message: `Spend all your token to claim more token`}
+        }
+        const oneWeek = 7 * 24 * 60 * 60 * 1000;
+
+if (Date.now() - checkToken.claimedAt.getTime() < oneWeek) {
+  throw {
+    message: "You must wait 1 week to claim more token",
+  };
+}
+
+        const result = await this.collection().updateOne(
+  { _id: new ObjectId(userId) },
+  {
+    $set: {
+      token: 5,
+      claimedAt: new Date(),
+    },
+  }
+);
+        return {message: `Success to claim Token`}
+    }
+
+    static async checkToken(userId: string){
+    const agg = [
+  {
+    '$match': {
+      '_id': new ObjectId(userId)
+    }
+  }, {
+    '$project': {
+      'password': false, 
+      '_id': false, 
+      'username': false, 
+      'email': false, 
+      'createdAt': false
+    }
+  }
+];
+const result = await this.collection().aggregate(agg).toArray()
+return result[0]
     }
 }
