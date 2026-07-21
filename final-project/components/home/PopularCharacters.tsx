@@ -3,6 +3,7 @@
 import { Sparkles, ArrowRight } from "lucide-react";
 import type { GetProduct } from "@/app/types";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export interface PopularCharactersProps {
   title?: string;
@@ -58,14 +59,16 @@ function CharacterCard({
           <p className="text-base text-muted">{character.theme || "Series"}</p>
         </div>
 
+        <Link href={`/try-on?productId=${character._id}`}>
         <button
           type="button"
           onClick={() => onTryOn?.(character._id)}
           className="mt-auto inline-flex items-center justify-center gap-2 rounded-xl border border-primary px-4 py-2.5 text-base font-medium text-primary transition hover:bg-cream/40"
-        >
+          >
           {tryOnLabel}
           <ArrowRight className="h-5 w-5" />
         </button>
+          </Link>
       </div>
     </div>
   );
