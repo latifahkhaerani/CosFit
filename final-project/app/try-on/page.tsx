@@ -24,6 +24,7 @@ interface ProductType {
   views: number;
   discount: number;
   finalPrice: number;
+  slug: string
 }
 
 interface HistoryType {
@@ -253,7 +254,7 @@ function TryOnContent() {
       } else if (data?.AiImgUrl || data?.url) {
         setAiResult(data.AiImgUrl || data.url);
       }
-      
+
       fetchToken();
     } catch (error: any) {
       Swal.fire({
@@ -649,6 +650,7 @@ function TryOnContent() {
                         <p className="subtitle text-xs text-gray-500 mb-1">Rental Price</p>
                         <h3 className="text-2xl font-bold text-primary text-[#c2410c]">Rp{selectedProduct.finalPrice.toLocaleString("id-ID")}</h3>
                       </div>
+                      <Link href={`/marketplace/products/${selectedProduct.slug}`}><button className="rounded-lg bg-[#FFF8F6] px-10 py-3 text-xs font-medium text-primary hover:bg-primary/20 transition cursor-pointer">Detail</button></Link>
                     </div>
                   </div>
                 </>

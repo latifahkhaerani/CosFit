@@ -59,7 +59,7 @@ function CharacterCard({
           <p className="text-base text-muted">{character.theme || "Series"}</p>
         </div>
 
-        <Link href={`/try-on?productId=${character._id}`}>
+        <Link href={`/try-on?productId=${character.slug}`}>
         <button
           type="button"
           onClick={() => onTryOn?.(character._id)}
