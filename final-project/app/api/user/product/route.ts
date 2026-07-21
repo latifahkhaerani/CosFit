@@ -1,4 +1,3 @@
-import { NextRequest } from "next/server";
 import ProductModel from "@/db/models/productModel";
 import errorHandler from "@/app/helpers/errorHandler";
 

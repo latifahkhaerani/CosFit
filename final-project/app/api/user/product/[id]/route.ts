@@ -1,6 +1,7 @@
 import ProductModel from "@/db/models/productModel";
 import errorHandler from "@/app/helpers/errorHandler";
 import { cookies } from "next/headers";
+import { PostProduct } from "@/app/types";
 
 export async function GET(
   req: Request,
@@ -12,6 +13,19 @@ export async function GET(
     return Response.json(result);
   } catch (error) {
     return errorHandler(error);
+  }
+}
+
+export async function PUT(
+  req: Request,
+  {params}: {params: Promise<{id: string}>}){
+  try {
+    const {id} = await params
+    const body: PostProduct = await req.json()
+    const result = await ProductModel.putProduct(body, id)
+    return Response.json(result)
+  } catch (error) {
+    return errorHandler(error)
   }
 }
 
