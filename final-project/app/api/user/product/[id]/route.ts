@@ -9,7 +9,9 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
-    const result = await ProductModel.getById(id);
+
+    const result = await ProductModel.getBySlug(id);
+
     return Response.json(result);
   } catch (error) {
     return errorHandler(error);

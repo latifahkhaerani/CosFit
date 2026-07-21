@@ -23,6 +23,7 @@ export interface GetProduct {
   stock: number;
   views: number;
   wishlists: [GetWishlist];
+  slug: string;
 }
 
 export interface GetWishlist {

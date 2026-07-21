@@ -7,19 +7,14 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const { id } = await params;
+    const { id: slug } = await params;
 
-    // 1. Cari detail produk utama untuk mendapatkan theme-nya
-    const mainProduct = await ProductModel.getById(id);
-    if (!mainProduct) {
-      return Response.json([], { status: 404 });
-    }
+    const mainProduct = await ProductModel.getBySlug(slug);
 
-    // 2. Cari maksimal 4 produk dengan theme yang sama, kecualikan produk utama
     const relatedProducts = await ProductModel.collection()
       .find({
         theme: mainProduct.theme,
-        _id: { $ne: new ObjectId(id) },
+        _id: { $ne: mainProduct._id },
       })
       .limit(4)
       .toArray();

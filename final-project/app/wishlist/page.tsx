@@ -120,6 +120,7 @@ export default async function WishlistPage() {
                 price={Number(product.originalPrice)}
                 duration="3 days"
                 // sizeMatch="unknown"
+                productSlug={product.slug}
                 isWishlisted
                 wishlistId={item._id}
                 productId={item.productId}

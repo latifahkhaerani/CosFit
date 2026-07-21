@@ -27,6 +27,7 @@ type WishlistCardProps = {
   onCheckout?: () => void;
   wishlistId: string;
   productId: string;
+  productSlug: string;
 };
 
 export default function WishlistCard({
@@ -42,6 +43,7 @@ export default function WishlistCard({
   onTryOn,
   wishlistId,
   productId,
+  productSlug,
 }: WishlistCardProps) {
   const router = useRouter();
 
@@ -73,7 +75,7 @@ export default function WishlistCard({
 
   return (
     <div
-      onClick={() => router.push(`/marketplace/products/${productId}`)}
+      onClick={() => router.push(`/marketplace/products/${productSlug}`)}
       className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
     >
       {/* IMAGE */}
