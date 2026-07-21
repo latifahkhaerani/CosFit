@@ -17,7 +17,8 @@ type Props = {
   rental: "Available" | "Rented";
   views: number;
   wishlist: number;
-  id: string
+  id: string,
+  stock: number
 };
 
 export default function VendorProductRow({
@@ -30,6 +31,7 @@ export default function VendorProductRow({
   views,
   wishlist,
   id,
+  stock
 }: Props) {
   return (
     <tr className="group border-t border-[#F5EEE8] transition hover:bg-[#FCFBFA]">
@@ -140,6 +142,27 @@ export default function VendorProductRow({
           <p className="text-xs text-[var(--muted)]">
 
             saved
+
+          </p>
+
+        </div>
+
+      </td>
+
+      
+      <td>
+
+        <div>
+
+          <h4 className="font-semibold">
+
+            {stock}
+
+          </h4>
+
+          <p className="text-xs text-[var(--muted)]">
+
+            available
 
           </p>
 

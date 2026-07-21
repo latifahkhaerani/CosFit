@@ -101,6 +101,8 @@ export default function VendorDashboard() {
 
                   <th>Wishlist</th>
 
+                  <th>Stock</th>
+
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -118,6 +120,7 @@ export default function VendorDashboard() {
                     views={el.views?? 0}
                     wishlist={el.wishlists.length}
                     id={el._id}
+                    stock={el.stock}
                     />
                   )
                 })}

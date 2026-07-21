@@ -124,6 +124,11 @@ static async postProduct(productData: PostProduct, vendorId: string) {
     return `Product image of ${product.upsertedId} updated successfully`;
   }
 
+  static async addGaleryPhoto (imgUrl: string, id: string){
+    const product = await this.collection().updateOne({ _id: new ObjectId(id) },{ $push: { imgGalery: imgUrl } },);
+    return `Product galery of ${product.upsertedId} updated successfully`;
+  }
+
   static async addViews(id: string) {
     await this.collection().updateOne(
       { _id: new ObjectId(id) },

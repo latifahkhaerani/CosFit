@@ -13,6 +13,7 @@ export interface GetProduct {
   _id: string;
   imgUrl: string;
   title: string;
+  imgGalery?: string[];
   desc: string;
   size: string;
   theme: string;
@@ -111,6 +112,7 @@ export interface PostUser {
 
 export interface PostProduct {
   imgUrl: string;
+  imgGalery?: string[];
   desc: string;
   size: string;
   theme: string;
@@ -171,7 +173,7 @@ export interface PostVendor {
   alamat: string;
   email: string;
   password: string;
-  no_rek?: [string];
+  no_rek?: string[];
   no_phone: string;
   webUrl?: string;
 }
