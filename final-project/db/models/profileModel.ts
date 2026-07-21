@@ -32,7 +32,7 @@ export default class ProfileModel{
     }
 
     static async createProfile(profileData: PostUserProfile, userId: string){
-        const result = await this.collection().insertOne({...profileData, userId: new ObjectId(userId)})
+        const result = await this.collection().insertOne({...profileData, userId: new ObjectId(userId), token: "5"})
         return "Profile created with ID: " + result.insertedId
     }
 
