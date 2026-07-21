@@ -8,19 +8,6 @@ interface ProductDetailPageProps {
   params: Promise<{ id: string }>;
 }
 
-const placeholderRelatedProducts: GetProduct[] = Array.from(
-  { length: 4 },
-  (_, i) => ({
-    _id: `related-${i}`,
-    imgUrl: "",
-    desc: "",
-    size: "",
-    theme: "",
-    title: "",
-    originalPrice: 0,
-  }),
-);
-
 export default async function ProductDetailPage({
   params,
 }: ProductDetailPageProps) {
@@ -29,6 +16,12 @@ export default async function ProductDetailPage({
     `http://localhost:3000/api/user/product/${id}`,
   ).then((res) => res.json());
 
+  const relatedProducts = await fetch(
+    `http://localhost:3000/api/user/product/${id}/related`,
+    { cache: "no-store" },
+  )
+    .then((res) => res.json())
+    .catch(() => []);
   return (
     <div className="mx-auto max-w-7xl px-6 py-10 lg:px-8">
       <ProductViewTracker productId={id} />
@@ -37,7 +30,7 @@ export default async function ProductDetailPage({
         <ProductInfo product={product} />
       </div>
 
-      <RelatedProducts products={placeholderRelatedProducts} />
+      <RelatedProducts products={relatedProducts} />
     </div>
   );
 }

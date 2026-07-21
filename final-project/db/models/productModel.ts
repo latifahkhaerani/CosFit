@@ -161,4 +161,22 @@ export default class ProductModel {
     const data = await this.collection().aggregate(agg).toArray();
     return data;
   }
+
+  static async getRelatedChar() {
+    const agg = [
+      {
+        $match: {
+          theme: "Wuthering Waves",
+          _id: {
+            $ne: new ObjectId("6a5a40d95855caae5e513959"),
+          },
+        },
+      },
+      {
+        $limit: 4,
+      },
+    ];
+    const data = await this.collection().aggregate(agg).toArray();
+    return data;
+  }
 }
