@@ -20,7 +20,7 @@ type WishlistCardProps = {
   vendorAvatar: string;
   price: number;
   duration: string;
-  sizeMatch: "good" | "possible" | "unknown";
+  // sizeMatch: "good" | "possible" | "unknown";
   isWishlisted: boolean;
   onWishlist?: () => void;
   onTryOn?: () => void;
@@ -36,7 +36,7 @@ export default function WishlistCard({
   vendor,
   price,
   duration,
-  sizeMatch,
+  // sizeMatch,
   isWishlisted,
   onWishlist,
   onTryOn,
@@ -73,7 +73,7 @@ export default function WishlistCard({
 
   return (
     <div
-      onClick={() => router.push(`/wishlist/${wishlistId}`)}
+      onClick={() => router.push(`/marketplace/products/${productId}`)}
       className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
     >
       {/* IMAGE */}
@@ -86,11 +86,14 @@ export default function WishlistCard({
           className="object-cover transition duration-500 group-hover:scale-105"
         />
 
-        <div className="absolute right-3 top-3">
+        <div
+          onClick={(e) => e.stopPropagation()}
+          className="absolute right-3 top-3"
+        >
           <WishlistButton isWishlisted={isWishlisted} onClick={onWishlist} />
         </div>
 
-        <div className="absolute bottom-3 left-3">
+        {/* <div className="absolute bottom-3 left-3">
           {sizeMatch === "good" && (
             <div className="flex items-center gap-1 rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-700">
               <CircleCheck size={14} />
@@ -110,7 +113,7 @@ export default function WishlistCard({
               Unknown
             </div>
           )}
-        </div>
+        </div> */}
       </div>
 
       {/* CONTENT */}
@@ -148,6 +151,7 @@ export default function WishlistCard({
         <div className="mt-auto grid grid-cols-2 gap-2.5">
           <Link
             href="/try-on"
+            onClick={(e) => e.stopPropagation()}
             className="flex items-center justify-center gap-2 rounded-xl border border-[#B14744] py-2 text-sm font-medium text-[#B14744] transition hover:bg-[#FFF3EF]"
           >
             <Sparkles size={15} />

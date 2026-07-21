@@ -119,7 +119,7 @@ export default async function WishlistPage() {
                 vendorAvatar="/images/default-vendor.png"
                 price={Number(product.originalPrice)}
                 duration="3 days"
-                sizeMatch="unknown"
+                // sizeMatch="unknown"
                 isWishlisted
                 wishlistId={item._id}
                 productId={item.productId}
