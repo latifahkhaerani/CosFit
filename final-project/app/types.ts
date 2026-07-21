@@ -16,18 +16,21 @@ export interface GetProduct {
   size: string;
   theme: string;
   title: string;
-  OriginalPrice: number;
+  originalPrice: number;
   vendorId: string;
   discount: number;
   finalPrice: number;
   stock: number;
+  views: number;
+  wishlists: [GetWishlist];
 }
 
 export interface GetWishlist {
   _id: string;
   productId: string;
-  aiImgUrl: string;
   userId: string;
+  product: GetProduct;
+  vendor: GetVendor;
 }
 
 export interface GetUserProfile {
@@ -42,6 +45,8 @@ export interface GetCheckout {
   productId: string;
   userId: string;
   status: string;
+  product: GetProduct; //added this to aggregate
+  vendor: GetVendor; //added this to aggregate
 }
 
 export interface GetInputImage {
@@ -83,8 +88,8 @@ export interface GetUserDesign {
 
 export interface GetVendor {
   _id: string;
-  NamaToko: string;
-  Alamat: string;
+  namaToko: string;
+  alamat: string;
   email: string;
   password: string;
   norek: string;
@@ -109,16 +114,14 @@ export interface PostProduct {
   size: string;
   theme: string;
   title: string;
-  OriginalPrice: number;
-  vendorId: string;
-  discount: number;
-  finalPrice: number;
-  stock: number;
+  originalPrice: string;
+  discount?: string;
+  finalPrice?: string;
+  stock: string;
 }
 
 export interface PostWishlist {
   productId: string;
-  aiImgUrl: string;
 }
 
 export interface PostUserProfile {
@@ -147,8 +150,7 @@ export interface PostChat {
 export interface PostRoom {
   nameForum: string;
   desc: string;
-  img: string;
-  tag: [string];
+  tag: string[];
 }
 
 export interface PostOurEvent {
@@ -170,7 +172,7 @@ export interface PostVendor {
   password: string;
   no_rek?: [string];
   no_phone: string;
-  webUrl?: string
+  webUrl?: string;
 }
 
 export interface PostMonthlySales {

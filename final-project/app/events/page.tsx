@@ -3,23 +3,33 @@ import CategoryCard from "@/components/events/CategoryCard";
 import CommunityGallery from "@/components/events/CommunityGallery";
 import EventNewsletter from "@/components/events/EventNewsletter";
 import FeaturedEventCard from "@/components/events/FeaturedEventCard";
-import FeaturedWinnerCard from "@/components/events/FeaturedWinnerCard";
+import HallOfFame from "@/components/events/HallOfFame";
 
 import HeroEvent from "@/components/events/HeroEvent";
 import PastEventCard from "@/components/events/PastEventCard";
 import EventsClient from "@/components/events/EventsClient";
+import OurEventModel from "@/db/models/ourEventModel";
+import UserDesignModel from "@/db/models/userDesignModel";
+import serializeEvent from "@/app/helpers/serializeEvent";
+import serializeUserDesign from "@/app/helpers/serializeUserDesign";
 import { Trophy, Shirt, Scissors, Camera, Ticket, Users } from "lucide-react";
 
-export default function EventsPage() {
+export const dynamic = "force-dynamic";
+
+export default async function EventsPage() {
+  const events = (await OurEventModel.getAllEvents()).map(serializeEvent);
+  const [featuredEvent, ...upcomingEvents] = events;
+  const userDesigns = (await UserDesignModel.getAllUserDesigns()).map(serializeUserDesign);
+
   return (
     <>
       <main className="page-container space-y-14">
         <HeroEvent />
 
-        <FeaturedEventCard />
+        <FeaturedEventCard event={featuredEvent} />
 
         {/* upcoming events (join event flow) */}
-        <EventsClient />
+        <EventsClient events={upcomingEvents.length > 0 ? upcomingEvents.slice(0, 4) : undefined} />
 
         {/* category */}
         <section>
@@ -100,53 +110,9 @@ export default function EventsPage() {
             />
           </div>
         </section>
-{/* Featured Winners */}
+{/* Hall of Fame (community designs, ranked by votes) */}
 
-<section>
-
-  <div className="mb-8">
-
-    <h2 className="card-title">
-
-      Hall of Fame
-
-    </h2>
-
-  </div>
-
-  <div className="grid gap-7 md:grid-cols-2 xl:grid-cols-4">
-
-    <FeaturedWinnerCard
-      image="/images/winner1.jpg"
-      name="Akira"
-      character="Raiden Shogun"
-      likes={1240}
-    />
-
-    <FeaturedWinnerCard
-      image="/images/winner2.jpg"
-      name="Luna"
-      character="2B"
-      likes={987}
-    />
-
-    <FeaturedWinnerCard
-      image="/images/winner3.jpg"
-      name="Niko"
-      character="Gojo"
-      likes={1634}
-    />
-
-    <FeaturedWinnerCard
-      image="/images/winner4.jpg"
-      name="Rin"
-      character="Makima"
-      likes={1498}
-    />
-
-  </div>
-
-</section>
+<HallOfFame designs={userDesigns} />
 
 <CommunityGallery />
 

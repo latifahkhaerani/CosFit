@@ -2,11 +2,12 @@
 
 import { Sparkles, Heart, ArrowRight } from "lucide-react";
 import type { GetProduct, GetWishlist } from "@/app/types";
+import { useEffect, useState } from "react";
 
 export interface FeaturedCostumesProps {
   title?: string;
   viewAllLabel?: string;
-  /** Products rendered as costume cards (imgUrl, title, theme -> series, OriginalPrice). */
+  /** Products rendered as costume cards (imgUrl, title, theme -> series, originalPrice). */
   costumes?: GetProduct[];
   /** Current user's wishlist entries, used to derive each costume's favorited state. */
   wishlist?: GetWishlist[];
@@ -17,48 +18,103 @@ export interface FeaturedCostumesProps {
   currency?: string; // e.g. "USD", "IDR" — passed to Intl.NumberFormat
 }
 
-const placeholderCostumes: GetProduct[] = Array.from({ length: 4 }, (_, i) => ({
-  _id: `costume-${i}`,
-  imgUrl: "",
-  desc: "",
-  size: "",
-  theme: "",
-  title: "",
-  OriginalPrice: 0,
-  vendorId: '',
-  discount: 0,
-  finalPrice: 0,
-  stock: 0,
-}));
+const data = await fetch("http://localhost:3000/api/user/product/featured");
+const char: GetProduct[] = await data.json();
 
 function formatPrice(amount: number, currency: string) {
-  if (!amount) return "$0";
+  if (!amount) return "Rp 0";
   try {
-    return new Intl.NumberFormat("en-US", {
+    return new Intl.NumberFormat("id-ID", {
       style: "currency",
       currency,
       maximumFractionDigits: 0,
     }).format(amount);
   } catch {
-    return `$${amount}`;
+    return `Rp ${amount}`;
   }
 }
 
 function CostumeCard({
   costume,
-  isFavorited,
   currency,
   detailsLabel,
   onSelect,
   onToggleFavorite,
 }: {
   costume: GetProduct;
-  isFavorited: boolean;
   currency: string;
   detailsLabel: string;
   onSelect?: (productId: string) => void;
   onToggleFavorite?: (productId: string) => void;
 }) {
+  const [isFavorited, setIsFavorited] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchWishlistStatus = async () => {
+      try {
+        const response = await fetch("/api/user/wishlist");
+        if (response.ok) {
+          const wishlist = await response.json();
+          console.log(wishlist, "<<<<<<");
+
+          if (Array.isArray(wishlist)) {
+            const isExist = wishlist.some((item: GetWishlist) => {
+              const targetId =
+                typeof item.productId === "object" && item.productId !== null
+                  ? item.product._id
+                  : item.productId;
+
+              return String(targetId) === String(costume._id);
+            });
+
+            setIsFavorited(isExist);
+          }
+        }
+      } catch (error) {
+        console.error("Gagal mengecek status wishlist:", error);
+      }
+    };
+
+    if (costume?._id) {
+      fetchWishlistStatus();
+    }
+  }, [costume?._id]);
+
+  const handleToggleFavorite = async () => {
+    if (isLoading) return;
+
+    const previousState = isFavorited;
+
+    // Optimistic Update UI
+    setIsFavorited(!isFavorited);
+    setIsLoading(true);
+
+    try {
+      if (!previousState) {
+        const response = await fetch("/api/user/wishlist", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ productId: costume._id }),
+        });
+
+        if (!response.ok) throw new Error("Gagal menambah wishlist");
+      } else {
+        const response = await fetch(`/api/user/wishlist/${costume._id}`, {
+          method: "DELETE",
+        });
+
+        if (!response.ok) throw new Error("Gagal menghapus wishlist");
+      }
+
+      onToggleFavorite?.(costume._id);
+    } catch (error) {
+      console.error(error);
+      setIsFavorited(previousState);
+    } finally {
+      setIsLoading(false);
+    }
+  };
   return (
     <div className="flex flex-col overflow-hidden rounded-2xl border border-border bg-surface">
       <div className="relative aspect-[3/4] w-full overflow-hidden bg-cream/30">
@@ -72,7 +128,7 @@ function CostumeCard({
             <img
               src={costume.imgUrl}
               alt={costume.title || "Costume"}
-              className="h-full w-full object-cover"
+              className="h-full w-full object-cover object-top"
             />
           ) : (
             <div className="flex h-full w-full items-center justify-center text-base text-muted">
@@ -83,10 +139,12 @@ function CostumeCard({
         <button
           type="button"
           aria-label="Toggle favorite"
-          onClick={() => onToggleFavorite?.(costume._id)}
+          onClick={handleToggleFavorite}
           className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full bg-surface shadow-sm transition hover:bg-cream/40"
         >
-          <Heart className={`h-5 w-5 ${isFavorited ? "fill-primary text-primary" : "text-muted"}`} />
+          <Heart
+            className={`h-5 w-5 ${isFavorited ? "fill-primary text-primary" : "text-muted"}`}
+          />
         </button>
       </div>
 
@@ -98,7 +156,7 @@ function CostumeCard({
           <p className="text-base text-muted">{costume.theme || "Series"}</p>
         </div>
         <p className="text-xl font-bold text-primary">
-          {formatPrice(costume.OriginalPrice, currency)}
+          {formatPrice(costume.originalPrice, currency)}
         </p>
 
         <button
@@ -117,13 +175,13 @@ function CostumeCard({
 export default function FeaturedCostumes({
   title = "Featured Costumes",
   viewAllLabel = "View All Costumes",
-  costumes = placeholderCostumes,
+  costumes = char,
   wishlist = [],
   detailsLabel = "View Details",
   onViewAll,
   onSelectCostume,
   onToggleFavorite,
-  currency = "USD",
+  currency = "IDR",
 }: FeaturedCostumesProps) {
   const favoritedIds = new Set(wishlist.map((entry) => entry.productId));
 
@@ -137,7 +195,7 @@ export default function FeaturedCostumes({
         <button
           type="button"
           onClick={onViewAll}
-          className="text-base font-medium text-primary hover:text-secondary"
+          className="text-base font-medium text-primary hover:text-secondary hover:underline"
         >
           {viewAllLabel} &rarr;
         </button>
@@ -148,7 +206,6 @@ export default function FeaturedCostumes({
           <CostumeCard
             key={costume._id}
             costume={costume}
-            isFavorited={favoritedIds.has(costume._id)}
             currency={currency}
             detailsLabel={detailsLabel}
             onSelect={onSelectCostume}

@@ -1,12 +1,19 @@
-import TryOnModel from "@/app/db/models/tryonModel";
+import TryOnModel from "@/db/models/tryonModel";
+import errorHandler from "@/app/helpers/errorHandler";
 
 export async function POST(req: Request)
 {
-    const userId = req.headers.get("x-user-id") as string;
-    const formData = await req.formData();
-    const yourImg = formData.get("User") as File;
-    const cosImg = formData.get("Product") as File;
-    const response = await TryOnModel.UserTryOn(yourImg, cosImg, userId)
-    return Response.json(response)
-
+    try {
+        const userId = req.headers.get("x-user-id") as string;
+        if(!userId){
+            throw {message: `Please login first`}
+        }
+        const formData = await req.formData();
+        const yourImg = formData.get("User") as File;
+        const cosImg = formData.get("Product") as File;
+        const response = await TryOnModel.UserTryOn(yourImg, cosImg, userId)
+        return Response.json(response)
+    } catch (error) {
+        return errorHandler(error)
+    }
 }

@@ -1,9 +1,9 @@
 
 import type { Metadata } from "next";
 import { Inter, Poppins } from "next/font/google";
-import Navbar from "@/components/Navbar";
 import ConditionalFooter from "@/components/ConditionalFooter";
 import "./globals.css";
+import ConditionalNavbar from "@/components/ConditionalNavbar";
 
 export const poppins = Poppins({
   subsets: ["latin"],
@@ -32,7 +32,7 @@ export default function RootLayout({
       className={`${poppins.variable} ${inter.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <Navbar />
+        <ConditionalNavbar />
         <main className="grow">{children}</main>
         <ConditionalFooter />
       </body>

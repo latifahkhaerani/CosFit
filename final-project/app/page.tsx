@@ -15,8 +15,8 @@ export default function HomePage() {
       <FeaturedCostumes />
       <UpcomingEvents />
       <CommunityDiscussions />
-      <CommunityDesigns />
-      <HowItWorks />
+      {/* <CommunityDesigns />
+      <HowItWorks /> */}
       <CTASection />
     </main>
   );

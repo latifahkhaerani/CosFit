@@ -1,4 +1,4 @@
-import WishlistModel from "@/app/db/models/wishlistModel";
+import WishlistModel from "@/db/models/wishlistModel";
 import errorHandler from "@/app/helpers/errorHandler";
 
 export async function GET(
@@ -19,8 +19,9 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const userId = req.headers.get("x-user-id") as string;
     const { id } = await params;
-    const result = await WishlistModel.deleteWishlist(id);
+    const result = await WishlistModel.deleteWishlist(id, userId);
     return Response.json({ message: result }, { status: 200 });
   } catch (error) {
     errorHandler(error);

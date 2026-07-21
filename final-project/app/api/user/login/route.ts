@@ -1,4 +1,4 @@
-import UserModel from "@/app/db/models/userModel";
+import UserModel from "@/db/models/userModel";
 import errorHandler from "@/app/helpers/errorHandler";
 import { compareSync } from "bcryptjs";
 import {sign} from "jsonwebtoken"
@@ -13,16 +13,17 @@ export async function POST(req: Request)
         }
         
         const user = await UserModel.findByEmail(body.email);
-
+        
         if (!user) {
             throw { message: "Invalid email or password", status: 401 };
         }
-
+        
         const isPasswordMatch = compareSync(body.password, user.password);
-
+        
         if (!isPasswordMatch) {
             throw { message: "Invalid email or password", status: 401 };
         }
+        console.log(true);
         const token = sign(
             { id: user._id, email: user.email, role: "User" },
             process.env.JWT_SECRET as string,

@@ -23,6 +23,9 @@ export default function PastEventCard({
       className="
       card
       group
+      flex
+      h-full
+      flex-col
       overflow-hidden
 
       transition-all
@@ -34,7 +37,7 @@ export default function PastEventCard({
     >
       {/* IMAGE */}
 
-      <div className="relative overflow-hidden">
+      <div className="relative flex-shrink-0 overflow-hidden">
 
         <Image
           src={image}
@@ -69,9 +72,9 @@ export default function PastEventCard({
 
       </div>
 
-      <div className="p-6">
+      <div className="flex flex-1 flex-col p-6">
 
-        <h3 className="text-xl font-semibold">
+        <h3 className="line-clamp-2 text-xl font-semibold">
 
           {title}
 
@@ -91,7 +94,7 @@ export default function PastEventCard({
         <button
           className="
           secondary-btn
-          mt-6
+          mt-auto
           flex
           w-full
           items-center

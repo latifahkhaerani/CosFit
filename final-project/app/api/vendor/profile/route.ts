@@ -1,5 +1,5 @@
-import VendorModel from "@/app/db/models/vendorModel";
 import errorHandler from "@/app/helpers/errorHandler";
+import VendorModel from "@/db/models/vendorModel";
 
 export async function GET(req: Request) {
   const userId = req.headers.get("x-user-id") as string;

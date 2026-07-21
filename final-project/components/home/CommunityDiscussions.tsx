@@ -37,7 +37,11 @@ function RoomCard({
       <div className="aspect-video w-full overflow-hidden bg-cream/30">
         {room.img ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={room.img} alt={room.nameForum || "Forum room"} className="h-full w-full object-cover" />
+          <img
+            src={room.img}
+            alt={room.nameForum || "Forum room"}
+            className="h-full w-full object-cover"
+          />
         ) : (
           <div className="flex h-full w-full items-center justify-center text-base text-muted">
             Room image
@@ -47,7 +51,9 @@ function RoomCard({
 
       <div className="flex flex-1 flex-col gap-2 p-5">
         {tagLabel ? (
-          <p className="text-sm font-semibold uppercase tracking-wide text-muted">{tagLabel}</p>
+          <p className="text-sm font-semibold uppercase tracking-wide text-muted">
+            {tagLabel}
+          </p>
         ) : null}
         <p className="flex items-center gap-2 text-xl font-semibold text-foreground">
           <MessagesSquare className="h-5 w-5 text-accent" />
@@ -88,7 +94,7 @@ export default function CommunityDiscussions({
         <button
           type="button"
           onClick={onViewAll}
-          className="text-base font-medium text-primary hover:text-secondary"
+          className="text-base font-medium text-primary hover:text-secondary hover:underline"
         >
           {viewAllLabel} &rarr;
         </button>
@@ -96,7 +102,12 @@ export default function CommunityDiscussions({
 
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
         {rooms.map((room) => (
-          <RoomCard key={room._id} room={room} joinLabel={joinLabel} onSelect={onSelectRoom} />
+          <RoomCard
+            key={room._id}
+            room={room}
+            joinLabel={joinLabel}
+            onSelect={onSelectRoom}
+          />
         ))}
       </div>
     </section>

@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { Heart, ArrowRight } from "lucide-react";
-import type { GetProduct } from "@/app/types";
+import type { GetProduct, GetWishlist } from "@/app/types";
+import { useEffect, useState } from "react";
 
 export interface ProductCardProps {
   product: GetProduct;
@@ -15,7 +16,7 @@ export interface ProductCardProps {
 export function formatProductPrice(amount: number, currency: string) {
   if (!amount) return "$0";
   try {
-    return new Intl.NumberFormat("en-US", {
+    return new Intl.NumberFormat("id-ID", {
       style: "currency",
       currency,
       maximumFractionDigits: 0,
@@ -27,21 +28,91 @@ export function formatProductPrice(amount: number, currency: string) {
 
 export default function ProductCard({
   product,
-  isFavorited = false,
   currency = "USD",
   detailsLabel = "View Details",
   onToggleFavorite,
 }: ProductCardProps) {
+  const [isFavorited, setIsFavorited] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchWishlistStatus = async () => {
+      try {
+        const response = await fetch("/api/user/wishlist");
+        if (response.ok) {
+          const wishlist = await response.json();
+          console.log(wishlist, "<<<<<<");
+
+          if (Array.isArray(wishlist)) {
+            const isExist = wishlist.some((item: GetWishlist) => {
+              const targetId =
+                typeof item.productId === "object" && item.productId !== null
+                  ? item.product._id
+                  : item.productId;
+
+              return String(targetId) === String(product._id);
+            });
+
+            setIsFavorited(isExist);
+          }
+        }
+      } catch (error) {
+        console.error("Gagal mengecek status wishlist:", error);
+      }
+    };
+
+    if (product?._id) {
+      fetchWishlistStatus();
+    }
+  }, [product?._id]);
+
+  const handleToggleFavorite = async () => {
+    if (isLoading) return;
+
+    const previousState = isFavorited;
+
+    // Optimistic Update UI
+    setIsFavorited(!isFavorited);
+    setIsLoading(true);
+
+    try {
+      if (!previousState) {
+        const response = await fetch("/api/user/wishlist", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ productId: product._id }),
+        });
+
+        if (!response.ok) throw new Error("Gagal menambah wishlist");
+      } else {
+        const response = await fetch(`/api/user/wishlist/${product._id}`, {
+          method: "DELETE",
+        });
+
+        if (!response.ok) throw new Error("Gagal menghapus wishlist");
+      }
+
+      onToggleFavorite?.(product._id);
+    } catch (error) {
+      console.error(error);
+      setIsFavorited(previousState);
+    } finally {
+      setIsLoading(false);
+    }
+  };
   return (
     <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-surface transition hover:shadow-md">
       <div className="relative aspect-[4/5] w-full overflow-hidden bg-cream/30">
-        <Link href={`/marketplace/products/${product._id}`} className="block h-full w-full">
+        <Link
+          href={`/marketplace/products/${product._id}`}
+          className="block h-full w-full"
+        >
           {product.imgUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={product.imgUrl}
               alt={product.title || "Product"}
-              className="h-full w-full object-cover transition group-hover:scale-105"
+              className="h-full w-full object-cover transition group-hover:scale-105 object-top"
             />
           ) : (
             <div className="flex h-full w-full items-center justify-center text-sm text-muted">
@@ -52,10 +123,13 @@ export default function ProductCard({
         <button
           type="button"
           aria-label="Toggle favorite"
-          onClick={() => onToggleFavorite?.(product._id)}
+          onClick={handleToggleFavorite}
+          disabled={isLoading}
           className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-surface shadow-sm transition hover:bg-cream/40"
         >
-          <Heart className={`h-5 w-5 ${isFavorited ? "fill-primary text-primary" : "text-muted"}`} />
+          <Heart
+            className={`h-5 w-5 ${isFavorited ? "fill-primary text-primary" : "text-muted"}`}
+          />
         </button>
       </div>
 
@@ -64,10 +138,12 @@ export default function ProductCard({
           <p className="line-clamp-1 text-lg font-semibold text-foreground">
             {product.title || "Product Title"}
           </p>
-          <p className="mt-0.5 line-clamp-1 text-sm text-muted">{product.theme || "Series"}</p>
+          <p className="mt-0.5 line-clamp-1 text-sm text-muted">
+            {product.theme || "Series"}
+          </p>
         </div>
         <p className="text-2xl font-bold text-primary">
-          {formatProductPrice(product.OriginalPrice, currency)}
+          {formatProductPrice(product.originalPrice, currency)}
         </p>
 
         <Link

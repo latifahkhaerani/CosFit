@@ -1,4 +1,4 @@
-import WishlistModel from "@/app/db/models/wishlistModel";
+import WishlistModel from "@/db/models/wishlistModel";
 import errorHandler from "@/app/helpers/errorHandler";
 
 export const GET = async (req: Request) => {
