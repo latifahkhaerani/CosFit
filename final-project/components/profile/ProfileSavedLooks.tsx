@@ -1,8 +1,9 @@
 "use client";
 
-import { BookMarked, Heart, LayoutGrid, List } from "lucide-react";
+import { Bookmark, BookMarked } from "lucide-react";
 import { useMemo, useState } from "react";
 import LookCard from "./LookCard";
+import SavedLookModal from "./SavedLookModal";
 
 type Tab = "all" | "ready" | "wishlist";
 
@@ -24,16 +25,32 @@ export default function ProfileSavedLooks({ savedLooks }: Props) {
   const [activeTab, setActiveTab] = useState<Tab>("all");
   const [view, setView] = useState<"grid" | "list">("grid");
 
+  const [selectedLook, setSelectedLook] = useState<SavedLook | null>(null);
+  const [openModal, setOpenModal] = useState(false);
+
   const filteredLooks = useMemo(() => savedLooks, [savedLooks]);
 
   return (
     <div className="space-y-6">
+      <SavedLookModal
+        open={openModal}
+        onClose={() => setOpenModal(false)}
+        beforeImage={selectedLook?.UserImg || ""}
+        afterImage={selectedLook?.AiImgUrl || ""}
+        character={selectedLook?.Name || ""}
+        series={selectedLook?.Theme || ""}
+        generatedAt={
+          selectedLook
+            ? new Date(selectedLook.createdAt).toLocaleDateString("id-ID")
+            : ""
+        }
+      />
       {/* HEADER */}
 
       <div className="flex flex-col justify-between gap-5 rounded-3xl border border-[#efe4db] bg-white p-8 lg:flex-row lg:items-center">
         <div className="flex items-start gap-4">
           <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#FFF3EF]">
-            <BookMarked className=" text-[#B14744]" size={24} />
+            <Bookmark className=" text-[#B14744]" size={24} />
           </div>
 
           <div>
@@ -79,6 +96,10 @@ export default function ProfileSavedLooks({ savedLooks }: Props) {
               status="saved"
               tags={[]}
               liked={false}
+              onClick={() => {
+                setSelectedLook(look);
+                setOpenModal(true);
+              }}
             />
           ))}
         </div>
