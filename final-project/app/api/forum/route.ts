@@ -1,13 +1,19 @@
 import ForumModel from "@/db/models/forumModel";
 import errorHandler from "@/app/helpers/errorHandler";
 
-export async function GET(req: Request){
-    try {
-        const result = await ForumModel.getAllForums()
-        return Response.json(result)
-    } catch (error) {
-        return errorHandler(error)
-    }
+export async function GET(req: Request) {
+  try {
+    const { searchParams } = new URL(req.url);
+
+    const sort = searchParams.get("sort") || "newest"; 
+    const page = searchParams.get("page") || "1";
+
+    const response = await ForumModel.getAllForums(sort, page);
+
+    return Response.json(response);
+  } catch (error) {
+    return errorHandler(error);
+  }
 }
 
 export async function POST(req: Request){
@@ -19,13 +25,11 @@ export async function POST(req: Request){
     const tagRaw = formData.get("tag") as string;
     const tag = tagRaw ? tagRaw.split(", ").map(t => t.trim()) : [];
     const slug = nameForum.replaceAll(" ", "-")
-    const chatId = null
 const body = {
     slug,
     nameForum,
     desc,
-    tag,
-    chatId
+    tag
 };
         const userId = req.headers.get("x-user-id") as string;
         if(!userId){

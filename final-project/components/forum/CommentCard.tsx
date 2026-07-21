@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { socket } from "@/socket";
 import { Heart, Reply, Flag, MoreHorizontal } from "lucide-react";
+import Image from "next/image";
 
 interface chatType {
   _id: string;
@@ -21,9 +22,10 @@ interface CommentCardProps {
   roomId: string;
   initialMessages: chatType[];
   currentUser: string;
+  image: string
 }
 
-export default function CommentCard({ roomId, initialMessages, currentUser }: CommentCardProps) {
+export default function CommentCard({ roomId, initialMessages, currentUser, image }: CommentCardProps) {
   const [messages, setMessages] = useState<chatType[]>(initialMessages);
   const roleColor = "#8B5CF6";
 
@@ -63,9 +65,9 @@ export default function CommentCard({ roomId, initialMessages, currentUser }: Co
           <div key={chat._id} className="card rounded-xl border border-border bg-white p-6 shadow-sm">
             <div className="flex gap-4">
               
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-orange-100 font-bold text-lg text-orange-600 select-none">
-                {initialLetter}
-              </div>
+              <div className="relative h-12 w-12 shrink-0">
+                        <Image src={image} alt="My Avatar" fill className="rounded-full object-cover" />
+                      </div>
 
               <div className="flex-1">
                 <div className="flex items-start justify-between">

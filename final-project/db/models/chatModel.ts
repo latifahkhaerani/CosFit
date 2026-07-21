@@ -9,7 +9,7 @@ export default class ChatModel {
 
     static async getChatRoomId(roomId: string, userId: string) {
         const agg = [
-            { '$match': { 'roomId': roomId } },
+            { '$match': { 'roomId': new ObjectId(roomId) } },
             {
                 '$lookup': {
                     'from': 'users',
@@ -22,11 +22,11 @@ export default class ChatModel {
         ];
         const chat = await this.collection().aggregate(agg).toArray()
         const userDetail = await UserModel.collection().findOne({ "_id": new ObjectId(userId) })
-        return { message: chat, username: userDetail?.username, status: 200 }
+        return { message: chat, username: userDetail?.username, image:userDetail?.userImg , status: 200 }
     }
 
     static async postChat(roomId: string, userId: string, body: string) {
-    const newChat = { roomId, userId: new ObjectId(userId), content: body, createdAt: new Date() };
+    const newChat = { roomId: new ObjectId(roomId), userId: new ObjectId(userId), content: body, createdAt: new Date() };
     const insertResult = await this.collection().insertOne(newChat);
 
     const agg = [
