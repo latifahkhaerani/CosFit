@@ -10,7 +10,7 @@ export default class TryOnModel {
     return database.collection("cosplay");
   }
 
-static async UserTryOn(yourImg: File, cosImg: File, userId: string) {
+static async UserTryOn(yourImg: File, cosImg: string, userId: string, name: string) {
   const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
   const blob1 = await put(yourImg.name, yourImg, {
@@ -18,10 +18,6 @@ static async UserTryOn(yourImg: File, cosImg: File, userId: string) {
     addRandomSuffix: true
   });
 
-  const blob2 = await put(cosImg.name, cosImg, {
-    access: 'public',
-    addRandomSuffix: true
-  });
 
   const response = await fetch('https://api.fashn.ai/v1/run', {
     method: 'POST',
@@ -32,7 +28,7 @@ static async UserTryOn(yourImg: File, cosImg: File, userId: string) {
     body: JSON.stringify({
       model_name: "tryon-max",
       inputs: {
-        product_image: blob2.url,
+        product_image: cosImg,
         model_image: blob1.url
       }
     })
@@ -82,7 +78,8 @@ static async UserTryOn(yourImg: File, cosImg: File, userId: string) {
 
   const payload = {
     UserId: userId,
-    AiImgUrl: AIimg
+    AiImgUrl: AIimg,
+    Name: name
   };
 
   await this.collection().insertOne(payload);
@@ -91,6 +88,7 @@ static async UserTryOn(yourImg: File, cosImg: File, userId: string) {
 }
 
 static async getHistory (userId: string){
-  return await this.collection().find({"_id": new ObjectId(userId)})
+  const data = await this.collection().find({"UserId": userId}).toArray()
+  return data
   }
 }

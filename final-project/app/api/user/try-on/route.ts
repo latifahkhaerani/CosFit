@@ -10,8 +10,9 @@ export async function POST(req: Request)
         }
         const formData = await req.formData();
         const yourImg = formData.get("User") as File;
-        const cosImg = formData.get("Product") as File;
-        const response = await TryOnModel.UserTryOn(yourImg, cosImg, userId)
+        const cosImg = formData.get("Product") as string;
+        const name = formData.get("CharName") as string;
+        const response = await TryOnModel.UserTryOn(yourImg, cosImg, userId, name)
         return Response.json(response)
     } catch (error) {
         return errorHandler(error)

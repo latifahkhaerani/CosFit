@@ -1,10 +1,9 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import Link from "next/link";
-import { ChevronRight, ChevronLeft, X } from "lucide-react";
 import Image from "next/image";
-import { Camera, Pencil, Ruler, Weight, HeartPulse, Loader2 } from "lucide-react";
+import { ChevronRight, ChevronLeft, X, Camera, Pencil, Ruler, Weight, HeartPulse, Loader2, Download } from "lucide-react";
 import {
   ReactCompareSlider,
   ReactCompareSliderImage,
@@ -25,48 +24,33 @@ interface ProductType {
   finalPrice: number;
 }
 
+interface HistoryType {
+  _id: string;
+  UserId: string;
+  AiImgUrl: string;
+  Name: string;
+}
+
 export default function TryOnPage() {
-  // State User Photo
   const [userFile, setUserFile] = useState<File | null>(null);
   const [userPreview, setUserPreview] = useState<string | null>(null);
   const [isDraggingUser, setIsDraggingUser] = useState<boolean>(false);
   const userInputRef = useRef<HTMLInputElement>(null);
 
-  // State Selected Product
   const [selectedProduct, setSelectedProduct] = useState<ProductType | null>(null);
   const [showAllProducts, setShowAllProducts] = useState<boolean>(false);
 
-  // State AI
+  const [showAllHistory, setShowAllHistory] = useState<boolean>(false);
+  const [selectedHistoryItem, setSelectedHistoryItem] = useState<HistoryType | null>(null);
   const [aiResult, setAiResult] = useState<string>("https://cdn.fashn.ai/0aac3b42-e9ae-4282-bfb7-c5f1ae0b5db5/try_on_0.png");
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  // State Product Database
   const [product, setProduct] = useState<ProductType[]>([]);
-
-  const history = [
-    {
-      id: 1,
-      title: "Hu Tao",
-      image: "/images/history1.jpg",
-      date: "2 hours ago",
-    },
-    {
-      id: 2,
-      title: "Raiden Shogun",
-      image: "/images/history2.jpg",
-      date: "Yesterday",
-    },
-    {
-      id: 3,
-      title: "Makima",
-      image: "/images/history3.jpg",
-      date: "3 days ago",
-    },
-  ];
+  const [history, setHistory] = useState<HistoryType[]>([]);
 
   const fetchProduct = async () => {
     try {
-      const res = await fetch(`http://localhost:3000/api/user/product`);
+      const res = await fetch(`/api/user/product`);
       if (res.ok) {
         const data: ProductType[] = await res.json();
         setProduct(data);
@@ -76,17 +60,42 @@ export default function TryOnPage() {
     }
   };
 
+  const fetchHistory = async () => {
+    try {
+      const res = await fetch(`/api/user/history`);
+      if (res.ok) {
+        const data: HistoryType[] = await res.json();
+        setHistory(data);
+      }
+    } catch (error) {
+      console.error("Failed to fetch history", error);
+    }
+  };
+
   useEffect(() => {
     fetchProduct();
+    fetchHistory();
+    
+    return () => {
+      if (userPreview) {
+        URL.revokeObjectURL(userPreview);
+      }
+    };
   }, []);
 
-  // --- Fungsi Handle User Photo ---
-  const handleUserImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+  const processSelectedFile = useCallback((file?: File) => {
     if (file) {
+      if (userPreview) {
+        URL.revokeObjectURL(userPreview);
+      }
       setUserFile(file);
       setUserPreview(URL.createObjectURL(file));
     }
+  }, [userPreview]);
+
+  const handleUserImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    processSelectedFile(file);
   };
 
   const handleUserDragOver = (e: React.DragEvent) => {
@@ -103,13 +112,13 @@ export default function TryOnPage() {
     e.preventDefault();
     setIsDraggingUser(false);
     const file = e.dataTransfer.files?.[0];
-    if (file) {
-      setUserFile(file);
-      setUserPreview(URL.createObjectURL(file));
-    }
+    processSelectedFile(file);
   };
 
   const clearUserPhoto = () => {
+    if (userPreview) {
+      URL.revokeObjectURL(userPreview);
+    }
     setUserFile(null);
     setUserPreview(null);
     if (userInputRef.current) {
@@ -117,21 +126,13 @@ export default function TryOnPage() {
     }
   };
 
-  // --- Fungsi Pilih Produk dari List ---
   const handleSelectProduct = (p: ProductType) => {
     setSelectedProduct(p);
     setShowAllProducts(false);
   };
 
-  // --- Fungsi AI ---
-  const urlToFile = async (url: string, filename: string): Promise<File> => {
-    const res = await fetch(url);
-    const blob = await res.blob();
-    return new File([blob], filename, { type: blob.type });
-  };
-
   const handleGenerate = async () => {
-    if (!userPreview || !selectedProduct) {
+    if (!userFile || !selectedProduct) {
       alert("Please provide both your photo and select a costume product!");
       return;
     }
@@ -139,15 +140,12 @@ export default function TryOnPage() {
     try {
       setIsLoading(true);
 
-      const finalUserFile = userFile || (await urlToFile(userPreview, "user_selected.png"));
-      // Tarik gambar kostum berdasarkan URL produk yang dipilih dari DB
-      const finalCostumeFile = await urlToFile(selectedProduct.imgUrl, "costume_selected.jpg");
-
       const formData = new FormData();
-      formData.append("User", finalUserFile);
-      formData.append("Product", finalCostumeFile);
+      formData.append("User", userFile);
+      formData.append("Product", selectedProduct.imgUrl);
+      formData.append("CharName", selectedProduct.title);
 
-      const response = await fetch("http://localhost:3000/api/user/try-on", {
+      const response = await fetch("/api/user/try-on", {
         method: "POST",
         body: formData,
       });
@@ -167,17 +165,21 @@ export default function TryOnPage() {
       alert(`Error: ${error.message}`);
     } finally {
       setIsLoading(false);
+      fetchHistory(); 
     }
   };
 
-  const handleDownload = async () => {
+  const downloadImage = async (imgUrl: string, fileName: string) => {
+    if (!imgUrl) return;
     try {
-      const response = await fetch(aiResult);
+      const response = await fetch(imgUrl);
+      if (!response.ok) throw new Error("Gagal mengambil gambar");
+      
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      link.download = `cosfit-tryon-${Date.now()}.png`;
+      link.download = fileName;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -200,33 +202,106 @@ export default function TryOnPage() {
               </div>
               <button
                 onClick={() => setShowAllProducts(false)}
-                className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 transition"
+                className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 transition cursor-pointer"
               >
                 <X size={20} />
               </button>
             </div>
-            <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 md:grid-cols-4">
-              {product.map((p) => (
-                <div key={p._id} className="card p-4 hover:shadow-lg transition">
-                  <div className="relative h-48 w-full overflow-hidden rounded-2xl mb-3 bg-gray-100">
-                    <Image src={p.imgUrl} alt={p.title} fill className="object-cover" unoptimized />
+            
+            {product.length === 0 ? (
+              <p className="text-center py-10 text-muted">No products available at the moment.</p>
+            ) : (
+              <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 md:grid-cols-4">
+                {product.map((p) => (
+                  <div key={p._id} className="card p-4 hover:shadow-lg transition">
+                    <div className="relative h-48 w-full overflow-hidden rounded-2xl mb-3 bg-gray-100">
+                      <Image src={p.imgUrl} alt={p.title} fill className="object-cover" unoptimized />
+                    </div>
+                    <h4 className="font-semibold text-sm line-clamp-1">{p.title}</h4>
+                    <p className="text-xs text-muted mb-3 line-clamp-1">{p.theme}</p>
+                    <div className="flex items-center justify-between">
+                      <span className="font-bold text-primary text-sm">
+                        Rp{p.finalPrice?.toLocaleString("id-ID")}
+                      </span>
+                      <button
+                        onClick={() => handleSelectProduct(p)}
+                        className="rounded-lg bg-[#FFF8F6] px-3 py-1.5 text-xs font-medium text-primary hover:bg-primary/20 transition cursor-pointer"
+                      >
+                        Select
+                      </button>
+                    </div>
                   </div>
-                  <h4 className="font-semibold text-sm line-clamp-1">{p.title}</h4>
-                  <p className="text-xs text-muted mb-3 line-clamp-1">{p.theme}</p>
-                  <div className="flex items-center justify-between">
-                    <span className="font-bold text-primary text-sm">
-                      Rp{p.finalPrice?.toLocaleString("id-ID")}
-                    </span>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Pop-up All History */}
+      {showAllHistory && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
+          <div className="w-full max-w-4xl max-h-[85vh] overflow-y-auto rounded-[32px] bg-white p-8 shadow-2xl">
+            <div className="mb-6 flex items-center justify-between sticky top-0 bg-white z-10 py-2">
+              <div>
+                <h2 className="text-3xl font-bold">Generation History</h2>
+                <p className="subtitle mt-1">All your AI generated previews</p>
+              </div>
+              <button
+                onClick={() => setShowAllHistory(false)}
+                className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 transition cursor-pointer"
+              >
+                <X size={20} />
+              </button>
+            </div>
+            
+            {history.length === 0 ? (
+              <p className="text-center py-10 text-muted">No history available yet.</p>
+            ) : (
+              <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 md:grid-cols-4">
+                {history.map((h) => (
+                  <div key={h._id} className="card p-4 hover:shadow-lg transition border border-border">
+                    <div className="relative h-48 w-full overflow-hidden rounded-2xl mb-3 bg-gray-100 cursor-pointer" onClick={() => setSelectedHistoryItem(h)}>
+                      <Image src={h.AiImgUrl} alt={h.Name} fill className="object-cover" unoptimized />
+                    </div>
+                    <h4 className="font-semibold text-sm line-clamp-1">{h.Name}</h4>
+                    <p className="text-xs text-muted mb-3 line-clamp-1">AI Generated</p>
                     <button
-                      onClick={() => handleSelectProduct(p)}
-                      className="rounded-lg bg-[#FFF8F6] px-3 py-1.5 text-xs font-medium text-primary hover:bg-primary/20 transition cursor-pointer"
+                      onClick={() => setSelectedHistoryItem(h)}
+                      className="w-full rounded-lg bg-primary/10 px-3 py-2 text-sm font-medium text-primary hover:bg-primary/20 transition cursor-pointer"
                     >
-                      Select
+                      View Full Image
                     </button>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Pop-up Single History Image Detail */}
+      {selectedHistoryItem && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/80 p-4 backdrop-blur-md">
+          <div className="relative w-full max-w-xl rounded-[32px] bg-white p-6 shadow-2xl">
+            <div className="mb-4 flex items-center justify-between">
+              <h3 className="text-xl font-bold line-clamp-1">{selectedHistoryItem.Name}</h3>
+              <button
+                onClick={() => setSelectedHistoryItem(null)}
+                className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 transition cursor-pointer"
+              >
+                <X size={18} />
+              </button>
             </div>
+            <div className="relative h-[60vh] w-full overflow-hidden rounded-2xl bg-[#F7F4F1] mb-6">
+              <Image src={selectedHistoryItem.AiImgUrl} alt={selectedHistoryItem.Name} fill className="object-contain" unoptimized />
+            </div>
+            <button
+              onClick={() => downloadImage(selectedHistoryItem.AiImgUrl, `cosfit-history-${Date.now()}.png`)}
+              className="primary-btn w-full flex justify-center items-center gap-2 bg-primary text-white py-3 rounded-xl font-semibold hover:bg-primary/90 transition cursor-pointer"
+            >
+              <Download size={18} /> Download Image
+            </button>
           </div>
         </div>
       )}
@@ -237,7 +312,7 @@ export default function TryOnPage() {
       <div className="page-container">
         {/* Breadcrumb */}
         <div className="mb-8 flex items-center gap-3 text-sm">
-          <Link href="/wishlist" className="flex items-center gap-2 text-muted hover:text-primary">
+          <Link href="/wishlist" className="flex items-center gap-2 text-muted hover:text-primary transition">
             <ChevronLeft size={16} /> Wishlist
           </Link>
           <ChevronRight size={15} className="text-muted" />
@@ -252,12 +327,13 @@ export default function TryOnPage() {
           </div>
         </div>
 
-        {/* ROW 1 */}
-        <div className="grid grid-cols-[320px_1fr_360px] gap-7">
+        {/* MAIN GRID LAYOUT */}
+        <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr_360px] gap-7">
           
           {/* LEFT SECTION */}
-          <section>
-            <div className="card p-5 mb-7">
+          <section className="space-y-7">
+            {/* YOUR PHOTO */}
+            <div className="card p-5">
               <div className="mb-4 flex items-center justify-between">
                 <h3 className="font-semibold">Your Photo</h3>
                 {userPreview && (
@@ -267,7 +343,6 @@ export default function TryOnPage() {
                 )}
               </div>
 
-              {/* YOUR PHOTO - DRAG & DROP OR PREVIEW */}
               {userPreview ? (
                 <>
                   <div className="relative overflow-hidden rounded-3xl">
@@ -277,7 +352,7 @@ export default function TryOnPage() {
                     </button>
                   </div>
                   <button onClick={() => userInputRef.current?.click()} className="mt-4 flex h-12 w-full items-center justify-center gap-2 rounded-2xl border border-border bg-white font-medium hover:bg-[#FFF8F6] cursor-pointer transition">
-                    <Camera size={18} /> Choose/Change Your Photo
+                    <Camera size={18} /> Change Your Photo
                   </button>
                 </>
               ) : (
@@ -299,44 +374,63 @@ export default function TryOnPage() {
               )}
             </div>
 
+            {/* GENERATION HISTORY */}
             <div className="card p-5">
               <div className="mb-5 flex items-center justify-between">
-                <h3 className="font-semibold">Your Measurements</h3>
-                <button className="flex items-center gap-1 text-sm font-medium text-primary">
-                  <Pencil size={15} /> Edit
-                </button>
+                <div>
+                  <h3 className="font-semibold">Generation History</h3>
+                  <p className="subtitle mt-1 text-xs text-muted">Recent AI previews</p>
+                </div>
+                <button onClick={() => setShowAllHistory(true)} className="text-sm font-medium text-primary hover:underline cursor-pointer">View All</button>
               </div>
-              <div className="grid grid-cols-2 gap-3">
-                <MeasureCard icon={<Ruler size={16} />} title="Height" value="155 cm" />
-                <MeasureCard icon={<Weight size={16} />} title="Weight" value="45 kg" />
-                <MeasureCard icon={<HeartPulse size={16} />} title="Bust" value="84 cm" />
-                <MeasureCard icon={<HeartPulse size={16} />} title="Waist" value="62 cm" />
-                <MeasureCard icon={<HeartPulse size={16} />} title="Hip" value="88 cm" />
-                <MeasureCard icon={<HeartPulse size={16} />} title="Shoulder" value="36 cm" />
+              
+              <div className="space-y-4">
+                {history.length > 0 ? (
+                  history.slice(0, 4).map((item) => (
+                    <div key={item._id} className="flex items-center gap-3 rounded-2xl border border-border p-3 hover:bg-gray-50 transition">
+                      <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-gray-100">
+                        <Image src={item.AiImgUrl} alt={item.Name} fill className="object-cover" unoptimized />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-medium text-sm truncate">{item.Name}</h4>
+                        <p className="text-xs text-muted mt-1 truncate">AI Generated</p>
+                      </div>
+                      <button
+                        onClick={() => setSelectedHistoryItem(item)}
+                        className="shrink-0 rounded-lg bg-primary/10 px-4 py-2 text-xs font-medium text-primary hover:bg-primary/20 transition cursor-pointer"
+                      >
+                        View
+                      </button>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-sm text-muted text-center py-6">No history yet.</p>
+                )}
               </div>
             </div>
           </section>
 
           {/* CENTER SECTION */}
-          <section>
-            <div className="card p-6 mb-7">
+          <section className="space-y-7">
+            {/* TRY ON MAIN PREVIEW */}
+            <div className="card p-6">
               <div className="mb-6 flex items-center justify-between">
                 <div>
                   <h2 className="section-title">AI Virtual Try-On</h2>
                   <p className="subtitle mt-1">Preview generated using your body profile.</p>
                 </div>
-                {aiResult && <span className="badge-success">✓ Generated</span>}
+                {aiResult && !isLoading && <span className="badge-success px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold">✓ Generated</span>}
               </div>
 
-              <div className="relative overflow-hidden rounded-[28px] bg-[#F7F4F1]">
+              <div className="relative overflow-hidden rounded-[28px] bg-[#F7F4F1] min-h-[400px]">
                 {isLoading ? (
-                  <div className="flex h-150 w-full flex-col items-center justify-center bg-white/80 backdrop-blur-sm">
+                  <div className="flex h-[600px] w-full flex-col items-center justify-center bg-white/80 backdrop-blur-sm">
                     <Loader2 className="h-12 w-12 animate-spin text-primary mb-3" />
                     <p className="font-semibold text-lg animate-pulse">Generating your AI Cosplay...</p>
                     <p className="text-sm text-muted mt-1">This may take up to a minute.</p>
                   </div>
                 ) : (
-                  <Image src={aiResult} alt="Generated Preview" width={900} height={900} unoptimized className="h-150 w-full object-contain py-2" />
+                  <Image src={aiResult} alt="Generated Preview" width={900} height={900} unoptimized className="h-[600px] w-full object-contain py-2" />
                 )}
                 <div className="absolute left-5 top-5 rounded-full bg-white/90 px-4 py-2 shadow-card backdrop-blur">
                   <p className="text-xs font-medium text-primary">AI Generated Preview</p>
@@ -344,28 +438,52 @@ export default function TryOnPage() {
               </div>
 
               <div className="mt-6 justify-center">
-                <button onClick={handleGenerate} disabled={isLoading || !selectedProduct || !userPreview} className="primary-btn w-full cursor-pointer flex justify-center items-center gap-2 disabled:opacity-70">
+                <button onClick={handleGenerate} disabled={isLoading || !selectedProduct || !userFile} className="primary-btn w-full cursor-pointer flex justify-center items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed bg-primary text-white py-3 rounded-xl font-semibold hover:bg-primary/90 transition">
                   {isLoading && <Loader2 className="animate-spin" size={18} />}
-                  {isLoading ? "Generating..." : "Generate New Try-On"}
+                  {isLoading ? "Generating..." : "Click Here to Generate"}
                 </button>
               </div>
             </div>
 
+            {/* AI RECOMMENDATION */}
             <div className="card p-5">
               <div className="flex items-start gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#FFF4EE]">✨</div>
+                <div className="flex shrink-0 h-12 w-12 items-center justify-center rounded-2xl bg-[#FFF4EE]">✨</div>
                 <div>
                   <h3 className="font-semibold">AI Recommendation</h3>
-                  <p className="subtitle mt-2 leading-7">Based on your height, weight and measurements, this costume has an excellent fit. The sleeve length and waist proportions closely match your body profile.</p>
+                  <p className="subtitle mt-2 leading-7 text-sm text-muted">Based on your height, weight and measurements, this costume has an excellent fit. The sleeve length and waist proportions closely match your body profile.</p>
                 </div>
+              </div>
+            </div>
+
+            {/* BEFORE & AFTER - PERBAIKAN: Menghapus -mx-50 */}
+            <div className="card p-6">
+              <div className="mb-5 flex items-center justify-between">
+                <div>
+                  <h2 className="section-title text-xl font-bold">Before & After</h2>
+                  <p className="subtitle mt-1 text-xs text-muted">Compare your original photo with the AI generated preview.</p>
+                </div>
+                <button 
+                  onClick={() => downloadImage(aiResult, `cosfit-tryon-${Date.now()}.png`)} 
+                  disabled={isLoading || !aiResult} 
+                  className="secondary-btn cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed border border-border px-3.5 py-2 rounded-xl hover:bg-gray-50 transition font-medium text-xs flex items-center gap-1.5"
+                >
+                  <Download size={15} /> Download
+                </button>
+              </div>
+              <div className="overflow-hidden rounded-[26px] border border-border">
+                <ReactCompareSlider
+                  itemOne={<ReactCompareSliderImage src={userPreview || "https://cdn.fashn.ai/95e99a9c-608e-4eb8-b52e-9380a74b3516/try_on_0.png"} alt="Original" className="object-cover h-[450px] w-full" />}
+                  itemTwo={<ReactCompareSliderImage src={aiResult} alt="Generated" className="object-cover h-[450px] w-full" />}
+                />
               </div>
             </div>
           </section>
 
           {/* RIGHT SECTION */}
-          <section>
+          <section className="space-y-7">
             {/* SELECTED COSTUME */}
-            <div className="card p-5 mb-7">
+            <div className="card p-5">
               <div className="mb-5 flex items-center justify-between">
                 <div>
                   <h3 className="font-semibold">Selected Costume</h3>
@@ -381,34 +499,33 @@ export default function TryOnPage() {
               {selectedProduct ? (
                 <>
                   <div className="relative overflow-hidden rounded-3xl group">
-                    <Image src={selectedProduct.imgUrl} alt="Selected Costume" width={500} height={700} unoptimized className="h-67.5 w-full object-cover" />
-                    <span className="absolute left-4 top-4 badge-success">Good Match</span>
+                    <Image src={selectedProduct.imgUrl} alt="Selected Costume" width={500} height={700} unoptimized className="h-[270px] w-full object-cover" />
                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
                        <button onClick={() => setShowAllProducts(true)} className="bg-white text-black px-4 py-2 rounded-xl text-sm font-medium cursor-pointer hover:bg-gray-100">
-                          Change Product
+                         Change Product
                        </button>
                     </div>
                   </div>
 
                   <div className="mt-5">
                     <h2 className="text-2xl font-bold">{selectedProduct.title}</h2>
-                    <p className="subtitle">{selectedProduct.theme}</p>
+                    <p className="subtitle text-sm text-muted">{selectedProduct.theme}</p>
                     
-                    <div className="mt-4 bg-gray-50 rounded-xl p-3 flex justify-between items-center">
+                    <div className="mt-4 bg-gray-50 rounded-xl p-3 flex justify-between items-center border border-border">
                       <span className="text-sm text-muted">Size Selected</span>
                       <span className="font-semibold text-sm">{selectedProduct.size}</span>
                     </div>
 
                     <div className="mt-6 flex items-center justify-between">
                       <div>
-                        <p className="subtitle text-xs">Rental Price</p>
+                        <p className="subtitle text-xs text-muted mb-1">Rental Price</p>
                         <h3 className="text-2xl font-bold text-primary">Rp{selectedProduct.finalPrice?.toLocaleString("id-ID")}</h3>
                       </div>
                     </div>
                   </div>
                 </>
               ) : (
-                /* EMPTY STATE - KLIK MEMUNCULKAN SEMUA PRODUK */
+
                 <div
                   onClick={() => setShowAllProducts(true)}
                   className={`flex h-[380px] w-full cursor-pointer flex-col items-center justify-center rounded-[28px] border-2 border-dashed border-border bg-gray-50 hover:bg-gray-100 transition-all`}
@@ -434,16 +551,16 @@ export default function TryOnPage() {
               <div className="space-y-4">
                 {product.slice(0, 3).map((p) => (
                   <div key={p._id} className="flex items-center gap-3 rounded-2xl border border-border p-3 hover:bg-gray-50 transition">
-                    <div className="relative h-16 w-16 overflow-hidden rounded-xl bg-gray-100">
+                    <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-gray-100">
                       <Image src={p.imgUrl} alt={p.title} fill className="object-cover" unoptimized />
                     </div>
-                    <div className="flex-1 overflow-hidden">
+                    <div className="flex-1 min-w-0">
                       <h4 className="font-medium text-sm truncate">{p.title}</h4>
                       <p className="text-xs text-muted mt-1 truncate">Rp{p.finalPrice?.toLocaleString("id-ID")}</p>
                     </div>
                     <button
                       onClick={() => handleSelectProduct(p)}
-                      className="rounded-lg bg-primary/10 px-4 py-2 text-xs font-medium text-primary hover:bg-primary/20 transition cursor-pointer"
+                      className="shrink-0 rounded-lg bg-[#FFF8F6] px-4 py-2 text-xs font-medium text-primary hover:bg-primary/20 transition cursor-pointer"
                     >
                       Select
                     </button>
@@ -452,57 +569,6 @@ export default function TryOnPage() {
                 {product.length === 0 && (
                    <p className="text-sm text-muted text-center py-4">No products found.</p>
                 )}
-              </div>
-            </div>
-          </section>
-        </div>
-
-        {/* ROW 2: History & Comparison */}
-        <div className="mt-8 grid grid-cols-12 gap-7">
-          <section className="col-span-8 space-y-6">
-            <div className="card p-6">
-              <div className="mb-6 flex items-center justify-between">
-                <div>
-                  <h2 className="section-title">Before & After</h2>
-                  <p className="subtitle mt-1">Compare your original photo with the AI generated preview.</p>
-                </div>
-                <button onClick={handleDownload} disabled={isLoading || !userPreview} className="secondary-btn cursor-pointer disabled:opacity-50">
-                  Download
-                </button>
-              </div>
-              <div className="overflow-hidden rounded-[28px]">
-                <ReactCompareSlider
-                  itemOne={<ReactCompareSliderImage src={userPreview || "/images/body.png"} alt="Original" />}
-                  itemTwo={<ReactCompareSliderImage src={aiResult} alt="Generated" />}
-                />
-              </div>
-            </div>
-          </section>
-
-          <section className="col-span-4 space-y-6">
-            <div className="card p-5">
-              <div className="mb-5 flex items-center justify-between">
-                <div>
-                  <h3 className="font-semibold">Generation History</h3>
-                  <p className="subtitle mt-1">Recent AI previews</p>
-                </div>
-                <button className="text-sm text-primary hover:underline">View All</button>
-              </div>
-              <div className="space-y-4">
-                {history.map((item) => (
-                  <div key={item.id} className="group flex cursor-pointer gap-3 rounded-2xl p-2 transition hover:soft-bg">
-                    <div className="relative h-24 w-20 overflow-hidden rounded-xl">
-                      <Image src={item.image} alt="" fill className="object-cover" />
-                    </div>
-                    <div className="flex flex-1 flex-col justify-between">
-                      <div>
-                        <h4 className="font-medium">{item.title}</h4>
-                        <p className="subtitle">{item.date}</p>
-                      </div>
-                      <span className="badge-success">95% Match</span>
-                    </div>
-                  </div>
-                ))}
               </div>
             </div>
           </section>
@@ -520,8 +586,8 @@ type MeasureProps = {
 
 function MeasureCard({ icon, title, value }: MeasureProps) {
   return (
-    <div className="rounded-2xl soft-bg p-4">
-      <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-white text-primary">
+    <div className="rounded-2xl bg-gray-50 p-4 border border-border">
+      <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-white text-primary shadow-sm">
         {icon}
       </div>
       <p className="text-xs text-muted">{title}</p>

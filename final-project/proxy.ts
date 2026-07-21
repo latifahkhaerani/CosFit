@@ -72,5 +72,6 @@ export const config = {
     "/api/user/checkout",
     "/api/chat/:path*",
     "/api/user/try-on",
+    "/api/user/history"
   ],
 };
