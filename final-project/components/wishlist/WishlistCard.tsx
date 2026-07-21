@@ -19,7 +19,7 @@ type WishlistCardProps = {
   vendor: string;
   vendorAvatar: string;
   price: number;
-  duration: string;
+  duration?: string;
   // sizeMatch: "good" | "possible" | "unknown";
   isWishlisted: boolean;
   onWishlist?: () => void;
@@ -28,6 +28,7 @@ type WishlistCardProps = {
   wishlistId: string;
   productId: string;
   productSlug: string;
+  onRemoved?: () => Promise<void>;
 };
 
 export default function WishlistCard({
@@ -44,19 +45,22 @@ export default function WishlistCard({
   wishlistId,
   productId,
   productSlug,
+  onRemoved,
 }: WishlistCardProps) {
   const router = useRouter();
 
-  async function handleRemove() {
-    const res = await fetch(`/api/user/wishlist/${wishlistId}`, {
-      method: "DELETE",
-    });
+async function handleRemove() {
+  const res = await fetch(`/api/user/wishlist/${wishlistId}`, {
+    method: "DELETE",
+  });
 
-    console.log(res.status);
-    console.log(await res.text());
-
-    router.refresh();
+  if (!res.ok) {
+    console.error(await res.text());
+    return;
   }
+
+  await onRemoved?.();
+}
 
   async function handleCheckout() {
     await fetch("/api/user/checkout", {

@@ -44,17 +44,10 @@ export default function ProfilePage() {
     products: [],
     savedLooks: [],
   });
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [
-          profileRes,
-          wishlistRes,
-          checkoutRes,
-          productsRes,
-          savedLooksRes,
-        ] = await Promise.all([
+  const fetchData = async () => {
+    try {
+      const [profileRes, wishlistRes, checkoutRes, productsRes, savedLooksRes] =
+        await Promise.all([
           fetch("http://localhost:3000/api/user/profile", {
             cache: "no-store",
           }),
@@ -72,35 +65,36 @@ export default function ProfilePage() {
           }),
         ]);
 
-        if (
-          !profileRes.ok ||
-          !wishlistRes.ok ||
-          !checkoutRes.ok ||
-          !productsRes.ok
-        ) {
-          throw new Error("Failed to load profile data");
-        }
-        const [userProfile, wishlist, checkout, products, savedLooks] =
-          await Promise.all([
-            profileRes.json() as Promise<GetUserProfile>,
-            wishlistRes.json() as Promise<GetWishlist[]>,
-            checkoutRes.json() as Promise<GetCheckout[]>,
-            productsRes.json() as Promise<GetProduct[]>,
-            savedLooksRes.json() as Promise<GetSavedLook[]>,
-          ]);
-
-        setProfileData({
-          profile: userProfile,
-          wishlist,
-          checkout,
-          products,
-          savedLooks,
-        });
-      } catch (error) {
-        errorHandler(error);
+      if (
+        !profileRes.ok ||
+        !wishlistRes.ok ||
+        !checkoutRes.ok ||
+        !productsRes.ok
+      ) {
+        throw new Error("Failed to load profile data");
       }
-    };
+      const [userProfile, wishlist, checkout, products, savedLooks] =
+        await Promise.all([
+          profileRes.json() as Promise<GetUserProfile>,
+          wishlistRes.json() as Promise<GetWishlist[]>,
+          checkoutRes.json() as Promise<GetCheckout[]>,
+          productsRes.json() as Promise<GetProduct[]>,
+          savedLooksRes.json() as Promise<GetSavedLook[]>,
+        ]);
 
+      setProfileData({
+        profile: userProfile,
+        wishlist,
+        checkout,
+        products,
+        savedLooks,
+      });
+    } catch (error) {
+      errorHandler(error);
+    }
+  };
+
+  useEffect(() => {
     fetchData();
   }, []);
 
@@ -125,7 +119,9 @@ export default function ProfilePage() {
       case "Saved Looks":
         return <ProfileSavedLooks savedLooks={savedLooks} />;
       case "Wishlist":
-        return <ProfileWishlist />;
+        return (
+          <ProfileWishlist wishlist={wishlist} refreshProfileData={fetchData} />
+        );
       case "Checkout History":
         return <ProfileCheckoutHistory />;
       case "Joined Events":
