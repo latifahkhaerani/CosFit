@@ -123,7 +123,7 @@ export default function ProfilePage() {
           <ProfileWishlist wishlist={wishlist} refreshProfileData={fetchData} />
         );
       case "Checkout History":
-        return <ProfileCheckoutHistory />;
+        return <ProfileCheckoutHistory checkout={checkout} />;
       case "Joined Events":
         return <ProfileJoinedEvents />;
       case "Overview":
@@ -194,18 +194,6 @@ export default function ProfilePage() {
 
               <button
                 type="button"
-                onClick={() => setActiveSection("Wishlist")}
-                className="w-full"
-              >
-                <SidebarItem
-                  active={activeSection === "Wishlist"}
-                  icon={<Heart size={18} />}
-                  title="Wishlist"
-                />
-              </button>
-
-              <button
-                type="button"
                 onClick={() => setActiveSection("Checkout History")}
                 className="w-full"
               >
@@ -213,6 +201,18 @@ export default function ProfilePage() {
                   active={activeSection === "Checkout History"}
                   icon={<Clock3 size={18} />}
                   title="Checkout History"
+                />
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setActiveSection("Wishlist")}
+                className="w-full"
+              >
+                <SidebarItem
+                  active={activeSection === "Wishlist"}
+                  icon={<Heart size={18} />}
+                  title="Wishlist"
                 />
               </button>
 
@@ -382,7 +382,10 @@ export default function ProfilePage() {
                           </p>
                         </div>
 
-                        <button className="text-sm font-medium text-primary transition hover:text-[#bc5f2f]">
+                        <button
+                          onClick={() => setActiveSection("Joined Events")}
+                          className="text-sm font-medium text-primary transition hover:text-[#bc5f2f]"
+                        >
                           View All →
                         </button>
                       </div>
@@ -437,7 +440,10 @@ export default function ProfilePage() {
                           </p>
                         </div>
 
-                        <button className="text-sm font-medium text-primary transition hover:text-[#bc5f2f]">
+                        <button
+                          onClick={() => setActiveSection("Checkout History")}
+                          className="text-sm font-medium text-primary transition hover:text-[#bc5f2f]"
+                        >
                           View All →
                         </button>
                       </div>
@@ -501,12 +507,12 @@ export default function ProfilePage() {
                           </p>
                         </div>
 
-                        <Link
-                          href="/wishlist"
+                        <button
+                          onClick={() => setActiveSection("Wishlist")}
                           className="text-sm font-medium text-primary transition hover:text-[#bc5f2f]"
                         >
                           View All →
-                        </Link>
+                        </button>
                       </div>
 
                       <div className="space-y-3">
