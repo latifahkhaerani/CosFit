@@ -28,12 +28,13 @@ export function formatProductPrice(amount: number, currency: string) {
 
 export default function ProductCard({
   product,
-  currency = "USD",
+  currency = "IDR",
   detailsLabel = "View Details",
   onToggleFavorite,
 }: ProductCardProps) {
   const [isFavorited, setIsFavorited] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const hasDiscount = Boolean(product.discount && product.discount > 0);
 
   useEffect(() => {
     const fetchWishlistStatus = async () => {
@@ -41,7 +42,6 @@ export default function ProductCard({
         const response = await fetch("/api/user/wishlist");
         if (response.ok) {
           const wishlist = await response.json();
-          console.log(wishlist, "<<<<<<");
 
           if (Array.isArray(wishlist)) {
             const isExist = wishlist.some((item: GetWishlist) => {
@@ -142,9 +142,25 @@ export default function ProductCard({
             {product.theme || "Series"}
           </p>
         </div>
-        <p className="text-2xl font-bold text-primary">
-          {formatProductPrice(product.originalPrice, currency)}
-        </p>
+        <div className="flex flex-col">
+          {hasDiscount ? (
+            <>
+              <span className="text-xs font-medium text-muted line-through opacity-75">
+                {formatProductPrice(Number(product.originalPrice), currency)}
+              </span>
+              <p className="text-2xl font-bold text-primary">
+                {formatProductPrice(
+                  Number(product.finalPrice || product.originalPrice),
+                  currency,
+                )}
+              </p>
+            </>
+          ) : (
+            <p className="text-2xl font-bold text-primary">
+              {formatProductPrice(Number(product.originalPrice), currency)}
+            </p>
+          )}
+        </div>
 
         <Link
           href={`/marketplace/products/${product._id}`}
