@@ -182,3 +182,13 @@ export interface PostMonthlySales {
   totalSales: number;
   vendorId: string;
 }
+
+export type GetSavedLook = {
+  _id: string;
+  UserId: string;
+  UserImg: string;
+  AiImgUrl: string;
+  Name: string;
+  Theme: string;
+  createdAt: string;
+};

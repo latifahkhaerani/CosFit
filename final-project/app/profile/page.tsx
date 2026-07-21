@@ -13,68 +13,95 @@ import {
 } from "lucide-react";
 import { CheckCircle2, Circle, LogOut } from "lucide-react";
 import SidebarItem from "@/components/profile/sidebarButton";
-import { GetCheckout, GetProduct, GetUserProfile, GetWishlist } from "../types";
+import ProfileCheckoutHistory from "@/components/profile/ProfileCheckoutHistory";
+import ProfileJoinedEvents from "@/components/profile/ProfileJoinedEvents";
+import ProfileOverview from "@/components/profile/ProfileOverview";
+import ProfileSavedLooks from "@/components/profile/ProfileSavedLooks";
+import ProfileWishlist from "@/components/profile/ProfileWishlist";
+import {
+  GetCheckout,
+  GetProduct,
+  GetSavedLook,
+  GetUserProfile,
+  GetWishlist,
+} from "../types";
 import { useEffect, useState } from "react";
 import errorHandler from "../helpers/errorHandler";
 import Link from "next/link";
+import EditProfileModal from "@/components/marketplace/EditProfileModal";
 
 export default function ProfilePage() {
+  const [activeSection, setActiveSection] = useState("Overview");
+
+  const [openEditModal, setOpenEditModal] = useState(false);
+
   const [profileData, setProfileData] = useState<{
     profile?: GetUserProfile;
     wishlist: GetWishlist[];
     checkout: GetCheckout[];
     products: GetProduct[];
+    savedLooks: GetSavedLook[];
   }>({
     wishlist: [],
     checkout: [],
     products: [],
+    savedLooks: [],
   });
+  const fetchData = async () => {
+    try {
+      const [profileRes, wishlistRes, checkoutRes, productsRes, savedLooksRes] =
+        await Promise.all([
+          fetch("http://localhost:3000/api/user/profile", {
+            cache: "no-store",
+          }),
+          fetch("http://localhost:3000/api/user/wishlist", {
+            cache: "no-store",
+          }),
+          fetch("http://localhost:3000/api/user/checkout", {
+            cache: "no-store",
+          }),
+          fetch("http://localhost:3000/api/user/product", {
+            cache: "no-store",
+          }),
+          fetch("http://localhost:3000/api/user/history", {
+            cache: "no-store",
+          }),
+        ]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [profileRes, wishlistRes, checkoutRes, productsRes] =
-          await Promise.all([
-            fetch("http://localhost:3000/api/user/profile", {
-              cache: "no-store",
-            }),
-            fetch("http://localhost:3000/api/user/wishlist", {
-              cache: "no-store",
-            }),
-            fetch("http://localhost:3000/api/user/checkout", {
-              cache: "no-store",
-            }),
-            fetch("http://localhost:3000/api/user/product", {
-              cache: "no-store",
-            }),
-          ]);
-
-        if (
-          !profileRes.ok ||
-          !wishlistRes.ok ||
-          !checkoutRes.ok ||
-          !productsRes.ok
-        ) {
-          throw new Error("Failed to load profile data");
-        }
-
-        const [userProfile, wishlist, checkout, products] = await Promise.all([
+      if (
+        !profileRes.ok ||
+        !wishlistRes.ok ||
+        !checkoutRes.ok ||
+        !productsRes.ok
+      ) {
+        throw new Error("Failed to load profile data");
+      }
+      const [userProfile, wishlist, checkout, products, savedLooks] =
+        await Promise.all([
           profileRes.json() as Promise<GetUserProfile>,
           wishlistRes.json() as Promise<GetWishlist[]>,
           checkoutRes.json() as Promise<GetCheckout[]>,
           productsRes.json() as Promise<GetProduct[]>,
+          savedLooksRes.json() as Promise<GetSavedLook[]>,
         ]);
 
-        setProfileData({ profile: userProfile, wishlist, checkout, products });
-      } catch (error) {
-        errorHandler(error);
-      }
-    };
+      setProfileData({
+        profile: userProfile,
+        wishlist,
+        checkout,
+        products,
+        savedLooks,
+      });
+    } catch (error) {
+      errorHandler(error);
+    }
+  };
 
+  useEffect(() => {
     fetchData();
   }, []);
 
-  const { profile, wishlist, checkout, products } = profileData;
+  const { profile, wishlist, checkout, products, savedLooks } = profileData;
   const profileName = profile?.userId?.[0]?.username ?? "You";
   const profileAddress =
     profile?.address || "Add your address to personalize your profile";
@@ -88,6 +115,25 @@ export default function ProfilePage() {
   const previewWishlist = wishlist.slice(0, 3);
   const previewCheckout = checkout.slice(0, 3);
   const previewEvents = checkout.slice(0, 2);
+  const previewSavedLooks = savedLooks.slice(0, 3);
+
+  const renderActiveSection = () => {
+    switch (activeSection) {
+      case "Saved Looks":
+        return <ProfileSavedLooks savedLooks={savedLooks} />;
+      case "Wishlist":
+        return (
+          <ProfileWishlist wishlist={wishlist} refreshProfileData={fetchData} />
+        );
+      case "Checkout History":
+        return <ProfileCheckoutHistory checkout={checkout} />;
+      case "Joined Events":
+        return <ProfileJoinedEvents />;
+      case "Overview":
+      default:
+        return <ProfileOverview />;
+    }
+  };
 
   return (
     <main className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(255,244,238,0.55),transparent_28%),linear-gradient(180deg,#f8f4ef_0%,#fcfbf8_100%)]">
@@ -125,28 +171,65 @@ export default function ProfilePage() {
             {/* Menu */}
 
             <div className="rounded-3xl border border-[#efe4db] bg-[#fcfaf8] p-3 shadow-[0_10px_30px_rgba(15,23,42,0.03)]">
-              <SidebarItem
-                active
-                icon={<Home size={18} />}
-                title={"Overview"}
-              />
+              <button
+                type="button"
+                onClick={() => setActiveSection("Overview")}
+                className="w-full"
+              >
+                <SidebarItem
+                  active={activeSection === "Overview"}
+                  icon={<Home size={18} />}
+                  title={"Overview"}
+                />
+              </button>
 
-              <SidebarItem
-                icon={<Sparkles size={18} />}
-                title={"Saved Looks"}
-              />
+              <button
+                type="button"
+                onClick={() => setActiveSection("Saved Looks")}
+                className="w-full"
+              >
+                <SidebarItem
+                  active={activeSection === "Saved Looks"}
+                  icon={<Sparkles size={18} />}
+                  title={"Saved Looks"}
+                />
+              </button>
 
-              <SidebarItem icon={<Heart size={18} />} title="Wishlist" />
+              <button
+                type="button"
+                onClick={() => setActiveSection("Checkout History")}
+                className="w-full"
+              >
+                <SidebarItem
+                  active={activeSection === "Checkout History"}
+                  icon={<Clock3 size={18} />}
+                  title="Checkout History"
+                />
+              </button>
 
-              <SidebarItem
-                icon={<Clock3 size={18} />}
-                title="checkout history"
-              />
+              <button
+                type="button"
+                onClick={() => setActiveSection("Wishlist")}
+                className="w-full"
+              >
+                <SidebarItem
+                  active={activeSection === "Wishlist"}
+                  icon={<Heart size={18} />}
+                  title="Wishlist"
+                />
+              </button>
 
-              <SidebarItem
-                icon={<Calendar size={18} />}
-                title="Joined Events"
-              />
+              <button
+                type="button"
+                onClick={() => setActiveSection("Joined Events")}
+                className="w-full"
+              >
+                <SidebarItem
+                  active={activeSection === "Joined Events"}
+                  icon={<Calendar size={18} />}
+                  title="Joined Events"
+                />
+              </button>
 
               <SidebarItem icon={<LogOut size={18} />} title="Logout" />
             </div>
@@ -169,317 +252,409 @@ export default function ProfilePage() {
           {/* ================= CONTENT ================= */}
 
           <section className="space-y-6 lg:space-y-8">
-            {/* Welcome */}
-
-            <div className="overflow-hidden rounded-4xl border border-[#efe4db] bg-linear-to-br from-[#fff9f4] via-[#fffdfb] to-[#fef4ea] p-6 shadow-[0_16px_60px_rgba(15,23,42,0.05)] sm:p-8 lg:p-10">
-              <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-                <div className="max-w-2xl">
-                  <div className="inline-flex items-center gap-2 rounded-full border border-[#f1dfcf] bg-white/70 px-3 py-1 text-sm font-medium text-[#8f6d53]">
-                    <Sparkles size={16} />
-                    Your profile, refined
-                  </div>
-
-                  <h1 className="mt-4 flex flex-wrap items-center gap-2 text-3xl font-semibold tracking-tight text-[#1f1a17] sm:text-4xl">
-                    Welcome back, {profileName}
-                    <Sparkles size={20} className="text-accent" />
-                  </h1>
-
-                  <p className="mt-3 max-w-xl text-base leading-7 text-muted sm:text-lg">
-                    Ready to find your next perfect cosplay? Your saved looks,
-                    wishlist, and events are all gathered here.
-                  </p>
-                </div>
-
-                <button className="inline-flex h-11 items-center justify-center gap-2 rounded-2xl bg-primary px-5 text-sm font-medium text-white transition hover:-translate-y-0.5 hover:opacity-95">
-                  <Pencil size={16} />
-                  Edit Profile
-                </button>
-              </div>
-            </div>
-
             {/* Content Grid */}
 
-            <div className="grid gap-5 2xl:grid-cols-[1.15fr_0.95fr]">
-              <div className="space-y-5">
-                <div className="rounded-3xl border border-[#efe4db] bg-white/80 p-5 shadow-[0_10px_32px_rgba(15,23,42,0.04)]">
-                  <div className="mb-5 flex items-start justify-between gap-4">
-                    <div>
-                      <h3 className="text-xl font-semibold text-[#1f1a17]">
-                        Wishlist
-                      </h3>
-
-                      <p className="mt-1 text-sm text-muted">
-                        Your saved costume picks
-                      </p>
-                    </div>
-
-                    <Link
-                      href="/wishlist"
-                      className="text-sm font-medium text-primary transition hover:text-[#bc5f2f]"
-                    >
-                      View All →
-                    </Link>
-                  </div>
-
-                  <div className="space-y-3">
-                    {previewWishlist.map((item) => {
-                      const product = item.product;
-
-                      return (
-                        <div
-                          key={item._id}
-                          className="flex items-center gap-3 rounded-2xl border border-[#f3e8df] bg-[#fcfaf8] p-3 transition duration-200 hover:-translate-y-0.5 hover:border-[#f3caa9] hover:shadow-sm"
-                        >
-                          <div className="relative h-20 w-16 shrink-0 overflow-hidden rounded-xl">
-                            <Image
-                              src={
-                                product.imgUrl || "/images/register-girl.png"
-                              }
-                              alt={product.title}
-                              fill
-                              className="object-cover"
-                            />
-                          </div>
-
-                          <div className="min-w-0 flex-1">
-                            <h4 className="truncate font-semibold text-[#2f2723]">
-                              {product.title}
-                            </h4>
-
-                            <p className="truncate text-xs text-muted">
-                              {product.theme}
-                            </p>
-
-                            <p className="mt-3 text-sm font-semibold text-primary">
-                              Rp{" "}
-                              {Number(product.originalPrice).toLocaleString(
-                                "id-ID",
-                              )}
-                            </p>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-
-                  <div className="mt-5 rounded-2xl border border-[#f4e7dc] bg-[#fcfbf8] p-4">
-                    <div className="flex items-center justify-between gap-4">
-                      <div>
-                        <p className="text-sm text-muted">Total Wishlist</p>
-
-                        <h3 className="text-2xl font-semibold text-[#1f1a17]">
-                          {wishlist.length}
-                        </h3>
+            {activeSection === "Overview" ? (
+              <>
+                {/* Welcome */}
+                <div className="overflow-hidden rounded-4xl border border-[#efe4db] bg-linear-to-br from-[#fff9f4] via-[#fffdfb] to-[#fef4ea] p-6 shadow-[0_16px_60px_rgba(15,23,42,0.05)] sm:p-8 lg:p-10">
+                  <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+                    <div className="max-w-2xl">
+                      <div className="inline-flex items-center gap-2 rounded-full border border-[#f1dfcf] bg-white/70 px-3 py-1 text-sm font-medium text-[#8f6d53]">
+                        <Sparkles size={16} />
+                        Your profile, refined
                       </div>
 
-                      <Link
-                        href="/checkout"
-                        className="rounded-2xl bg-primary px-4 py-2 text-sm font-medium text-white transition hover:opacity-95"
-                      >
-                        Checkout
-                      </Link>
-                    </div>
-                  </div>
-                </div>
+                      <h1 className="mt-4 flex flex-wrap items-center gap-2 text-3xl font-semibold tracking-tight text-[#1f1a17] sm:text-4xl">
+                        Welcome back, {profileName}
+                        <Sparkles size={20} className="text-accent" />
+                      </h1>
 
-                {/* recomended costume */}
-                <div className="rounded-3xl border border-[#efe4db] bg-white/80 p-5 shadow-[0_10px_32px_rgba(15,23,42,0.04)]">
-                  <div className="mb-5 flex items-start justify-between gap-4">
-                    <div>
-                      <h3 className="text-xl font-semibold text-[#1f1a17]">
-                        Recommended Costumes
-                      </h3>
-
-                      <p className="mt-1 text-sm text-muted">
-                        Curated picks from our marketplace
+                      <p className="mt-3 max-w-xl text-base leading-7 text-muted sm:text-lg">
+                        Ready to find your next perfect cosplay? Your saved
+                        looks, wishlist, and events are all gathered here.
                       </p>
                     </div>
 
-                    <button className="text-sm font-medium text-primary transition hover:text-[#bc5f2f]">
-                      View All →
+                    <button
+                      onClick={() => setOpenEditModal(true)}
+                      className="inline-flex h-11 items-center justify-center gap-2 rounded-2xl bg-primary px-5 text-sm font-medium text-white transition hover:-translate-y-0.5 hover:opacity-95"
+                    >
+                      <Pencil size={16} />
+                      Edit Profile
                     </button>
                   </div>
+                </div>
+                <div className="grid gap-5 2xl:grid-cols-[1.15fr_0.95fr]">
+                  <div className="space-y-5">
+                    {/* saved look */}
+                    <div className="rounded-3xl border border-[#efe4db] bg-white/80 p-5 shadow-[0_10px_32px_rgba(15,23,42,0.04)]">
+                      <div className="mb-5 flex items-start justify-between gap-4">
+                        <div>
+                          <h3 className="text-xl font-semibold text-[#1f1a17]">
+                            Saved Looks
+                          </h3>
 
-                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-                    {previewProducts.map((item) => (
-                      <div key={item._id} className="group cursor-pointer">
-                        <div className="relative aspect-3/4 overflow-hidden rounded-2xl">
-                          <Image
-                            src={item.imgUrl || "/images/register-girl.png"}
-                            alt={item.title}
-                            fill
-                            className="object-cover transition duration-300 group-hover:scale-105"
-                          />
+                          <p className="mt-1 text-sm text-muted">
+                            Your AI generated cosplay history
+                          </p>
+                        </div>
 
-                          <button className="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 shadow-sm backdrop-blur">
-                            ❤️
+                        <button
+                          onClick={() => setActiveSection("Saved Looks")}
+                          className="text-sm font-medium text-primary transition hover:text-[#bc5f2f]"
+                        >
+                          View All →
+                        </button>
+                      </div>
+
+                      <div className="space-y-3">
+                        {previewSavedLooks.map((item) => (
+                          <div
+                            key={item._id}
+                            className="flex items-center gap-3 rounded-2xl border border-[#f3e8df] bg-[#fcfaf8] p-3 transition duration-200 hover:-translate-y-0.5 hover:border-[#f3caa9] hover:shadow-sm"
+                          >
+                            <div className="flex overflow-hidden rounded-xl">
+                              <div className="relative h-20 w-14">
+                                <Image
+                                  src={item.UserImg}
+                                  alt="before"
+                                  fill
+                                  className="object-cover"
+                                />
+                              </div>
+
+                              <div className="relative h-20 w-14 border-l border-white">
+                                <Image
+                                  src={item.AiImgUrl}
+                                  alt={item.Name}
+                                  fill
+                                  className="object-cover"
+                                />
+                              </div>
+                            </div>
+
+                            <div className="min-w-0 flex-1">
+                              <h4 className="truncate font-semibold text-[#2f2723]">
+                                {item.Name}
+                              </h4>
+
+                              <p className="truncate text-xs text-muted">
+                                {item.Theme}
+                              </p>
+
+                              <p className="mt-2 text-xs text-muted">
+                                {new Date(item.createdAt).toLocaleDateString(
+                                  "id-ID",
+                                )}
+                              </p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+
+                      <div className="mt-5 rounded-2xl border border-[#f4e7dc] bg-[#fcfbf8] p-4">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-sm text-muted">
+                              Total Saved Looks
+                            </p>
+
+                            <h3 className="text-2xl font-semibold text-[#1f1a17]">
+                              {savedLooks.length}
+                            </h3>
+                          </div>
+
+                          <button
+                            onClick={() => setActiveSection("Saved Looks")}
+                            className="rounded-2xl bg-primary px-4 py-2 text-sm font-medium text-white"
+                          >
+                            View All
                           </button>
                         </div>
-
-                        <h4 className="mt-2 truncate font-medium text-[#2f2723]">
-                          {item.title}
-                        </h4>
-
-                        <p className="text-xs text-muted">{item.theme}</p>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="mt-5 rounded-2xl border border-[#f4e7dc] bg-[#fcfbf8] p-4">
-                    <div className="flex items-center gap-4">
-                      <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#fff3eb]">
-                        ⭐
-                      </div>
-
-                      <div>
-                        <p className="text-sm text-muted">Recommended Picks</p>
-
-                        <h3 className="text-2xl font-semibold text-[#1f1a17]">
-                          {previewProducts.length}
-                        </h3>
                       </div>
                     </div>
-                  </div>
-                </div>
-              </div>
 
-              <div className="space-y-5">
-                <div className="rounded-3xl border border-[#efe4db] bg-white/80 p-5 shadow-[0_10px_32px_rgba(15,23,42,0.04)]">
-                  <div className="mb-5 flex items-start justify-between gap-4">
-                    <div>
-                      <h3 className="text-xl font-semibold text-[#1f1a17]">
-                        Checkout History
-                      </h3>
+                    {/* recomended costume */}
+                    <div className="rounded-3xl border border-[#efe4db] bg-white/80 p-5 shadow-[0_10px_32px_rgba(15,23,42,0.04)]">
+                      <div className="mb-5 flex items-start justify-between gap-4">
+                        <div>
+                          <h3 className="text-xl font-semibold text-[#1f1a17]">
+                            Recommended Costumes
+                          </h3>
 
-                      <p className="mt-1 text-sm text-muted">
-                        Your recent cosplay rentals
-                      </p>
-                    </div>
+                          <p className="mt-1 text-sm text-muted">
+                            Curated picks from our marketplace
+                          </p>
+                        </div>
 
-                    <button className="text-sm font-medium text-primary transition hover:text-[#bc5f2f]">
-                      View All →
-                    </button>
-                  </div>
-
-                  <div className="space-y-3">
-                    {previewCheckout.map((item) => {
-                      const product = item.product;
-
-                      return (
-                        <div
-                          key={item._id}
-                          className="flex items-center gap-3 rounded-2xl border border-[#f3e8df] bg-[#fcfaf8] p-3 transition duration-200 hover:-translate-y-0.5 hover:border-[#f3caa9] hover:shadow-sm"
+                        <button
+                          onClick={() => setActiveSection("Joined Events")}
+                          className="text-sm font-medium text-primary transition hover:text-[#bc5f2f]"
                         >
-                          <div className="relative h-20 w-16 shrink-0 overflow-hidden rounded-xl">
-                            <Image
-                              src={
-                                product.imgUrl || "/images/register-girl.png"
-                              }
-                              alt={product.title}
-                              fill
-                              className="object-cover"
-                            />
+                          View All →
+                        </button>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                        {previewProducts.map((item) => (
+                          <div key={item._id} className="group cursor-pointer">
+                            <div className="relative aspect-3/4 overflow-hidden rounded-2xl">
+                              <Image
+                                src={item.imgUrl || "/images/register-girl.png"}
+                                alt={item.title}
+                                fill
+                                className="object-cover transition duration-300 group-hover:scale-105"
+                              />
+                            </div>
+
+                            <h4 className="mt-2 truncate font-medium text-[#2f2723]">
+                              {item.title}
+                            </h4>
+
+                            <p className="text-xs text-muted">{item.theme}</p>
+                          </div>
+                        ))}
+                      </div>
+
+                      <div className="mt-5 rounded-2xl border border-[#f4e7dc] bg-[#fcfbf8] p-4">
+                        <div className="flex items-center gap-4">
+                          <div>
+                            <p className="text-sm text-muted">
+                              Recommended Picks
+                            </p>
+
+                            <h3 className="text-2xl font-semibold text-[#1f1a17]">
+                              {previewProducts.length}
+                            </h3>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-5">
+                    <div className="rounded-3xl border border-[#efe4db] bg-white/80 p-5 shadow-[0_10px_32px_rgba(15,23,42,0.04)]">
+                      <div className="mb-5 flex items-start justify-between gap-4">
+                        <div>
+                          <h3 className="text-xl font-semibold text-[#1f1a17]">
+                            Checkout History
+                          </h3>
+
+                          <p className="mt-1 text-sm text-muted">
+                            Your recent cosplay rentals
+                          </p>
+                        </div>
+
+                        <button
+                          onClick={() => setActiveSection("Checkout History")}
+                          className="text-sm font-medium text-primary transition hover:text-[#bc5f2f]"
+                        >
+                          View All →
+                        </button>
+                      </div>
+
+                      <div className="space-y-3">
+                        {previewCheckout.map((item) => {
+                          const product = item.product;
+
+                          return (
+                            <div
+                              key={item._id}
+                              className="flex items-center gap-3 rounded-2xl border border-[#f3e8df] bg-[#fcfaf8] p-3 transition duration-200 hover:-translate-y-0.5 hover:border-[#f3caa9] hover:shadow-sm"
+                            >
+                              <div className="relative h-20 w-16 shrink-0 overflow-hidden rounded-xl">
+                                <Image
+                                  src={
+                                    product.imgUrl ||
+                                    "/images/register-girl.png"
+                                  }
+                                  alt={product.title}
+                                  fill
+                                  className="object-cover"
+                                />
+                              </div>
+
+                              <div className="min-w-0 flex-1">
+                                <div className="flex items-start justify-between gap-2">
+                                  <h4 className="truncate font-semibold text-[#2f2723]">
+                                    {product.title}
+                                  </h4>
+
+                                  <StatusBadge status={item.status} />
+                                </div>
+
+                                <p className="text-xs text-muted">
+                                  {product.theme}
+                                </p>
+
+                                <p className="mt-2 text-xs text-muted">
+                                  {item.vendor?.namaToko || "CosFit Vendor"}
+                                </p>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* kosong */}
+
+                    {/* wishlist */}
+                    <div className="rounded-3xl border border-[#efe4db] bg-white/80 p-5 shadow-[0_10px_32px_rgba(15,23,42,0.04)]">
+                      <div className="mb-5 flex items-start justify-between gap-4">
+                        <div>
+                          <h3 className="text-xl font-semibold text-[#1f1a17]">
+                            Wishlist
+                          </h3>
+
+                          <p className="mt-1 text-sm text-muted">
+                            Your saved costume picks
+                          </p>
+                        </div>
+
+                        <button
+                          onClick={() => setActiveSection("Wishlist")}
+                          className="text-sm font-medium text-primary transition hover:text-[#bc5f2f]"
+                        >
+                          View All →
+                        </button>
+                      </div>
+
+                      <div className="space-y-3">
+                        {previewWishlist.map((item) => {
+                          const product = item.product;
+
+                          return (
+                            <div
+                              key={item._id}
+                              className="flex items-center gap-3 rounded-2xl border border-[#f3e8df] bg-[#fcfaf8] p-3 transition duration-200 hover:-translate-y-0.5 hover:border-[#f3caa9] hover:shadow-sm"
+                            >
+                              <div className="relative h-20 w-16 shrink-0 overflow-hidden rounded-xl">
+                                <Image
+                                  src={
+                                    product.imgUrl ||
+                                    "/images/register-girl.png"
+                                  }
+                                  alt={product.title}
+                                  fill
+                                  className="object-cover"
+                                />
+                              </div>
+
+                              <div className="min-w-0 flex-1">
+                                <h4 className="truncate font-semibold text-[#2f2723]">
+                                  {product.title}
+                                </h4>
+
+                                <p className="truncate text-xs text-muted">
+                                  {product.theme}
+                                </p>
+
+                                <p className="mt-3 text-sm font-semibold text-primary">
+                                  Rp{" "}
+                                  {Number(product.originalPrice).toLocaleString(
+                                    "id-ID",
+                                  )}
+                                </p>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+
+                      <div className="mt-5 rounded-2xl border border-[#f4e7dc] bg-[#fcfbf8] p-4">
+                        <div className="flex items-center justify-between gap-4">
+                          <div>
+                            <p className="text-sm text-muted">Total Wishlist</p>
+
+                            <h3 className="text-2xl font-semibold text-[#1f1a17]">
+                              {wishlist.length}
+                            </h3>
                           </div>
 
-                          <div className="min-w-0 flex-1">
-                            <div className="flex items-start justify-between gap-2">
-                              <h4 className="truncate font-semibold text-[#2f2723]">
+                          <Link
+                            href="/checkout"
+                            className="rounded-2xl bg-primary px-4 py-2 text-sm font-medium text-white transition hover:opacity-95"
+                          >
+                            Checkout
+                          </Link>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* <div className="rounded-3xl border border-[#efe4db] bg-white/80 p-5 shadow-[0_10px_32px_rgba(15,23,42,0.04)]">
+                    <div className="mb-5 flex items-start justify-between gap-4">
+                      <div>
+                        <h3 className="text-xl font-semibold text-[#1f1a17]">
+                          Active Rentals
+                        </h3>
+
+                        <p className="mt-1 text-sm text-muted">
+                          Your current checkout activity
+                        </p>
+                      </div>
+
+                      <button className="text-sm font-medium text-primary transition hover:text-[#bc5f2f]">
+                        Calendar →
+                      </button>
+                    </div>
+
+                    <div className="space-y-3">
+                      {previewEvents.map((item) => {
+                        const product = item.product;
+
+                        return (
+                          <div
+                            key={item._id}
+                            className="flex items-center gap-3 rounded-2xl border border-[#f3e8df] bg-[#fcfaf8] p-3 transition duration-200 hover:-translate-y-0.5 hover:border-[#f3caa9] hover:shadow-sm"
+                          >
+                            <div className="flex h-16 w-16 shrink-0 flex-col items-center justify-center rounded-2xl bg-[#fff4eb]">
+                              <span className="text-[10px] uppercase tracking-[0.2em] text-muted">
+                                {item.status.slice(0, 3).toUpperCase()}
+                              </span>
+
+                              <span className="text-2xl font-semibold text-primary">
+                                {item.status.length > 3 ? "•" : "1"}
+                              </span>
+                            </div>
+
+                            <div className="flex-1">
+                              <h4 className="font-semibold text-[#2f2723]">
                                 {product.title}
                               </h4>
 
-                              <StatusBadge status={item.status} />
-                            </div>
+                              <p className="mt-1 text-sm text-muted">
+                                {item.vendor?.namaToko || "CosFit Vendor"}
+                              </p>
 
-                            <p className="text-xs text-muted">
-                              {product.theme}
-                            </p>
+                              <p className="mt-1 text-xs text-muted">
+                                {product.theme}
+                              </p>
 
-                            <p className="mt-2 text-xs text-muted">
-                              {item.vendor?.namaToko || "CosFit Vendor"}
-                            </p>
-
-                            <div className="mt-3 flex items-center gap-1">
-                              {[1, 2, 3, 4, 5].map((star) => (
-                                <span key={star} className="text-gray-300">
-                                  ★
+                              <div className="mt-3 flex items-center justify-between">
+                                <span className="rounded-full bg-green-100 px-2 py-1 text-[10px] font-medium text-green-700">
+                                  {item.status}
                                 </span>
-                              ))}
+
+                                <button className="text-sm text-primary transition hover:text-[#bc5f2f]">
+                                  View
+                                </button>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                <div className="rounded-3xl border border-[#efe4db] bg-white/80 p-5 shadow-[0_10px_32px_rgba(15,23,42,0.04)]">
-                  <div className="mb-5 flex items-start justify-between gap-4">
-                    <div>
-                      <h3 className="text-xl font-semibold text-[#1f1a17]">
-                        Active Rentals
-                      </h3>
-
-                      <p className="mt-1 text-sm text-muted">
-                        Your current checkout activity
-                      </p>
+                        );
+                      })}
                     </div>
-
-                    <button className="text-sm font-medium text-primary transition hover:text-[#bc5f2f]">
-                      Calendar →
-                    </button>
+                  </div> */}
                   </div>
+                </div>{" "}
+              </>
+            ) : (
+              <div className="w-full">{renderActiveSection()}</div>
+            )}
 
-                  <div className="space-y-3">
-                    {previewEvents.map((item) => {
-                      const product = item.product;
-
-                      return (
-                        <div
-                          key={item._id}
-                          className="flex items-center gap-3 rounded-2xl border border-[#f3e8df] bg-[#fcfaf8] p-3 transition duration-200 hover:-translate-y-0.5 hover:border-[#f3caa9] hover:shadow-sm"
-                        >
-                          <div className="flex h-16 w-16 shrink-0 flex-col items-center justify-center rounded-2xl bg-[#fff4eb]">
-                            <span className="text-[10px] uppercase tracking-[0.2em] text-muted">
-                              {item.status.slice(0, 3).toUpperCase()}
-                            </span>
-
-                            <span className="text-2xl font-semibold text-primary">
-                              {item.status.length > 3 ? "•" : "1"}
-                            </span>
-                          </div>
-
-                          <div className="flex-1">
-                            <h4 className="font-semibold text-[#2f2723]">
-                              {product.title}
-                            </h4>
-
-                            <p className="mt-1 text-sm text-muted">
-                              {item.vendor?.namaToko || "CosFit Vendor"}
-                            </p>
-
-                            <p className="mt-1 text-xs text-muted">
-                              {product.theme}
-                            </p>
-
-                            <div className="mt-3 flex items-center justify-between">
-                              <span className="rounded-full bg-green-100 px-2 py-1 text-[10px] font-medium text-green-700">
-                                {item.status}
-                              </span>
-
-                              <button className="text-sm text-primary transition hover:text-[#bc5f2f]">
-                                View
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Banner */}
+            {/* Banner profile completed */}
             {/* 
             <div className="overflow-hidden rounded-4xl border border-[#efe4db] bg-linear-to-r from-[#fff6ee] via-[#fffdfb] to-[#fef4ea] shadow-[0_16px_60px_rgba(15,23,42,0.04)]">
               <div className="flex flex-col items-start justify-between gap-8 p-6 sm:p-8 lg:flex-row lg:items-center lg:p-9">
@@ -546,6 +721,11 @@ export default function ProfilePage() {
             </div> */}
           </section>
         </div>
+        <EditProfileModal
+          open={openEditModal}
+          onClose={() => setOpenEditModal(false)}
+          profile={profile}
+        />
       </div>
     </main>
   );
