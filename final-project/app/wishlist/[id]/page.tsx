@@ -223,76 +223,7 @@ export default function WishlistDetailPage() {
 
             {/* Body Profile */}
 
-            <div className="rounded-[30px] border border-border bg-white shadow-sm">
-              <div className="flex items-center justify-between border-b border-border px-6 py-5">
-                <h3 className="text-2xl font-bold text-text">
-                  Your Body Profile
-                </h3>
-
-                <button className="rounded-xl border border-primary px-4 py-2 text-sm font-medium text-primary hover:bg-primary hover:text-white">
-                  Edit Profile
-                </button>
-              </div>
-
-              <div className="grid grid-cols-5">
-                {[
-                  ["Height", "155 cm"],
-                  ["Weight", "45 kg"],
-                  ["Bust", "84 cm"],
-                  ["Waist", "62 cm"],
-                  ["Hip", "88 cm"],
-                ].map(([title, value]) => (
-                  <div
-                    key={title}
-                    className="border-r border-border px-5 py-6 last:border-none"
-                  >
-                    <p className="text-sm text-muted">{title}</p>
-
-                    <h4 className="mt-2 text-lg font-semibold">{value}</h4>
-                  </div>
-                ))}
-              </div>
-
-              {/* AI Match */}
-
-              <div className="border-t border-border p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h4 className="font-semibold">AI Match Score</h4>
-
-                    <p className="text-sm text-muted">
-                      Based on your body measurements
-                    </p>
-                  </div>
-
-                  <div className="flex items-center gap-4">
-                    <div className="relative flex h-20 w-20 items-center justify-center rounded-full border-8 border-green-500">
-                      <span className="text-xl font-bold text-green-600">
-                        95%
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="mt-6 grid grid-cols-2 gap-3">
-                  {[
-                    "Height Match",
-                    "Bust Match",
-                    "Waist Match",
-                    "Hip Match",
-                  ].map((item) => (
-                    <div
-                      key={item}
-                      className="flex items-center justify-between rounded-xl bg-[#F8FAF8] px-4 py-3"
-                    >
-                      <span className="text-sm">{item}</span>
-
-                      <CheckCircle2 className="text-green-500" size={18} />
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
+    
 
             {/* Vendor */}
 

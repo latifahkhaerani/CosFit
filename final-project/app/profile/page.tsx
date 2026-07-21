@@ -7,28 +7,65 @@ import {
   Heart,
   Calendar,
   Clock3,
-  Star,
-  Settings,
   Crown,
   Pencil,
   Sparkles,
 } from "lucide-react";
 import { CheckCircle2, Circle, LogOut } from "lucide-react";
 import SidebarItem from "@/components/profile/sidebarButton";
-import { GetUserProfile } from "../types";
+import { GetCheckout, GetProduct, GetUserProfile, GetWishlist } from "../types";
 import { useEffect, useState } from "react";
 import errorHandler from "../helpers/errorHandler";
+import Link from "next/link";
 
 export default function ProfilePage() {
-  const [profile, setProfile] = useState<GetUserProfile>();
+  const [profileData, setProfileData] = useState<{
+    profile?: GetUserProfile;
+    wishlist: GetWishlist[];
+    checkout: GetCheckout[];
+    products: GetProduct[];
+  }>({
+    wishlist: [],
+    checkout: [],
+    products: [],
+  });
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await fetch("http://localhost:3000/api/user/profile")
-        const userProfile: GetUserProfile = await data.json()
-        
-        setProfile(userProfile)
+        const [profileRes, wishlistRes, checkoutRes, productsRes] =
+          await Promise.all([
+            fetch("http://localhost:3000/api/user/profile", {
+              cache: "no-store",
+            }),
+            fetch("http://localhost:3000/api/user/wishlist", {
+              cache: "no-store",
+            }),
+            fetch("http://localhost:3000/api/user/checkout", {
+              cache: "no-store",
+            }),
+            fetch("http://localhost:3000/api/user/product", {
+              cache: "no-store",
+            }),
+          ]);
+
+        if (
+          !profileRes.ok ||
+          !wishlistRes.ok ||
+          !checkoutRes.ok ||
+          !productsRes.ok
+        ) {
+          throw new Error("Failed to load profile data");
+        }
+
+        const [userProfile, wishlist, checkout, products] = await Promise.all([
+          profileRes.json() as Promise<GetUserProfile>,
+          wishlistRes.json() as Promise<GetWishlist[]>,
+          checkoutRes.json() as Promise<GetCheckout[]>,
+          productsRes.json() as Promise<GetProduct[]>,
+        ]);
+
+        setProfileData({ profile: userProfile, wishlist, checkout, products });
       } catch (error) {
         errorHandler(error);
       }
@@ -37,184 +74,62 @@ export default function ProfilePage() {
     fetchData();
   }, []);
 
-  const savedLooks = [
-    {
-      id: 1,
-      character: "Hu Tao",
-      series: "Genshin Impact",
-      image: "/images/hutao-card.jpg",
-    },
-    {
-      id: 2,
-      character: "Rem",
-      series: "Re:Zero",
-      image: "/images/rem.jpg",
-    },
-    {
-      id: 3,
-      character: "2B",
-      series: "NieR",
-      image: "/images/2b.jpg",
-    },
-    {
-      id: 4,
-      character: "Saber",
-      series: "Fate",
-      image: "/images/saber.jpg",
-    },
-  ];
-
-  const wishlistItems = [
-    {
-      id: 1,
-      character: "Raiden Shogun",
-      series: "Genshin Impact",
-      image: "/images/raiden.jpg",
-      price: 450000,
-    },
-    {
-      id: 2,
-      character: "Zero Two",
-      series: "Darling in the Franxx",
-      image: "/images/zerotwo.jpg",
-      price: 400000,
-    },
-    {
-      id: 3,
-      character: "Makima",
-      series: "Chainsaw Man",
-      image: "/images/makima.jpg",
-      price: 500000,
-    },
-  ];
-
-  const rentals = [
-    {
-      id: 1,
-      character: "Hu Tao",
-      series: "Genshin Impact",
-      image: "/images/hutao-card.jpg",
-      status: "Completed",
-      rating: 5,
-      date: "12 Jun 2026",
-    },
-    {
-      id: 2,
-      character: "Rem",
-      series: "Re:Zero",
-      image: "/images/rem.jpg",
-      status: "Returned",
-      rating: 4,
-      date: "20 May 2026",
-    },
-    {
-      id: 3,
-      character: "Zero Two",
-      series: "Darling in the Franxx",
-      image: "/images/zerotwo.jpg",
-      status: "On Going",
-      rating: 0,
-      date: "26 Jul 2026",
-    },
-  ];
-
-  const events = [
-    {
-      id: 1,
-      title: "Comic Frontier",
-      month: "AUG",
-      day: "12",
-      location: "ICE BSD",
-      time: "09:00 AM",
-    },
-    {
-      id: 2,
-      title: "Ennichisai Festival",
-      month: "SEP",
-      day: "05",
-      location: "Blok M",
-      time: "10:00 AM",
-    },
-  ];
-
-  const characters = [
-    {
-      id: 1,
-      name: "Hu Tao",
-      series: "Genshin",
-      image: "/images/hutao-avatar.jpg",
-    },
-    {
-      id: 2,
-      name: "Rem",
-      series: "Re:Zero",
-      image: "/images/rem-avatar.jpg",
-    },
-    {
-      id: 3,
-      name: "Makima",
-      series: "Chainsaw",
-      image: "/images/makima-avatar.jpg",
-    },
-  ];
-
-  const newLocal =
-    "rounded-2xl bg-gradient-to-r from-[#FFF4EE] to-[#FFFDFB] p-8";
+  const { profile, wishlist, checkout, products } = profileData;
+  const profileName = profile?.userId?.[0]?.username ?? "You";
+  const profileAddress =
+    profile?.address || "Add your address to personalize your profile";
+  const profileCompletion = Math.min(
+    100,
+    (profile?.photo ? 40 : 0) +
+      (profile?.address ? 30 : 0) +
+      (profile?.userId?.[0]?.email ? 30 : 0),
+  );
+  const previewProducts = products.slice(0, 4);
+  const previewWishlist = wishlist.slice(0, 3);
+  const previewCheckout = checkout.slice(0, 3);
+  const previewEvents = checkout.slice(0, 2);
 
   return (
-    <main className="min-h-screen bg-background">
-      <div className="mx-auto max-w-362.5 px-6 py-8">
-        <div className="grid gap-6 xl:grid-cols-[260px_1fr]">
+    <main className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(255,244,238,0.55),transparent_28%),linear-gradient(180deg,#f8f4ef_0%,#fcfbf8_100%)]">
+      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+        <div className="grid gap-6 xl:grid-cols-[280px_minmax(0,1fr)] 2xl:grid-cols-[300px_minmax(0,1fr)]">
           {/* ================= SIDEBAR ================= */}
 
-          <aside className="space-y-5">
+          <aside className="space-y-5 xl:sticky xl:top-6 xl:self-start">
             {/* Profile */}
 
-            <div className="card p-6">
-              <div className="flex flex-col items-center">
-                <div className="relative">
-                  <div className="relative h-28 w-28 overflow-hidden rounded-full border-4 border-[#F7D8C4]">
-                    <Image
-                      src={profile ? profile.photo : ""}
-                      alt="avatar"
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
+            <div
+              className="relative overflow-hidden rounded-[28px] border border-[#efe4db] bg-cover p-6 shadow-[0_16px_50px_rgba(15,23,42,0.04)] bg-center bg-no-repeat"
+              style={{
+                backgroundImage: "url('/images/profile/background.png')",
+                backgroundSize: "105%",
+              }}
+            >
+              <div className="flex flex-col items-center text-center">
+                <div className="relative h-28 w-28 overflow-hidden rounded-full border-4 border-[#f7dac4] shadow-[0_10px_30px_rgba(240,141,91,0.18)]">
+                  <Image
+                    src={profile?.photo || "/images/profile/profile.png"}
+                    alt="avatar"
+                    fill
+                    className="object-cover"
+                  />
                 </div>
 
-                <h2 className="mt-6 text-2xl font-bold">
-                  {profile ? profile.userId[0].username : "username"}
+                <h2 className="mt-6 text-2xl font-semibold text-[#1f1a17]">
+                  {profileName}
                 </h2>
 
-                <p className="text-muted">@yunacos</p>
+                <p className="mt-1 text-sm text-muted">{profileAddress}</p>
               </div>
-
-              {/* XP */}
-
-              {/* <div className="mt-8">
-                <div className="mb-2 flex justify-between text-sm">
-                  <span>Level 12</span>
-
-                  <span className="text-muted">2450 / 5000 XP</span>
-                </div>
-
-                <div className="h-2 overflow-hidden rounded-full bg-[#EFEAE4]">
-                  <div className="h-full w-1/2 rounded-full bg-primary" />
-                </div>
-              </div> */}
             </div>
-
             {/* Menu */}
 
-            <div className="card p-3">
+            <div className="rounded-3xl border border-[#efe4db] bg-[#fcfaf8] p-3 shadow-[0_10px_30px_rgba(15,23,42,0.03)]">
               <SidebarItem
                 active
                 icon={<Home size={18} />}
                 title={"Overview"}
               />
-
-              <SidebarItem icon={<User size={18} />} title={"Body Profile"} />
 
               <SidebarItem
                 icon={<Sparkles size={18} />}
@@ -223,520 +138,358 @@ export default function ProfilePage() {
 
               <SidebarItem icon={<Heart size={18} />} title="Wishlist" />
 
-              <SidebarItem icon={<Clock3 size={18} />} title="Rental History" />
+              <SidebarItem
+                icon={<Clock3 size={18} />}
+                title="checkout history"
+              />
 
               <SidebarItem
                 icon={<Calendar size={18} />}
-                title="Upcoming Events"
+                title="Joined Events"
               />
-
-              <SidebarItem
-                icon={<Star size={18} />}
-                title="Favorite Characters"
-              />
-
-              <SidebarItem icon={<Settings size={18} />} title="Settings" />
 
               <SidebarItem icon={<LogOut size={18} />} title="Logout" />
             </div>
 
             {/* Premium */}
-
-            <div className="overflow-hidden rounded-2xl bg-linear-to-br from-[#FFF4EE] to-[#FFFDFB] p-5 shadow-sm">
-              <div className="flex items-center gap-3">
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white">
-                  <Crown className="text-primary" />
-                </div>
-
-                <div>
-                  <h3 className="font-semibold">CosFit Premium</h3>
-
-                  <p className="text-sm text-muted">
-                    Unlock exclusive AI features
-                  </p>
-                </div>
-              </div>
-
-              <button className="mt-5 h-11 w-full rounded-xl bg-primary font-medium text-white">
-                Upgrade Now
-              </button>
-            </div>
+            <Link
+              href="/credits"
+              className="block overflow-hidden rounded-3xl "
+            >
+              <Image
+                src="/images/profile/topup.png"
+                alt="Buy Credits"
+                width={800}
+                height={400}
+                className="h-auto w-full object-fill "
+              />
+            </Link>
           </aside>
 
           {/* ================= CONTENT ================= */}
 
-          <section className="space-y-6">
+          <section className="space-y-6 lg:space-y-8">
             {/* Welcome */}
 
-            <div className="card flex items-center justify-between rounded-2xl border p-6 shadow-sm">
-              <div>
-                <h1 className="flex items-center gap-2 text-3xl font-bold">
-                  Welcome back, {profile ? profile.userId[0].username : "You"}
-                  <Sparkles size={20} className="text-accent" />
-                </h1>
+            <div className="overflow-hidden rounded-4xl border border-[#efe4db] bg-linear-to-br from-[#fff9f4] via-[#fffdfb] to-[#fef4ea] p-6 shadow-[0_16px_60px_rgba(15,23,42,0.05)] sm:p-8 lg:p-10">
+              <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+                <div className="max-w-2xl">
+                  <div className="inline-flex items-center gap-2 rounded-full border border-[#f1dfcf] bg-white/70 px-3 py-1 text-sm font-medium text-[#8f6d53]">
+                    <Sparkles size={16} />
+                    Your profile, refined
+                  </div>
 
-                <p className="mt-2 text-muted">
-                  Ready to find your next perfect cosplay?
-                </p>
+                  <h1 className="mt-4 flex flex-wrap items-center gap-2 text-3xl font-semibold tracking-tight text-[#1f1a17] sm:text-4xl">
+                    Welcome back, {profileName}
+                    <Sparkles size={20} className="text-accent" />
+                  </h1>
+
+                  <p className="mt-3 max-w-xl text-base leading-7 text-muted sm:text-lg">
+                    Ready to find your next perfect cosplay? Your saved looks,
+                    wishlist, and events are all gathered here.
+                  </p>
+                </div>
+
+                <button className="inline-flex h-11 items-center justify-center gap-2 rounded-2xl bg-primary px-5 text-sm font-medium text-white transition hover:-translate-y-0.5 hover:opacity-95">
+                  <Pencil size={16} />
+                  Edit Profile
+                </button>
               </div>
-
-              <button className="flex h-11 items-center gap-2 rounded-xl bg-primary px-5 text-white transition hover:opacity-90">
-                <Pencil size={16} />
-                Edit Profile
-              </button>
             </div>
 
             {/* Content Grid */}
 
-            <div className="grid gap-5 xl:grid-cols-[1.2fr_1.3fr_1fr]">
-              {/* BODY PROFILE */}
-
-              <div className="card p-5">
-                {/* Header */}
-
-                <div className="mb-5 flex items-center justify-between">
-                  <div>
-                    <h3 className="text-xl font-semibold text-text">
-                      Body Profile
-                    </h3>
-
-                    <p className="mt-1 text-sm text-muted">
-                      Used for AI size matching
-                    </p>
-                  </div>
-
-                  <button className="text-sm font-medium text-primary hover:underline">
-                    View Details →
-                  </button>
-                </div>
-
-                {/* Content */}
-
-                <div className="grid gap-5 lg:grid-cols-[160px_1fr]">
-                  {/* Image */}
-
-                  <div className="relative aspect-2/4 overflow-hidden rounded-2xl">
-                    <Image
-                      src="/images/user-body.png"
-                      alt="Body"
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
-
-                  {/* Right */}
-
-                  <div className="space-y-4">
-                    {/* Height Weight */}
-
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="rounded-xl bg-[#FCFBFA] p-4">
-                        <p className="text-sm text-muted">Height</p>
-
-                        <h3 className="mt-2 text-2xl font-bold">155 cm</h3>
-                      </div>
-
-                      <div className="rounded-xl bg-[#FCFBFA] p-4">
-                        <p className="text-sm text-muted">Weight</p>
-
-                        <h3 className="mt-2 text-2xl font-bold">45 kg</h3>
-                      </div>
-                    </div>
-
-                    {/* Measurement */}
-
-                    <div className="card rounded-xl p-4">
-                      <h4 className="mb-4 font-semibold">Measurements</h4>
-
-                      <div className="space-y-3">
-                        <MeasureRow label="Bust" value="84 cm" />
-
-                        <MeasureRow label="Waist" value="62 cm" />
-
-                        <MeasureRow label="Hip" value="88 cm" />
-
-                        <MeasureRow label="Shoulder" value="38 cm" />
-
-                        <MeasureRow label="Inseam" value="72 cm" />
-                      </div>
-                    </div>
-
-                    {/* AI */}
-
-                    <div className="rounded-xl bg-green-50 p-4">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="text-sm text-green-700">
-                            AI Match Accuracy
-                          </p>
-
-                          <h3 className="mt-1 text-3xl font-bold text-green-600">
-                            95%
-                          </h3>
-                        </div>
-
-                        <div className="flex h-16 w-16 items-center justify-center rounded-full border-[6px] border-green-500 text-xl font-bold text-green-600">
-                          ✓
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Button */}
-
-                    <button className="w-full rounded-xl border border-primary py-3 font-medium text-primary transition hover:bg-primary hover:text-white">
-                      ✨ Update Measurements
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              {/* SAVED LOOK */}
-
-              <div className="card p-5">
-                {/* Header */}
-
-                <div className="mb-5 flex items-center justify-between">
-                  <div>
-                    <h3 className="text-xl font-semibold text-text">
-                      Saved Looks
-                    </h3>
-
-                    <p className="mt-1 text-sm text-muted">
-                      Your favorite cosplay inspirations
-                    </p>
-                  </div>
-
-                  <button className="text-sm font-medium text-primary hover:underline">
-                    View All →
-                  </button>
-                </div>
-
-                {/* Grid */}
-
-                <div className="grid grid-cols-4 gap-3">
-                  {savedLooks.map((item) => (
-                    <div key={item.id} className="group cursor-pointer">
-                      <div className="relative aspect-3/4 overflow-hidden rounded-xl">
-                        <Image
-                          src={item.image}
-                          alt={item.character}
-                          fill
-                          className="object-cover transition duration-300 group-hover:scale-105"
-                        />
-
-                        <button className="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-full bg-white shadow">
-                          ❤️
-                        </button>
-                      </div>
-
-                      <h4 className="mt-2 truncate font-medium">
-                        {item.character}
-                      </h4>
-
-                      <p className="text-xs text-muted">{item.series}</p>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Summary */}
-
-                <div className="mt-5 rounded-xl bg-[#FCFBFA] p-4">
-                  <div className="flex items-center gap-4">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#FFF3EF]">
-                      ⭐
-                    </div>
-
+            <div className="grid gap-5 2xl:grid-cols-[1.15fr_0.95fr]">
+              <div className="space-y-5">
+                <div className="rounded-3xl border border-[#efe4db] bg-white/80 p-5 shadow-[0_10px_32px_rgba(15,23,42,0.04)]">
+                  <div className="mb-5 flex items-start justify-between gap-4">
                     <div>
-                      <p className="text-sm text-muted">Total Saved Looks</p>
-
-                      <h3 className="text-2xl font-bold">
-                        {savedLooks.length}
+                      <h3 className="text-xl font-semibold text-[#1f1a17]">
+                        Wishlist
                       </h3>
+
+                      <p className="mt-1 text-sm text-muted">
+                        Your saved costume picks
+                      </p>
                     </div>
-                  </div>
-                </div>
-              </div>
 
-              {/* WISHLIST */}
-              <div className="card p-5">
-                {/* Header */}
-
-                <div className="mb-5 flex items-center justify-between">
-                  <div>
-                    <h3 className="text-xl font-semibold text-text">
-                      Wishlist
-                    </h3>
-
-                    <p className="mt-1 text-sm text-muted">
-                      Items waiting for you
-                    </p>
-                  </div>
-
-                  <button className="text-sm font-medium text-primary hover:underline">
-                    View All →
-                  </button>
-                </div>
-
-                {/* List */}
-
-                <div className="space-y-4">
-                  {wishlistItems.map((item) => (
-                    <div
-                      key={item.id}
-                      className="card flex items-center gap-3 rounded-xl border p-3 transition hover:border-primary"
+                    <Link
+                      href="/wishlist"
+                      className="text-sm font-medium text-primary transition hover:text-[#bc5f2f]"
                     >
-                      <div className="relative h-20 w-16 overflow-hidden rounded-lg">
-                        <Image
-                          src={item.image}
-                          alt={item.character}
-                          fill
-                          className="object-cover"
-                        />
-                      </div>
-
-                      <div className="min-w-0 flex-1">
-                        <h4 className="truncate font-semibold">
-                          {item.character}
-                        </h4>
-
-                        <p className="truncate text-xs text-muted">
-                          {item.series}
-                        </p>
-
-                        {/* Badge */}
-
-                        <div className="mt-2 flex flex-wrap gap-2">
-                          <span className="rounded-full bg-green-100 px-2 py-1 text-[10px] font-medium text-green-700">
-                            Good Match
-                          </span>
-
-                          <span className="rounded-full bg-orange-100 px-2 py-1 text-[10px] font-medium text-orange-700">
-                            Ready to Rent
-                          </span>
-                        </div>
-
-                        <p className="mt-3 text-sm font-semibold text-primary">
-                          Rp {item.price.toLocaleString("id-ID")}
-                        </p>
-                      </div>
-
-                      <button className="rounded-lg bg-[#FFF4EE] p-2 text-primary transition hover:bg-primary hover:text-white">
-                        ❤️
-                      </button>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Summary */}
-
-                <div className="mt-5 rounded-xl bg-[#FCFBFA] p-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm text-muted">Total Wishlist</p>
-
-                      <h3 className="text-2xl font-bold">
-                        {wishlistItems.length}
-                      </h3>
-                    </div>
-
-                    <button className="rounded-xl bg-primary px-4 py-2 text-sm font-medium text-white transition hover:opacity-90">
-                      Checkout
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Bottom Grid */}
-
-            <div className="grid gap-5 xl:grid-cols-[1.1fr_1fr_1fr]">
-              <div className="card p-5">
-                {/* Header */}
-
-                <div className="mb-5 flex items-center justify-between">
-                  <div>
-                    <h3 className="text-xl font-semibold">Rental History</h3>
-
-                    <p className="mt-1 text-sm text-muted">
-                      Your recent cosplay rentals
-                    </p>
+                      View All →
+                    </Link>
                   </div>
 
-                  <button className="text-sm font-medium text-primary hover:underline">
-                    View All →
-                  </button>
-                </div>
+                  <div className="space-y-3">
+                    {previewWishlist.map((item) => {
+                      const product = item.product;
 
-                <div className="space-y-4">
-                  {rentals.map((item) => (
-                    <div
-                      key={item.id}
-                      className="card flex items-center gap-3 rounded-xl border p-3 transition hover:border-primary"
-                    >
-                      <div className="relative h-20 w-16 overflow-hidden rounded-lg">
-                        <Image
-                          src={item.image}
-                          alt={item.character}
-                          fill
-                          className="object-cover"
-                        />
-                      </div>
-
-                      <div className="min-w-0 flex-1">
-                        <div className="flex items-center justify-between">
-                          <h4 className="truncate font-semibold">
-                            {item.character}
-                          </h4>
-
-                          <StatusBadge status={item.status} />
-                        </div>
-
-                        <p className="text-xs text-muted">{item.series}</p>
-
-                        <p className="mt-2 text-xs text-muted">{item.date}</p>
-
-                        <div className="mt-3 flex items-center gap-1">
-                          {[1, 2, 3, 4, 5].map((star) => (
-                            <span
-                              key={star}
-                              className={
-                                star <= item.rating
-                                  ? "text-yellow-400"
-                                  : "text-gray-300"
+                      return (
+                        <div
+                          key={item._id}
+                          className="flex items-center gap-3 rounded-2xl border border-[#f3e8df] bg-[#fcfaf8] p-3 transition duration-200 hover:-translate-y-0.5 hover:border-[#f3caa9] hover:shadow-sm"
+                        >
+                          <div className="relative h-20 w-16 shrink-0 overflow-hidden rounded-xl">
+                            <Image
+                              src={
+                                product.imgUrl || "/images/register-girl.png"
                               }
-                            >
-                              ★
-                            </span>
-                          ))}
+                              alt={product.title}
+                              fill
+                              className="object-cover"
+                            />
+                          </div>
+
+                          <div className="min-w-0 flex-1">
+                            <h4 className="truncate font-semibold text-[#2f2723]">
+                              {product.title}
+                            </h4>
+
+                            <p className="truncate text-xs text-muted">
+                              {product.theme}
+                            </p>
+
+                            <p className="mt-3 text-sm font-semibold text-primary">
+                              Rp{" "}
+                              {Number(product.originalPrice).toLocaleString(
+                                "id-ID",
+                              )}
+                            </p>
+                          </div>
                         </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="card p-5">
-                {/* Header */}
-
-                <div className="mb-5 flex items-center justify-between">
-                  <div>
-                    <h3 className="text-xl font-semibold">Upcoming Events</h3>
-
-                    <p className="mt-1 text-sm text-muted">
-                      Events you&apos;re planning to attend
-                    </p>
+                      );
+                    })}
                   </div>
 
-                  <button className="text-sm font-medium text-primary hover:underline">
-                    Calendar →
-                  </button>
-                </div>
+                  <div className="mt-5 rounded-2xl border border-[#f4e7dc] bg-[#fcfbf8] p-4">
+                    <div className="flex items-center justify-between gap-4">
+                      <div>
+                        <p className="text-sm text-muted">Total Wishlist</p>
 
-                <div className="space-y-4">
-                  {events.map((event) => (
-                    <div
-                      key={event.id}
-                      className="card flex items-center gap-3 rounded-xl border p-3 transition hover:border-primary"
-                    >
-                      {/* Date */}
-
-                      <div className="flex w-16 flex-col items-center justify-center rounded-xl bg-[#FFF4EE]">
-                        <span className="text-xs uppercase text-muted">
-                          {event.month}
-                        </span>
-
-                        <span className="text-2xl font-bold text-primary">
-                          {event.day}
-                        </span>
+                        <h3 className="text-2xl font-semibold text-[#1f1a17]">
+                          {wishlist.length}
+                        </h3>
                       </div>
 
-                      {/* Content */}
+                      <Link
+                        href="/checkout"
+                        className="rounded-2xl bg-primary px-4 py-2 text-sm font-medium text-white transition hover:opacity-95"
+                      >
+                        Checkout
+                      </Link>
+                    </div>
+                  </div>
+                </div>
 
-                      <div className="flex-1">
-                        <h4 className="font-semibold">{event.title}</h4>
+                {/* recomended costume */}
+                <div className="rounded-3xl border border-[#efe4db] bg-white/80 p-5 shadow-[0_10px_32px_rgba(15,23,42,0.04)]">
+                  <div className="mb-5 flex items-start justify-between gap-4">
+                    <div>
+                      <h3 className="text-xl font-semibold text-[#1f1a17]">
+                        Recommended Costumes
+                      </h3>
 
-                        <p className="mt-1 text-sm text-muted">
-                          📍 {event.location}
-                        </p>
+                      <p className="mt-1 text-sm text-muted">
+                        Curated picks from our marketplace
+                      </p>
+                    </div>
 
-                        <p className="mt-1 text-xs text-muted">{event.time}</p>
+                    <button className="text-sm font-medium text-primary transition hover:text-[#bc5f2f]">
+                      View All →
+                    </button>
+                  </div>
 
-                        <div className="mt-3 flex items-center justify-between">
-                          <span className="rounded-full bg-green-100 px-2 py-1 text-[10px] font-medium text-green-700">
-                            Registered
-                          </span>
+                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                    {previewProducts.map((item) => (
+                      <div key={item._id} className="group cursor-pointer">
+                        <div className="relative aspect-3/4 overflow-hidden rounded-2xl">
+                          <Image
+                            src={item.imgUrl || "/images/register-girl.png"}
+                            alt={item.title}
+                            fill
+                            className="object-cover transition duration-300 group-hover:scale-105"
+                          />
 
-                          <button className="text-sm text-primary hover:underline">
-                            View
+                          <button className="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 shadow-sm backdrop-blur">
+                            ❤️
                           </button>
                         </div>
+
+                        <h4 className="mt-2 truncate font-medium text-[#2f2723]">
+                          {item.title}
+                        </h4>
+
+                        <p className="text-xs text-muted">{item.theme}</p>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="mt-5 rounded-2xl border border-[#f4e7dc] bg-[#fcfbf8] p-4">
+                    <div className="flex items-center gap-4">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#fff3eb]">
+                        ⭐
+                      </div>
+
+                      <div>
+                        <p className="text-sm text-muted">Recommended Picks</p>
+
+                        <h3 className="text-2xl font-semibold text-[#1f1a17]">
+                          {previewProducts.length}
+                        </h3>
                       </div>
                     </div>
-                  ))}
+                  </div>
                 </div>
               </div>
 
-              <div className="card p-5">
-                <div className="mb-5 flex items-center justify-between">
-                  <div>
-                    <h3 className="text-xl font-semibold">
-                      Favorite Characters
-                    </h3>
+              <div className="space-y-5">
+                <div className="rounded-3xl border border-[#efe4db] bg-white/80 p-5 shadow-[0_10px_32px_rgba(15,23,42,0.04)]">
+                  <div className="mb-5 flex items-start justify-between gap-4">
+                    <div>
+                      <h3 className="text-xl font-semibold text-[#1f1a17]">
+                        Checkout History
+                      </h3>
 
-                    <p className="mt-1 text-sm text-muted">
-                      Characters you cosplay the most
-                    </p>
+                      <p className="mt-1 text-sm text-muted">
+                        Your recent cosplay rentals
+                      </p>
+                    </div>
+
+                    <button className="text-sm font-medium text-primary transition hover:text-[#bc5f2f]">
+                      View All →
+                    </button>
                   </div>
 
-                  <button className="text-sm font-medium text-primary hover:underline">
-                    Edit →
-                  </button>
+                  <div className="space-y-3">
+                    {previewCheckout.map((item) => {
+                      const product = item.product;
+
+                      return (
+                        <div
+                          key={item._id}
+                          className="flex items-center gap-3 rounded-2xl border border-[#f3e8df] bg-[#fcfaf8] p-3 transition duration-200 hover:-translate-y-0.5 hover:border-[#f3caa9] hover:shadow-sm"
+                        >
+                          <div className="relative h-20 w-16 shrink-0 overflow-hidden rounded-xl">
+                            <Image
+                              src={
+                                product.imgUrl || "/images/register-girl.png"
+                              }
+                              alt={product.title}
+                              fill
+                              className="object-cover"
+                            />
+                          </div>
+
+                          <div className="min-w-0 flex-1">
+                            <div className="flex items-start justify-between gap-2">
+                              <h4 className="truncate font-semibold text-[#2f2723]">
+                                {product.title}
+                              </h4>
+
+                              <StatusBadge status={item.status} />
+                            </div>
+
+                            <p className="text-xs text-muted">
+                              {product.theme}
+                            </p>
+
+                            <p className="mt-2 text-xs text-muted">
+                              {item.vendor?.namaToko || "CosFit Vendor"}
+                            </p>
+
+                            <div className="mt-3 flex items-center gap-1">
+                              {[1, 2, 3, 4, 5].map((star) => (
+                                <span key={star} className="text-gray-300">
+                                  ★
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
 
-                <div className="grid grid-cols-3 gap-3">
-                  {characters.map((item) => (
-                    <div key={item.id} className="group text-center">
-                      <div className="relative mx-auto h-20 w-20 overflow-hidden rounded-full ring-2 ring-[#F6D8C5] transition group-hover:ring-primary">
-                        <Image
-                          src={item.image}
-                          alt={item.name}
-                          fill
-                          className="object-cover"
-                        />
-                      </div>
+                <div className="rounded-3xl border border-[#efe4db] bg-white/80 p-5 shadow-[0_10px_32px_rgba(15,23,42,0.04)]">
+                  <div className="mb-5 flex items-start justify-between gap-4">
+                    <div>
+                      <h3 className="text-xl font-semibold text-[#1f1a17]">
+                        Active Rentals
+                      </h3>
 
-                      <h4 className="mt-3 text-sm font-medium">{item.name}</h4>
-
-                      <p className="text-xs text-muted">{item.series}</p>
+                      <p className="mt-1 text-sm text-muted">
+                        Your current checkout activity
+                      </p>
                     </div>
-                  ))}
-                </div>
 
-                <div className="mt-5 rounded-xl bg-[#FCFBFA] p-4">
-                  <p className="text-sm text-muted">Most Cosplayed</p>
+                    <button className="text-sm font-medium text-primary transition hover:text-[#bc5f2f]">
+                      Calendar →
+                    </button>
+                  </div>
 
-                  <h3 className="mt-2 text-xl font-semibold">Hu Tao</h3>
+                  <div className="space-y-3">
+                    {previewEvents.map((item) => {
+                      const product = item.product;
 
-                  <p className="mt-1 text-sm text-primary">
-                    8 different costume versions tried
-                  </p>
+                      return (
+                        <div
+                          key={item._id}
+                          className="flex items-center gap-3 rounded-2xl border border-[#f3e8df] bg-[#fcfaf8] p-3 transition duration-200 hover:-translate-y-0.5 hover:border-[#f3caa9] hover:shadow-sm"
+                        >
+                          <div className="flex h-16 w-16 shrink-0 flex-col items-center justify-center rounded-2xl bg-[#fff4eb]">
+                            <span className="text-[10px] uppercase tracking-[0.2em] text-muted">
+                              {item.status.slice(0, 3).toUpperCase()}
+                            </span>
+
+                            <span className="text-2xl font-semibold text-primary">
+                              {item.status.length > 3 ? "•" : "1"}
+                            </span>
+                          </div>
+
+                          <div className="flex-1">
+                            <h4 className="font-semibold text-[#2f2723]">
+                              {product.title}
+                            </h4>
+
+                            <p className="mt-1 text-sm text-muted">
+                              {item.vendor?.namaToko || "CosFit Vendor"}
+                            </p>
+
+                            <p className="mt-1 text-xs text-muted">
+                              {product.theme}
+                            </p>
+
+                            <div className="mt-3 flex items-center justify-between">
+                              <span className="rounded-full bg-green-100 px-2 py-1 text-[10px] font-medium text-green-700">
+                                {item.status}
+                              </span>
+
+                              <button className="text-sm text-primary transition hover:text-[#bc5f2f]">
+                                View
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
             </div>
 
             {/* Banner */}
-
-            <div className="overflow-hidden rounded-2xl bg-linear-to-r from-[#FFF4EE] via-[#FFF9F6] to-[#FFFDFB] shadow-sm">
-              <div className="flex flex-col items-center justify-between gap-8 p-8 lg:flex-row">
-                {/* Left */}
-
-                <div className="flex items-center gap-6">
-                  <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-white shadow">
+            {/* 
+            <div className="overflow-hidden rounded-4xl border border-[#efe4db] bg-linear-to-r from-[#fff6ee] via-[#fffdfb] to-[#fef4ea] shadow-[0_16px_60px_rgba(15,23,42,0.04)]">
+              <div className="flex flex-col items-start justify-between gap-8 p-6 sm:p-8 lg:flex-row lg:items-center lg:p-9">
+                <div className="flex items-center gap-5">
+                  <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-3xl bg-white/90 shadow-sm">
                     🎯
                   </div>
 
                   <div>
-                    <h2 className="text-3xl font-bold text-text">
+                    <h2 className="text-2xl font-semibold tracking-tight text-[#1f1a17] sm:text-3xl">
                       Complete Your Profile
                     </h2>
 
@@ -748,49 +501,53 @@ export default function ProfilePage() {
                   </div>
                 </div>
 
-                {/* Right */}
-
-                <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-sm">
+                <div className="w-full max-w-md rounded-3xl border border-[#f2e4db] bg-white/90 p-6 shadow-[0_10px_30px_rgba(15,23,42,0.04)]">
                   <div className="mb-5 flex items-center justify-between">
-                    <span className="font-semibold">Profile Completion</span>
+                    <span className="font-semibold text-[#2f2723]">
+                      Profile Completion
+                    </span>
 
-                    <span className="font-bold text-primary">85%</span>
+                    <span className="font-semibold text-primary">
+                      {profileCompletion}%
+                    </span>
                   </div>
 
-                  <div className="mb-6 h-3 overflow-hidden rounded-full bg-[#EFEAE4]">
-                    <div className="h-full w-[85%] rounded-full bg-primary" />
+                  <div className="mb-6 h-3 overflow-hidden rounded-full bg-[#efeae4]">
+                    <div
+                      className="h-full rounded-full bg-primary"
+                      style={{ width: `${profileCompletion}%` }}
+                    />
                   </div>
 
                   <div className="space-y-3">
-                    <CheckItem checked title="Upload Full Body Photo" />
+                    <CheckItem
+                      checked={!!profile?.photo}
+                      title="Upload Full Body Photo"
+                    />
 
-                    <CheckItem checked title="Add Body Measurements" />
+                    <CheckItem
+                      checked={!!profile?.address}
+                      title="Add Your Address"
+                    />
 
-                    <CheckItem checked title="Verify Email" />
+                    <CheckItem
+                      checked={!!profile?.userId?.[0]?.email}
+                      title="Verify Email"
+                    />
 
-                    <CheckItem title="Connect Social Media" />
+                    <CheckItem title="Complete Your Profile" />
                   </div>
 
-                  <button className="mt-6 h-12 w-full rounded-xl bg-primary font-semibold text-white transition hover:opacity-90">
+                  <button className="mt-6 h-12 w-full rounded-2xl bg-primary font-semibold text-white transition hover:opacity-95">
                     Complete Profile
                   </button>
                 </div>
               </div>
-            </div>
+            </div> */}
           </section>
         </div>
       </div>
     </main>
-  );
-}
-
-function MeasureRow({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex items-center justify-between border-b border-border pb-2 last:border-none">
-      <span className="text-muted">{label}</span>
-
-      <span className="font-medium">{value}</span>
-    </div>
   );
 }
 

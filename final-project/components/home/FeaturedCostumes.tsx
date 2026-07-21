@@ -56,7 +56,6 @@ function CostumeCard({
         const response = await fetch("/api/user/wishlist");
         if (response.ok) {
           const wishlist = await response.json();
-          console.log(wishlist, "<<<<<<");
 
           if (Array.isArray(wishlist)) {
             const isExist = wishlist.some((item: GetWishlist) => {

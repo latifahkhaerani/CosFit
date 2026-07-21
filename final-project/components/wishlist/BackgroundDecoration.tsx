@@ -4,7 +4,7 @@ export default function BackgroundDecoration() {
   return (
     <>
       {/* Top Left */}
-      <div className="absolute left-8 top-44 text-[#F3CDB8] opacity-70">
+      <div className="absolute left-80 top-34 text-[#F3CDB8] opacity-70">
         <Sparkles size={36} />
       </div>
 

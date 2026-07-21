@@ -2,6 +2,7 @@ import { PostProduct } from "@/app/types";
 import { database } from "../config/mongodb";
 import { ObjectId } from "mongodb";
 import { put } from "@vercel/blob";
+import { generateSlug } from "@/helpers/  generateSlug";
 
 export default class ProductModel {
   static collection() {
@@ -91,14 +92,17 @@ export default class ProductModel {
     };
   }
 
-  static async postProduct(productData: PostProduct, vendorId: string) {
-    const result = await this.collection().insertOne({
-      ...productData,
-      vendorId: new ObjectId(vendorId),
-    });
-    console.log(result);
-    return "Product created with ID: " + result.insertedId;
-  }
+static async postProduct(productData: PostProduct, vendorId: string) {
+  const slug = generateSlug(productData.title, productData.theme);
+
+  const result = await this.collection().insertOne({
+    ...productData,
+    slug,
+    vendorId: new ObjectId(vendorId),
+  });
+
+  return "Product created with ID: " + result.insertedId;
+}
 
   static async putProduct(productData: PostProduct, id: string) {
     const product = await this.collection().updateOne(
@@ -118,6 +122,11 @@ export default class ProductModel {
       { $set: { imgUrl: blob.url } },
     );
     return `Product image of ${product.upsertedId} updated successfully`;
+  }
+
+  static async addGaleryPhoto (imgUrl: string, id: string){
+    const product = await this.collection().updateOne({ _id: new ObjectId(id) },{ $push: { imgGalery: imgUrl } },);
+    return `Product galery of ${product.upsertedId} updated successfully`;
   }
 
   static async addViews(id: string) {
@@ -161,4 +170,34 @@ export default class ProductModel {
     const data = await this.collection().aggregate(agg).toArray();
     return data;
   }
+
+  static async getRelatedChar() {
+    const agg = [
+      {
+        $match: {
+          theme: "Wuthering Waves",
+          _id: {
+            $ne: new ObjectId("6a5a40d95855caae5e513959"),
+          },
+        },
+      },
+      {
+        $limit: 4,
+      },
+    ];
+    const data = await this.collection().aggregate(agg).toArray();
+    return data;
+  }
+
+  static async getBySlug(slug: string) {
+  const product = await this.collection().findOne({
+    slug,
+  });
+
+  if (!product) {
+    throw { message: "Invalid Product" };
+  }
+
+  return product;
+}
 }

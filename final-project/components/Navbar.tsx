@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -55,19 +55,22 @@ export default function Navbar({
   profileHref = "/profile",
 }: NavbarProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isLoggedIn, setIsLogin] = useState(false)
+  const [isLoggedIn, setIsLogin] = useState(false);
   const pathname = usePathname();
   useEffect(() => {
     const checkLogin = async () => {
-      const res = await handleLoginCookies()
-      setIsLogin(res)
-    }
+      const res = await handleLoginCookies();
+      setIsLogin(res);
+    };
 
-    checkLogin()
-  }, [isLoggedIn])
+    checkLogin();
+  }, [isLoggedIn]);
 
   // const cookieStore = await cookies();
   // const isLoggedIn = cookieStore.get("Authorization") ? true : false;
+  const visibleLinks = isLoggedIn
+    ? links
+    : links.filter((link) => link.id !== "wishlist");
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-surface/90 backdrop-blur">
@@ -78,12 +81,14 @@ export default function Navbar({
             {brandName}
             <Sparkles className="h-4 w-4" />
           </span>
-          <span className="text-xs tracking-wide text-muted">{brandTagline}</span>
+          <span className="text-xs tracking-wide text-muted">
+            {brandTagline}
+          </span>
         </Link>
 
         {/* Desktop links */}
         <ul className="hidden items-center gap-8 md:flex">
-          {links.map((link) => {
+          {visibleLinks.map((link) => {
             const active = isActivePath(pathname, link.href);
             return (
               <li key={link.id}>
@@ -155,7 +160,11 @@ export default function Navbar({
           onClick={() => setIsMenuOpen((open) => !open)}
           className="flex h-11 w-11 items-center justify-center rounded-full border border-border text-text md:hidden"
         >
-          {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          {isMenuOpen ? (
+            <X className="h-5 w-5" />
+          ) : (
+            <Menu className="h-5 w-5" />
+          )}
         </button>
       </nav>
 
@@ -163,7 +172,7 @@ export default function Navbar({
       {isMenuOpen && (
         <div className="border-t border-border px-6 py-4 md:hidden">
           <ul className="flex flex-col gap-3">
-            {links.map((link) => {
+            {visibleLinks.map((link) => {
               const active = isActivePath(pathname, link.href);
               return (
                 <li key={link.id}>
