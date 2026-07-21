@@ -182,3 +182,34 @@ export interface PostMonthlySales {
   totalSales: number;
   vendorId: string;
 }
+
+export interface ProductType {
+  _id: string;
+  imgUrl: string;
+  title: string;
+  desc: string;
+  size: string;
+  theme: string;
+  originalPrice: number;
+  stock: number;
+  vendorId: string;
+  views: number;
+  discount: number;
+  finalPrice: number;
+  slug: string
+}
+
+export interface HistoryType {
+  _id: string;
+  UserId: string;
+  AiImgUrl: string;
+  Name: string;
+  Theme: string;
+  UserImg: string;
+  createdAt: Date;
+}
+
+export interface StatTokenType {
+  token: number;
+  claimedAt: string | Date | null;
+}

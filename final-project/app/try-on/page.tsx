@@ -10,37 +10,7 @@ import {
 } from "react-compare-slider";
 import { useSearchParams } from "next/navigation";
 import Swal from "sweetalert2";
-
-interface ProductType {
-  _id: string;
-  imgUrl: string;
-  title: string;
-  desc: string;
-  size: string;
-  theme: string;
-  originalPrice: number;
-  stock: number;
-  vendorId: string;
-  views: number;
-  discount: number;
-  finalPrice: number;
-  slug: string
-}
-
-interface HistoryType {
-  _id: string;
-  UserId: string;
-  AiImgUrl: string;
-  Name: string;
-  Theme: string;
-  UserImg: string;
-  createdAt: Date;
-}
-
-interface StatTokenType {
-  token: number;
-  claimedAt: string | Date | null;
-}
+import { HistoryType, ProductType, StatTokenType } from "../types";
 
 function TryOnContent() {
   const searchParams = useSearchParams();
@@ -57,7 +27,12 @@ function TryOnContent() {
   const [showAllHistory, setShowAllHistory] = useState<boolean>(false);
   const [selectedHistoryItem, setSelectedHistoryItem] = useState<HistoryType | null>(null);
   const [aiResult, setAiResult] = useState<string>("https://cdn.fashn.ai/0aac3b42-e9ae-4282-bfb7-c5f1ae0b5db5/try_on_0.png");
+  
+  // Loading states
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isProductsLoading, setIsProductsLoading] = useState<boolean>(true);
+  const [isHistoryLoading, setIsHistoryLoading] = useState<boolean>(true);
+  const [isSelectedProductLoading, setIsSelectedProductLoading] = useState<boolean>(false);
 
   const [product, setProduct] = useState<ProductType[]>([]);
   const [history, setHistory] = useState<HistoryType[]>([]);
@@ -65,6 +40,7 @@ function TryOnContent() {
 
   const fetchProduct = async () => {
     try {
+      setIsProductsLoading(true);
       const res = await fetch(`/api/user/product`);
       if (res.ok) {
         const data: ProductType[] = await res.json();
@@ -72,11 +48,14 @@ function TryOnContent() {
       }
     } catch (error) {
       console.error("Failed to fetch products", error);
+    } finally {
+      setIsProductsLoading(false);
     }
   };
 
   const fetchHistory = async () => {
     try {
+      setIsHistoryLoading(true);
       const res = await fetch(`/api/user/history`);
       if (res.ok) {
         const data: HistoryType[] = await res.json();
@@ -84,6 +63,8 @@ function TryOnContent() {
       }
     } catch (error) {
       console.error("Failed to fetch history", error);
+    } finally {
+      setIsHistoryLoading(false);
     }
   };
 
@@ -153,6 +134,7 @@ function TryOnContent() {
     if (key) {
       const getPassedTryOn = async () => {
         try {
+          setIsSelectedProductLoading(true);
           const res = await fetch(`/api/user/product/${key}`);
           if (res.ok) {
             const data: ProductType = await res.json();
@@ -160,9 +142,13 @@ function TryOnContent() {
           }
         } catch (error) {
           console.error("Failed to fetch selected product detail:", error);
+        } finally {
+          setIsSelectedProductLoading(false);
         }
       };
       getPassedTryOn();
+    } else {
+      setIsSelectedProductLoading(false);
     }
     fetchProduct();
     fetchHistory();
@@ -294,7 +280,7 @@ function TryOnContent() {
       {/* Pop-up All Products */}
       {showAllProducts && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-4xl max-h-[85vh] overflow-y-auto rounded-[32px] bg-white p-8 shadow-2xl">
+          <div className="w-full max-w-4xl max-h-[85vh] overflow-y-auto rounded-4xl bg-white p-8 shadow-2xl">
             <div className="mb-6 flex items-center justify-between sticky top-0 bg-white z-10 py-2">
               <div>
                 <h2 className="text-3xl font-bold">All Products</h2>
@@ -308,12 +294,26 @@ function TryOnContent() {
               </button>
             </div>
             
-            {product.length === 0 ? (
+            {isProductsLoading ? (
+              <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 md:grid-cols-4">
+                {[...Array(8)].map((_, i) => (
+                  <div key={i} className="card p-4 border border-gray-100 rounded-2xl animate-pulse space-y-3">
+                    <div className="h-48 w-full bg-gray-200 rounded-2xl" />
+                    <div className="h-4 w-3/4 bg-gray-200 rounded" />
+                    <div className="h-3 w-1/2 bg-gray-200 rounded" />
+                    <div className="flex justify-between items-center pt-2">
+                      <div className="h-4 w-1/3 bg-gray-200 rounded" />
+                      <div className="h-7 w-16 bg-gray-200 rounded-lg" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : product.length === 0 ? (
               <p className="text-center py-10 text-muted">No products available at the moment.</p>
             ) : (
               <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 md:grid-cols-4">
                 {product.map((p) => (
-                  <div key={p._id} className="card p-4 hover:shadow-lg transition">
+                  <div key={p._id} className="card p-4 hover:shadow-lg transition border border-gray-100 rounded-2xl">
                     <div className="relative h-48 w-full overflow-hidden rounded-2xl mb-3 bg-gray-100">
                       <Image src={p.imgUrl} alt={p.title} fill className="object-cover" unoptimized />
                     </div>
@@ -341,7 +341,7 @@ function TryOnContent() {
       {/* Pop-up All History */}
       {showAllHistory && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-4xl max-h-[85vh] overflow-y-auto rounded-[32px] bg-white p-8 shadow-2xl">
+          <div className="w-full max-w-4xl max-h-[85vh] overflow-y-auto rounded-4xl bg-white p-8 shadow-2xl">
             <div className="mb-6 flex items-center justify-between sticky top-0 bg-white z-10 py-2">
               <div>
                 <h2 className="text-3xl font-bold">Generation History</h2>
@@ -355,12 +355,23 @@ function TryOnContent() {
               </button>
             </div>
             
-            {history.length === 0 ? (
+            {isHistoryLoading ? (
+              <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 md:grid-cols-4">
+                {[...Array(8)].map((_, i) => (
+                  <div key={i} className="card p-4 border border-gray-100 rounded-2xl animate-pulse space-y-3">
+                    <div className="h-48 w-full bg-gray-200 rounded-2xl" />
+                    <div className="h-4 w-3/4 bg-gray-200 rounded" />
+                    <div className="h-3 w-1/2 bg-gray-200 rounded" />
+                    <div className="h-9 w-full bg-gray-200 rounded-lg mt-2" />
+                  </div>
+                ))}
+              </div>
+            ) : history.length === 0 ? (
               <p className="text-center py-10 text-muted">No history available yet.</p>
             ) : (
               <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 md:grid-cols-4">
                 {history.map((h) => (
-                  <div key={h._id} className="card p-4 hover:shadow-lg transition border border-border">
+                  <div key={h._id} className="card p-4 hover:shadow-lg transition border border-border rounded-2xl">
                     <div className="relative h-48 w-full overflow-hidden rounded-2xl mb-3 bg-gray-100 cursor-pointer" onClick={() => setSelectedHistoryItem(h)}>
                       <Image src={h.AiImgUrl} alt={h.Name} fill className="object-cover" unoptimized />
                     </div>
@@ -382,8 +393,8 @@ function TryOnContent() {
 
       {/* Pop-up Single History Image Detail */}
       {selectedHistoryItem && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/80 p-4 backdrop-blur-md">
-          <div className="relative w-full max-w-xl rounded-[32px] bg-white p-6 shadow-2xl">
+        <div className="fixed inset-0 z-60 flex items-center justify-center bg-black/80 p-4 backdrop-blur-md">
+          <div className="relative w-full max-w-xl rounded-4xl bg-white p-6 shadow-2xl">
             <div className="mb-4 flex items-center justify-between">
               <h3 className="text-xl font-bold line-clamp-1">{selectedHistoryItem.Name}</h3>
               <button
@@ -409,7 +420,7 @@ function TryOnContent() {
       {/* Hidden input for user photo */}
       <input type="file" ref={userInputRef} onChange={handleUserImageChange} accept="image/*" className="hidden" />
 
-      <div className="page-container px-6 py-8 max-w-[1400px] mx-auto">
+      <div className="page-container px-6 py-8 max-w-350 mx-auto">
         {/* Breadcrumb */}
         <div className="mb-8 flex items-center gap-3 text-sm">
           <Link href="/wishlist" className="flex items-center gap-2 text-muted hover:text-primary transition">
@@ -462,7 +473,7 @@ function TryOnContent() {
           {/* LEFT SECTION */}
           <section className="space-y-7">
             {/* YOUR PHOTO */}
-            <div className="card p-5 bg-white rounded-[32px] shadow-sm">
+            <div className="card p-5 bg-white rounded-4xl shadow-sm">
               <div className="mb-4 flex items-center justify-between">
                 <h3 className="font-semibold text-lg text-gray-800">Your Photo</h3>
                 {userPreview && (
@@ -475,7 +486,7 @@ function TryOnContent() {
               {userPreview ? (
                 <>
                   <div className="relative overflow-hidden rounded-3xl">
-                    <Image src={userPreview} alt="body" width={500} height={700} unoptimized className="h-[420px] w-full object-cover" />
+                    <Image src={userPreview} alt="body" width={500} height={700} unoptimized className="h-105 w-full object-cover" />
                     <button onClick={() => userInputRef.current?.click()} className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-md cursor-pointer hover:bg-gray-100 transition">
                       <Camera size={18} />
                     </button>
@@ -490,7 +501,7 @@ function TryOnContent() {
                   onDragLeave={handleUserDragLeave}
                   onDrop={handleUserDrop}
                   onClick={() => userInputRef.current?.click()}
-                  className={`flex h-[420px] w-full cursor-pointer flex-col items-center justify-center rounded-[28px] border-2 border-dashed transition-all ${
+                  className={`flex h-105 w-full cursor-pointer flex-col items-center justify-center rounded-[28px] border-2 border-dashed transition-all ${
                     isDraggingUser ? "border-primary bg-primary/10 scale-[0.98]" : "border-gray-200 bg-gray-50 hover:bg-gray-100"
                   }`}
                 >
@@ -504,7 +515,7 @@ function TryOnContent() {
             </div>
 
             {/* GENERATION HISTORY */}
-            <div className="card p-5 bg-white rounded-[32px] shadow-sm">
+            <div className="card p-5 bg-white rounded-4xl shadow-sm">
               <div className="mb-5 flex items-center justify-between">
                 <div>
                   <h3 className="font-semibold text-lg text-gray-800">Generation History</h3>
@@ -514,7 +525,19 @@ function TryOnContent() {
               </div>
               
               <div className="space-y-4">
-                {history.length > 0 ? (
+                {isHistoryLoading ? (
+                  // Skeleton Loading untuk History
+                  [...Array(3)].map((_, index) => (
+                    <div key={index} className="flex items-center gap-3 rounded-2xl border border-gray-100 p-3 animate-pulse">
+                      <div className="h-16 w-16 bg-gray-200 rounded-xl shrink-0" />
+                      <div className="flex-1 space-y-2">
+                        <div className="h-4 bg-gray-200 rounded w-3/4" />
+                        <div className="h-3 bg-gray-200 rounded w-1/2" />
+                      </div>
+                      <div className="h-8 w-14 bg-gray-200 rounded-lg shrink-0" />
+                    </div>
+                  ))
+                ) : history.length > 0 ? (
                   history.slice(0, 3).map((item) => (
                     <div key={item._id} className="flex items-center gap-3 rounded-2xl border border-gray-100 p-3 hover:bg-gray-50 transition">
                       <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-gray-100">
@@ -542,7 +565,7 @@ function TryOnContent() {
           {/* CENTER SECTION */}
           <section className="space-y-7">
             {/* TRY ON MAIN PREVIEW */}
-            <div className="card p-6 bg-white rounded-[32px] shadow-sm">
+            <div className="card p-6 bg-white rounded-4xl shadow-sm">
               <div className="mb-6 flex items-center justify-between">
                 <div>
                   <h2 className="section-title text-xl font-bold text-gray-800">AI Virtual Try-On</h2>
@@ -551,18 +574,18 @@ function TryOnContent() {
                 {aiResult && !isLoading && <span className="badge-success px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold">✓ Generated</span>}
               </div>
 
-              <div className="relative overflow-hidden rounded-[28px] bg-[#F7F4F1] min-h-[400px]">
+              <div className="relative overflow-hidden rounded-[28px] bg-[#F7F4F1] min-h-100">
                 {isLoading ? (
-                  <div className="flex h-[600px] w-full flex-col items-center justify-center bg-white/80 backdrop-blur-sm">
+                  <div className="flex h-150 w-full flex-col items-center justify-center bg-white/80 backdrop-blur-sm">
                     <Loader2 className="h-12 w-12 animate-spin text-primary mb-3" />
                     <p className="font-semibold text-lg text-gray-800 animate-pulse">Generating your AI Cosplay...</p>
                     <p className="text-sm text-gray-500 mt-1">This may take up to a minute.</p>
                   </div>
                 ) : (
-                  <Image src={aiResult} alt="Generated Preview" width={900} height={900} unoptimized className="h-[600px] w-full object-contain py-2" />
+                  <Image src={aiResult} alt="Generated Preview" width={900} height={900} unoptimized className="h-150 w-full object-contain py-2" />
                 )}
                 <div className="absolute left-5 top-5 rounded-full bg-white/90 px-4 py-2 shadow-sm backdrop-blur">
-                  <p className="text-xs font-medium text-primary text-[#c2410c]">AI Generated Preview</p>
+                  <p className="text-xs font-medium text-primary">AI Generated Preview</p>
                 </div>
               </div>
 
@@ -575,7 +598,7 @@ function TryOnContent() {
             </div>
 
             {/* AI RECOMMENDATION */}
-            <div className="card p-5 bg-white rounded-[32px] shadow-sm">
+            <div className="card p-5 bg-white rounded-4xl shadow-sm">
               <div className="flex items-start gap-4">
                 <div className="flex shrink-0 h-12 w-12 items-center justify-center rounded-2xl bg-[#FFF4EE] text-2xl">✨</div>
                 <div>
@@ -586,7 +609,7 @@ function TryOnContent() {
             </div>
 
             {/* BEFORE & AFTER */}
-            <div className="card p-6 bg-white rounded-[32px] shadow-sm">
+            <div className="card p-6 bg-white rounded-4xl shadow-sm">
               <div className="mb-5 flex items-center justify-between">
                 <div>
                   <h2 className="section-title text-xl font-bold text-gray-800">Before & After</h2>
@@ -602,8 +625,8 @@ function TryOnContent() {
               </div>
               <div className="overflow-hidden rounded-[26px] border border-gray-100">
                 <ReactCompareSlider
-                  itemOne={<ReactCompareSliderImage src={userPreview || "https://cdn.fashn.ai/95e99a9c-608e-4eb8-b52e-9380a74b3516/try_on_0.png"} alt="Original" className="object-cover h-[450px] w-full" />}
-                  itemTwo={<ReactCompareSliderImage src={aiResult} alt="Generated" className="object-cover h-[450px] w-full" />}
+                  itemOne={<ReactCompareSliderImage src={userPreview || "https://cdn.fashn.ai/95e99a9c-608e-4eb8-b52e-9380a74b3516/try_on_0.png"} alt="Original" className="object-cover h-112.5 w-full" />}
+                  itemTwo={<ReactCompareSliderImage src={aiResult} alt="Generated" className="object-cover h-112.5 w-full" />}
                 />
               </div>
             </div>
@@ -612,23 +635,34 @@ function TryOnContent() {
           {/* RIGHT SECTION */}
           <section className="space-y-7">
             {/* SELECTED COSTUME */}
-            <div className="card p-5 bg-white rounded-[32px] shadow-sm">
+            <div className="card p-5 bg-white rounded-4xl shadow-sm">
               <div className="mb-5 flex items-center justify-between">
                 <div>
                   <h3 className="font-semibold text-lg text-gray-800">Selected Costume</h3>
                   <p className="subtitle mt-1 text-sm text-gray-500">Ready to Try-On</p>
                 </div>
-                {selectedProduct && (
+                {selectedProduct && !isSelectedProductLoading && (
                   <button onClick={() => setSelectedProduct(null)} className="text-sm font-medium text-primary hover:underline cursor-pointer">
                     Clear
                   </button>
                 )}
               </div>
 
-              {selectedProduct ? (
+              {isSelectedProductLoading ? (
+                <div className="animate-pulse space-y-4">
+                  <div className="h-67.5 w-full bg-gray-200 rounded-3xl" />
+                  <div className="h-6 w-3/4 bg-gray-200 rounded" />
+                  <div className="h-4 w-1/2 bg-gray-200 rounded" />
+                  <div className="h-12 w-full bg-gray-200 rounded-xl" />
+                  <div className="flex justify-between items-center pt-2">
+                    <div className="h-8 w-1/3 bg-gray-200 rounded" />
+                    <div className="h-10 w-24 bg-gray-200 rounded-lg" />
+                  </div>
+                </div>
+              ) : selectedProduct ? (
                 <>
                   <div className="relative overflow-hidden rounded-3xl group">
-                    <Image src={selectedProduct.imgUrl} alt="Selected Costume" width={500} height={700} unoptimized className="h-[270px] w-full object-cover" />
+                    <Image src={selectedProduct.imgUrl} alt="Selected Costume" width={500} height={700} unoptimized className="h-67.5 w-full object-cover" />
                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
                        <button onClick={() => setShowAllProducts(true)} className="bg-white text-black px-4 py-2 rounded-xl text-sm font-medium cursor-pointer hover:bg-gray-100">
                          Change Product
@@ -648,7 +682,7 @@ function TryOnContent() {
                     <div className="mt-6 flex items-center justify-between">
                       <div>
                         <p className="subtitle text-xs text-gray-500 mb-1">Rental Price</p>
-                        <h3 className="text-2xl font-bold text-primary text-[#c2410c]">Rp{selectedProduct.finalPrice.toLocaleString("id-ID")}</h3>
+                        <h3 className="text-2xl font-bold text-primary">Rp{selectedProduct.finalPrice.toLocaleString("id-ID")}</h3>
                       </div>
                       <Link href={`/marketplace/products/${selectedProduct.slug}`}><button className="rounded-lg bg-[#FFF8F6] px-10 py-3 text-xs font-medium text-primary hover:bg-primary/20 transition cursor-pointer">Detail</button></Link>
                     </div>
@@ -657,7 +691,7 @@ function TryOnContent() {
               ) : (
                 <div
                   onClick={() => setShowAllProducts(true)}
-                  className={`flex h-[380px] w-full cursor-pointer flex-col items-center justify-center rounded-[28px] border-2 border-dashed border-gray-200 bg-gray-50 hover:bg-gray-100 transition-all`}
+                  className={`flex h-95 w-full cursor-pointer flex-col items-center justify-center rounded-[28px] border-2 border-dashed border-gray-200 bg-gray-50 hover:bg-gray-100 transition-all`}
                 >
                   <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-sm mb-4">
                     <Camera size={24} className="text-primary" />
@@ -669,7 +703,7 @@ function TryOnContent() {
             </div>
 
             {/* CHOOSE PRODUCTS (LIMIT 3) */}
-            <div className="card p-5 bg-white rounded-[32px] shadow-sm">
+            <div className="card p-5 bg-white rounded-4xl shadow-sm">
               <div className="mb-5 flex items-center justify-between">
                 <h3 className="font-semibold text-lg text-gray-800">Products</h3>
                 <button onClick={() => setShowAllProducts(true)} className="text-sm font-medium text-primary hover:underline cursor-pointer">
@@ -678,25 +712,37 @@ function TryOnContent() {
               </div>
               
               <div className="space-y-4">
-                {product.slice(0, 3).map((p) => (
-                  <div key={p._id} className="flex items-center gap-3 rounded-2xl border border-gray-100 p-3 hover:bg-gray-50 transition">
-                    <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-gray-100">
-                      <Image src={p.imgUrl} alt={p.title} fill className="object-cover" unoptimized />
+                {isProductsLoading ? (
+                  [...Array(3)].map((_, index) => (
+                    <div key={index} className="flex items-center gap-3 rounded-2xl border border-gray-100 p-3 animate-pulse">
+                      <div className="h-16 w-16 bg-gray-200 rounded-xl shrink-0" />
+                      <div className="flex-1 space-y-2">
+                        <div className="h-4 bg-gray-200 rounded w-3/4" />
+                        <div className="h-3 bg-gray-200 rounded w-1/2" />
+                      </div>
+                      <div className="h-8 w-16 bg-gray-200 rounded-lg shrink-0" />
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <h4 className="font-medium text-sm truncate text-gray-800">{p.title}</h4>
-                      <p className="text-xs text-gray-500 mt-1 truncate">Rp{p.finalPrice.toLocaleString("id-ID")}</p>
+                  ))
+                ) : product.length > 0 ? (
+                  product.slice(0, 3).map((p) => (
+                    <div key={p._id} className="flex items-center gap-3 rounded-2xl border border-gray-100 p-3 hover:bg-gray-50 transition">
+                      <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-gray-100">
+                        <Image src={p.imgUrl} alt={p.title} fill className="object-cover" unoptimized />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-medium text-sm truncate text-gray-800">{p.title}</h4>
+                        <p className="text-xs text-gray-500 mt-1 truncate">Rp{p.finalPrice.toLocaleString("id-ID")}</p>
+                      </div>
+                      <button
+                        onClick={() => handleSelectProduct(p)}
+                        className="shrink-0 rounded-lg bg-[#FFF8F6] px-4 py-2 text-xs font-medium text-primary hover:bg-primary/20 transition cursor-pointer"
+                      >
+                        Select
+                      </button>
                     </div>
-                    <button
-                      onClick={() => handleSelectProduct(p)}
-                      className="shrink-0 rounded-lg bg-[#FFF8F6] px-4 py-2 text-xs font-medium text-primary hover:bg-primary/20 transition cursor-pointer"
-                    >
-                      Select
-                    </button>
-                  </div>
-                ))}
-                {product.length === 0 && (
-                   <p className="text-sm text-gray-500 text-center py-4">No products found.</p>
+                  ))
+                ) : (
+                  <p className="text-sm text-gray-500 text-center py-4">No products found.</p>
                 )}
               </div>
             </div>
