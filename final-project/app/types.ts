@@ -12,18 +12,19 @@ export interface GetUser {
 export interface GetProduct {
   _id: string;
   imgUrl: string;
+  title: string;
   imgGalery?: string[];
   desc: string;
   size: string;
   theme: string;
-  title: string;
   originalPrice: number;
+  stock: number;
   vendorId: string;
+  views: number;
   discount: number;
   finalPrice: number;
-  stock: number;
-  views: number;
   wishlists: [GetWishlist];
+  slug: string;
 }
 
 export interface GetWishlist {
@@ -31,6 +32,7 @@ export interface GetWishlist {
   productId: string;
   userId: string;
   product: GetProduct;
+  vendor: GetVendor;
 }
 
 export interface GetUserProfile {

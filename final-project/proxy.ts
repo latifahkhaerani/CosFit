@@ -103,9 +103,10 @@ export const config = {
     "/api/user/profile",
     "/vendor",
     "/api/forum",
-    "/api/user/wishlist:path*",
-    "/api/user/checkout",
+    "/api/user/wishlist/:path*",
+    "/api/user/checkout/:path*",
     "/api/chat/:path*",
     "/api/user/try-on",
+    "/api/user/history"
   ],
 };
