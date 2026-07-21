@@ -5,6 +5,7 @@ import { Heart, ShoppingBag, ShoppingCart, ArrowRight } from "lucide-react";
 import { cookies } from "next/headers";
 import { GetWishlist } from "../types";
 import WishlistCard from "@/components/wishlist/WishlistCard";
+import Link from "next/link";
 
 export default async function WishlistPage() {
   async function getWishlist(): Promise<GetWishlist[]> {
@@ -31,99 +32,90 @@ export default async function WishlistPage() {
   return (
     <main className="min-h-screen bg-background">
       <BackgroundDecoration />
-      <section className="mx-auto max-w-7xl px-6 py-12">
-        {/* Header */}
 
-        <div className="mb-12 flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
-          <div className="flex items-center gap-6">
-            <div className="flex h-24 w-24 items-center justify-center rounded-full bg-[#FFF3EF]">
-              <Heart
-                className="text-(--primary)"
-                fill="currentColor"
-                size={40}
-              />
-            </div>
+      <section className="mx-auto max-w-360 px-4 py-6 sm:px-6 lg:px-8 xl:px-10 xl:py-8">
+        <div className="mb-8 flex flex-col gap-4 lg:mb-10 lg:flex-row lg:items-center lg:justify-between lg:gap-8">
+          <div className="flex items-center gap-20 sm:gap-5">
+            {/* <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#FFF3EF] sm:h-18 sm:w-18">
+              <Heart className="text-primary" fill="currentColor" size={28} />
+            </div> */}
 
             <div>
-              <h1 className="text-5xl font-bold text-[var(--text)]">
+              <h1 className="text-3xl font-semibold tracking-[-0.02em] text-(--text) sm:text-3xl">
                 My Wishlist
               </h1>
 
-              <p className="mt-3 text-xl text-gray-500">
+              <p className="mt-1.5 text-sm leading-6 text-gray-500 sm:text-base">
                 All the costumes you love in one place.
               </p>
             </div>
           </div>
+          {/* 
+          <div className="overflow-hidden rounded-3xl border border-border bg-white shadow-[0_16px_44px_-28px_rgba(15,23,42,0.2)] lg:min-w-140">
+            <div className="grid gap-0 md:grid-cols-[1fr_1fr] lg:grid-cols-[1fr_1fr_1.15fr]">
+              <div className="flex items-center gap-4 border-b border-border p-4 sm:p-5 lg:border-b-0 lg:border-r lg:p-4">
+                <div className="shrink-0 rounded-2xl bg-[#FFF3EF] p-3">
+                  <ShoppingBag className="text-primary" size={20} />
+                </div>
 
-          {/* Summary */}
-
-          <div className="grid overflow-hidden rounded-3xl border border-(--border) bg-white shadow-sm lg:grid-cols-[1fr_1.3fr_1.4fr]">
-            {/* Saved */}
-
-            <div className="flex items-center gap-5 border-r border-[var(--border)] p-8">
-              <div className="flex-shrink-0 rounded-2xl bg-[#FFF3EF] p-4">
-                <ShoppingBag className="text-[var(--primary)]" size={24} />
+                <div className="min-w-0">
+                  <p className="text-sm text-gray-500">Saved Costumes</p>
+                  <h2 className="text-2xl font-semibold text-(--text) sm:text-3xl">
+                    {wishlist.length}
+                  </h2>
+                </div>
               </div>
 
-              <div className="min-w-0">
-                <p className="text-sm text-gray-500">Saved Costumes</p>
+              <div className="flex items-center gap-4 border-b border-border p-4 sm:p-5 lg:border-b-0 lg:border-r lg:p-4">
+                <div className="shrink-0 rounded-2xl bg-[#FFF3EF] p-3">
+                  <ShoppingCart className="text-primary" size={20} />
+                </div>
 
-                <h2 className="text-4xl font-bold">{wishlist.length}</h2>
+                <div className="min-w-0">
+                  <p className="text-sm text-gray-500">Estimated Total</p>
+                  <h2 className="text-lg font-semibold text-(--text) sm:text-xl">
+                    Rp{" "}
+                    {wishlist
+                      .reduce(
+                        (total, item) =>
+                          total + Number(item.product.originalPrice),
+                        0,
+                      )
+                      .toLocaleString("id-ID")}
+                  </h2>
+                </div>
+              </div>
+
+              <div className="space-y-2.5 p-4 sm:p-5 lg:p-4">
+                <Link href="/checkout" className="block">
+                  <button className="flex h-10 w-full items-center justify-center gap-2 rounded-2xl bg-primary text-sm font-medium text-white transition-all duration-200 hover:-translate-y-0.5 hover:opacity-90">
+                    <ShoppingBag size={17} />
+                    Move to Checkout ({wishlist.length})
+                  </button>
+                </Link>
+
+                <Link href="/marketplace" className="block">
+                  <button className="flex h-10 w-full items-center justify-center gap-2 rounded-2xl border border-border bg-white text-sm font-medium text-primary transition-all duration-200 hover:border-primary/40 hover:bg-[#fff8f3]">
+                    Continue Shopping
+                    <ArrowRight size={17} />
+                  </button>
+                </Link>
               </div>
             </div>
-
-            {/* Price */}
-
-            <div className="flex items-center gap-5 border-r border-[var(--border)] p-8">
-              <div className="flex-shrink-0 rounded-2xl bg-[#FFF3EF] p-4">
-                <ShoppingCart className="text-[var(--primary)]" size={24} />
-              </div>
-
-              <div className="min-w-0">
-                <p className="text-sm text-gray-500">Estimated Total</p>
-
-                <h2 className="text-2xl font-bold sm:text-3xl">
-                  Rp{" "}
-                  {wishlist
-                    .reduce(
-                      (total, item) =>
-                        total + Number(item.product.originalPrice),
-                      0,
-                    )
-                    .toLocaleString("id-ID")}
-                </h2>
-              </div>
-            </div>
-
-            {/* Buttons */}
-
-            <div className="space-y-4 p-6">
-              <button className="flex h-14 w-full items-center justify-center gap-3 rounded-2xl bg-[var(--primary)] text-white transition hover:opacity-90">
-                <ShoppingBag size={18} />
-                Move to Checkout ({wishlist.length})
-              </button>
-
-              <button className="flex h-14 w-full items-center justify-center gap-2 rounded-2xl border border-[var(--border)] font-medium text-[var(--primary)]">
-                Continue Shopping
-                <ArrowRight size={18} />
-              </button>
-            </div>
-          </div>
+          </div> */}
         </div>
 
-        {/* Grid */}
-
-        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
           {wishlist.map((item) => {
             const product = item.product;
 
             return (
               <WishlistCard
                 key={item._id}
-                image={item.aiImgUrl || product.imgUrl}
+                image={product.imgUrl}
                 character={product.title}
                 series={product.theme}
-                vendor="Unknown Vendor"
+                vendor={item.vendor.namaToko}
                 vendorAvatar="/images/default-vendor.png"
                 price={Number(product.originalPrice)}
                 duration="3 days"
@@ -136,7 +128,7 @@ export default async function WishlistPage() {
           })}
         </div>
 
-        <NeedHelp />
+        {/* <NeedHelp /> */}
         <ChibiCTA />
       </section>
     </main>

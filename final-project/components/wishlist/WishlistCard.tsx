@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import WishlistButton from "./WishlistButton";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 type WishlistCardProps = {
   image: string;
@@ -33,7 +34,6 @@ export default function WishlistCard({
   character,
   series,
   vendor,
-  vendorAvatar,
   price,
   duration,
   sizeMatch,
@@ -46,9 +46,12 @@ export default function WishlistCard({
   const router = useRouter();
 
   async function handleRemove() {
-    await fetch(`/api/user/wishlist/${wishlistId}`, {
+    const res = await fetch(`/api/user/wishlist/${wishlistId}`, {
       method: "DELETE",
     });
+
+    console.log(res.status);
+    console.log(await res.text());
 
     router.refresh();
   }
@@ -69,10 +72,13 @@ export default function WishlistCard({
   }
 
   return (
-    <div className="group overflow-hidden rounded-3xl border border-orange-100 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+    <div
+      onClick={() => router.push(`/wishlist/${wishlistId}`)}
+      className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
+    >
       {/* IMAGE */}
 
-      <div className="relative aspect-4/3 overflow-hidden">
+      <div className="relative aspect-4/5 w-full overflow-hidden bg-[#faf6f2]">
         <Image
           src={image}
           alt={character}
@@ -109,64 +115,65 @@ export default function WishlistCard({
 
       {/* CONTENT */}
 
-      <div className="space-y-3 p-5">
-        <div className="flex items-start justify-between">
+      <div className="flex flex-1 flex-col gap-3 p-4 sm:p-5">
+        <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <h3 className="line-clamp-1 text-lg font-semibold text-[#4D565C]">
+            <h3 className="line-clamp-1 text-base font-semibold text-[#4D565C]">
               {character}
             </h3>
 
-            <p className="line-clamp-1 text-sm text-gray-500">{series}</p>
-          </div>
-
-          <div className="text-right">
-            <p className="text-lg font-bold text-[#B14744]">
-              Rp {price.toLocaleString("id-ID")}
+            <p className="mt-0.5 line-clamp-1 text-sm text-gray-500">
+              {series}
             </p>
-
-            <p className="text-sm text-gray-500">/ {duration}</p>
           </div>
         </div>
 
         {/* Vendor */}
+        <div className="flex items-center justify-between gap-4">
+          <div className="min-w-0">
+            <p className="line-clamp-1 text-sm ">{vendor}</p>
+          </div>
 
-        <div className="flex items-center gap-2">
-          <Image
-            src={vendorAvatar}
-            alt={vendor}
-            width={24}
-            height={24}
-            className="flex-shrink-0 rounded-full"
-          />
+          <div className="flex shrink-0 items-center gap-1 text-right">
+            <p className="text-base font-semibold text-primary">
+              Rp {price.toLocaleString("id-ID")}
+            </p>
 
-          <p className="line-clamp-1 text-sm text-[#849282]">{vendor}</p>
+            <p className="text-xs text-muted">/ {duration}</p>
+          </div>
         </div>
 
         {/* Buttons */}
 
-        <div className="grid grid-cols-2 gap-3">
-          <button
-            onClick={onTryOn}
-            className="flex items-center justify-center gap-2 rounded-xl border border-[#B14744] py-2 font-medium text-[#B14744] transition hover:bg-[#FFF3EF]"
+        <div className="mt-auto grid grid-cols-2 gap-2.5">
+          <Link
+            href="/try-on"
+            className="flex items-center justify-center gap-2 rounded-xl border border-[#B14744] py-2 text-sm font-medium text-[#B14744] transition hover:bg-[#FFF3EF]"
           >
-            <Sparkles size={16} />
+            <Sparkles size={15} />
             Try On
-          </button>
+          </Link>
 
           <button
-            onClick={handleCheckout}
-            className="flex items-center justify-center gap-2 rounded-xl bg-[#B14744] py-2 font-medium text-white transition hover:bg-[#9A3B39]"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleCheckout();
+            }}
+            className="flex items-center justify-center gap-2 rounded-xl bg-[#B14744] py-2 text-sm font-medium text-white transition hover:bg-[#9A3B39]"
           >
-            <ShoppingBag size={16} />
+            {/* <ShoppingBag size={15} /> */}
             Checkout
           </button>
         </div>
 
         <button
-          onClick={handleRemove}
+          onClick={(e) => {
+            e.stopPropagation();
+            handleRemove();
+          }}
           className="flex w-full items-center justify-center gap-2 rounded-xl border border-red-100 py-2 text-sm text-red-500 transition hover:bg-red-50"
         >
-          <Trash2 size={15} />
+          <Trash2 size={14} />
           Remove
         </button>
       </div>

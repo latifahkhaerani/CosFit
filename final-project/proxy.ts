@@ -41,42 +41,11 @@ export async function proxy(request: Request) {
       }
     }
 
-        if (pathname.startsWith("/api/vendor/product/")) {
-            const id = pathname.split("/").pop()!;
-
-            const product = await ProductModel.getById(id);
-
-            if (!product) {
-                throw {
-                    message: "Product not found",
-                    status: 404,
-                };
-            }
-
-            if (product.vendorId.toString() !== decoded.id) {
-                throw {
-                    message: "Forbidden",
-                    status: 403,
-                };
-            }
-        }
-
-        if (
-            (pathname.startsWith("/api/vendor") || pathname.startsWith("/vendor")) &&
-            decoded.role !== "Vendor"
-        ) {
-            throw {
-                message: "Forbidden",
-                status: 403,
-            };
-        }
-        
-        
-        // Clone the request headers and set a new header `x-hello-from-proxy1`
-        const requestHeaders = new Headers(request.headers);
-        requestHeaders.set("x-user-email", decoded.email);
-        requestHeaders.set("x-user-id", decoded.id);
-        requestHeaders.set("x-user-role", decoded.role);
+    // Clone the request headers and set a new header `x-hello-from-proxy1`
+    const requestHeaders = new Headers(request.headers);
+    requestHeaders.set("x-user-email", decoded.email);
+    requestHeaders.set("x-user-id", decoded.id);
+    requestHeaders.set("x-user-role", decoded.role);
 
     // You can also set request headers in NextResponse.next
     const response = NextResponse.next({
@@ -100,8 +69,8 @@ export const config = {
     "/api/user/profile",
     "/vendor",
     "/api/forum",
-    "/api/user/wishlist:path*",
-    "/api/user/checkout",
+    "/api/user/wishlist/:path*",
+    "/api/user/checkout/:path*",
     "/api/chat/:path*",
     "/api/user/try-on",
   ],

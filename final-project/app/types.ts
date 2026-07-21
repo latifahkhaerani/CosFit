@@ -30,6 +30,7 @@ export interface GetWishlist {
   productId: string;
   userId: string;
   product: GetProduct;
+  vendor: GetVendor;
 }
 
 export interface GetUserProfile {
