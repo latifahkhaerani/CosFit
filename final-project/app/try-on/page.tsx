@@ -117,7 +117,6 @@ function TryOnContent() {
         confirmButtonColor: "#c2410c",
       });
 
-      // Mentrigger ulang fetch token agar status & saldo ter-update
       await fetchToken();
 
     } catch (error: any) {
@@ -130,7 +129,6 @@ function TryOnContent() {
     }
   };
 
-  // Logika Pengecekan status Claim (7 Hari / 604800000 ms)
   const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
   
   const isClaimedRecently = useCallback(() => {
@@ -256,7 +254,6 @@ function TryOnContent() {
         setAiResult(data.AiImgUrl || data.url);
       }
       
-      // Update token balance after generation
       fetchToken();
     } catch (error: any) {
       Swal.fire({
