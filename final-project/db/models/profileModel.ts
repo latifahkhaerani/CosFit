@@ -33,13 +33,10 @@ export default class ProfileModel {
     return profile[0];
   }
 
-  static async createProfile(profileData: PostUserProfile, userId: string) {
-    const result = await this.collection().insertOne({
-      ...profileData,
-      userId: new ObjectId(userId),
-    });
-    return "Profile created with ID: " + result.insertedId;
-  }
+    static async createProfile(profileData: PostUserProfile, userId: string){
+        const result = await this.collection().insertOne({...profileData, userId: new ObjectId(userId), token: "5"})
+        return "Profile created with ID: " + result.insertedId
+    }
 
   static async putProfile(profileData: GetUserProfile, userId: string) {
     const result = await this.collection().updateOne(
