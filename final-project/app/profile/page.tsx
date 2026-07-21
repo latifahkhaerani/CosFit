@@ -28,9 +28,12 @@ import {
 import { useEffect, useState } from "react";
 import errorHandler from "../helpers/errorHandler";
 import Link from "next/link";
+import EditProfileModal from "@/components/marketplace/EditProfileModal";
 
 export default function ProfilePage() {
   const [activeSection, setActiveSection] = useState("Overview");
+
+  const [openEditModal, setOpenEditModal] = useState(false);
 
   const [profileData, setProfileData] = useState<{
     profile?: GetUserProfile;
@@ -273,7 +276,10 @@ export default function ProfilePage() {
                       </p>
                     </div>
 
-                    <button className="inline-flex h-11 items-center justify-center gap-2 rounded-2xl bg-primary px-5 text-sm font-medium text-white transition hover:-translate-y-0.5 hover:opacity-95">
+                    <button
+                      onClick={() => setOpenEditModal(true)}
+                      className="inline-flex h-11 items-center justify-center gap-2 rounded-2xl bg-primary px-5 text-sm font-medium text-white transition hover:-translate-y-0.5 hover:opacity-95"
+                    >
                       <Pencil size={16} />
                       Edit Profile
                     </button>
@@ -715,6 +721,11 @@ export default function ProfilePage() {
             </div> */}
           </section>
         </div>
+        <EditProfileModal
+          open={openEditModal}
+          onClose={() => setOpenEditModal(false)}
+          profile={profile}
+        />
       </div>
     </main>
   );
