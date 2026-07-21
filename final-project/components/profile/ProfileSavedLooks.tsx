@@ -1,0 +1,134 @@
+"use client";
+
+import { Heart, LayoutGrid, List } from "lucide-react";
+import { useMemo, useState } from "react";
+import LookCard from "./LookCard";
+
+type Tab = "all" | "ready" | "wishlist";
+
+type SavedLook = {
+  _id: string;
+  beforeImage: string;
+  afterImage: string;
+  character: string;
+  series: string;
+  status: "saved" | "ready" | "draft";
+  generatedAt: string;
+  tags: string[];
+  liked: boolean;
+};
+
+export default function ProfileSavedLooks() {
+  const [activeTab, setActiveTab] = useState<Tab>("all");
+  const [view, setView] = useState<"grid" | "list">("grid");
+
+  // Dummy data (nanti ganti hasil fetch API)
+  const savedLooks: SavedLook[] = [
+    {
+      _id: "1",
+      beforeImage: "/images/profile/user-avatar.png",
+      afterImage: "/images/profile/cosplay-mikasa.png",
+      character: "Frieren Costume",
+      series: "Frieren",
+      status: "ready",
+      generatedAt: "21 July 2026",
+      tags: ["Frieren", "Magic"],
+      liked: true,
+    },
+    {
+      _id: "2",
+      beforeImage: "/images/profile/user-avatar.png",
+      afterImage: "/images/profile/cosplay-hutao.png",
+      character: "Hu Tao",
+      series: "Genshin Impact",
+      status: "saved",
+      generatedAt: "19 July 2026",
+      tags: ["Pyro", "Liyue"],
+      liked: true,
+    },
+    {
+      _id: "3",
+      beforeImage: "/images/profile/user-avatar.png",
+      afterImage: "/images/profile/cosplay-frieren.png",
+      character: "Changli",
+      series: "Wuthering Waves",
+      status: "draft",
+      generatedAt: "15 July 2026",
+      tags: ["Sword", "Fire"],
+      liked: false,
+    },
+  ];
+
+  const filteredLooks = useMemo(() => {
+    switch (activeTab) {
+      case "ready":
+        return savedLooks.filter((item) => item.status === "ready");
+
+      case "wishlist":
+        return savedLooks.filter((item) => item.liked);
+
+      default:
+        return savedLooks;
+    }
+  }, [activeTab]);
+
+  return (
+    <div className="space-y-6">
+      {/* HEADER */}
+
+      <div className="flex flex-col justify-between gap-5 rounded-3xl border border-[#efe4db] bg-white p-8 lg:flex-row lg:items-center">
+        <div className="flex items-start gap-4">
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#FFF3EF]">
+            <Heart className="fill-[#B14744] text-[#B14744]" size={24} />
+          </div>
+
+          <div>
+            <h1 className="text-3xl font-bold text-[#1f1a17]">Saved Looks</h1>
+
+            <p className="mt-1 text-[#7d746d]">
+              All your AI generated cosplay previews.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* CONTENT */}
+
+      {filteredLooks.length === 0 ? (
+        <div className="rounded-3xl border border-dashed border-[#efe4db] bg-white py-24 text-center">
+          <Heart className="mx-auto mb-5 text-[#B14744]" size={42} />
+
+          <h2 className="text-xl font-semibold text-[#1f1a17]">
+            No saved looks yet
+          </h2>
+
+          <p className="mt-2 text-[#7d746d]">
+            Generate your first AI cosplay preview to see it here.
+          </p>
+        </div>
+      ) : (
+        <div
+          className={
+            view === "grid"
+              ? "grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3"
+              : "space-y-5"
+          }
+        >
+          {filteredLooks.map((look) => (
+            <LookCard
+              key={look._id}
+              beforeImage={look.beforeImage}
+              afterImage={look.afterImage}
+              character={look.character}
+              series={look.series}
+              status={look.status}
+              generatedAt={look.generatedAt}
+              tags={look.tags}
+              liked={look.liked}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
