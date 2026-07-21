@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { SubmitEvent, useEffect, useState } from "react";
+import DescriptionEditor from "../DescriptionEditor";
 
 export default function ProductInfoCard({product}: {product: GetProduct}) {
 
@@ -42,7 +43,7 @@ export default function ProductInfoCard({product}: {product: GetProduct}) {
       })
       
       setIsEdit(false)
-      route.push(`/vendor/product/${product._id}`)
+      route.push(`/vendor/product/${product.slug}`)
     } catch (error) {
       errorHandler(error)
     }
@@ -94,6 +95,7 @@ export default function ProductInfoCard({product}: {product: GetProduct}) {
             icon={<TypeOutline size={18} />}
             title="Description"
             value={desc}
+            isHtml
           />
 
           <InfoItem
@@ -137,7 +139,10 @@ export default function ProductInfoCard({product}: {product: GetProduct}) {
             <input id="Theme" required className="input-soft w-full" placeholder="e.g. Yae Miko XL" value={theme} onChange={(e) => {setTheme(e.target.value)}}/>
             </Field>
             <Field label="Description" htmlFor="desc">
-            <textarea id="desc" required rows={6} className="input-soft w-full resize-y" placeholder="Detail of your product, size, or materials of your product." value={desc} onChange={(e) => {setDesc(e.target.value)}} />
+            <DescriptionEditor
+              value={desc}
+              onChange={setDesc}
+            />
             </Field>
             <Field label="Stock" htmlFor="Stock">
             <input id="Stock" required className="input-soft w-full" placeholder="e.g. Yae Miko XL" value={stock} onChange={(e) => {setStock(+e.target.value)}}/>
@@ -171,59 +176,59 @@ function InfoItem({
   value,
   subtitle,
   badge,
+  isHtml,
 }: {
   icon: React.ReactNode;
   title: string;
   value?: string;
   subtitle?: string;
   badge?: string;
+  isHtml?: boolean;
 }) {
   return (
-    <div className="flex items-center justify-between rounded-2xl p-3 transition hover:bg-[#FCFBFA]">
-
+    <div className="flex justify-between items-start rounded-2xl p-3 transition hover:bg-[#FCFBFA]">
       <div className="flex items-center gap-4">
-
         <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#FFF5F0] text-[var(--primary)]">
-
           {icon}
-
         </div>
 
         <div>
-
-          <p className="text-sm text-[var(--muted)]">
-
-            {title}
-
-          </p>
-
+          <p className="text-sm text-[var(--muted)]">{title}</p>
         </div>
-
       </div>
 
       {badge ? (
-        <span className="badge-success">
-
-          {badge}
-
-        </span>
+        <span className="badge-success">{badge}</span>
       ) : (
-        <div className="text-right">
+        <div className="w-[200px] flex justify-end">
+          {isHtml ? (
+            <div
+              className="
+                w-full
+                text-right
+                [&>p]:mb-4
+                [&>p:last-child]:mb-0
+                [&>p]:text-right
+                [&>ul]:list-disc
+                [&>ul]:list-inside
+                [&>ul]:text-right
+                [&>ol]:list-decimal
+                [&>ol]:list-inside
+                [&>ol]:text-right
+              "
+              dangerouslySetInnerHTML={{ __html: value ?? "" }}
+            />
+          ) : (
+            <div className="text-right">
+              <p>{value}</p>
 
-          <h4 className="font-semibold">
-
-            {value}
-
-          </h4>
-
-          {subtitle && (
-            <p className="text-xs text-[var(--muted)]">
-
-              {subtitle}
-
-            </p>
+              {subtitle && (
+                <p className="text-xs text-[var(--muted)]">
+                  {subtitle}
+                </p>
+              )}
+            </div>
           )}
-
         </div>
       )}
     </div>
