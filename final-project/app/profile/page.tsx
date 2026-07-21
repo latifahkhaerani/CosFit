@@ -18,42 +18,59 @@ import ProfileJoinedEvents from "@/components/profile/ProfileJoinedEvents";
 import ProfileOverview from "@/components/profile/ProfileOverview";
 import ProfileSavedLooks from "@/components/profile/ProfileSavedLooks";
 import ProfileWishlist from "@/components/profile/ProfileWishlist";
-import { GetCheckout, GetProduct, GetUserProfile, GetWishlist } from "../types";
+import {
+  GetCheckout,
+  GetProduct,
+  GetSavedLook,
+  GetUserProfile,
+  GetWishlist,
+} from "../types";
 import { useEffect, useState } from "react";
 import errorHandler from "../helpers/errorHandler";
 import Link from "next/link";
 
 export default function ProfilePage() {
   const [activeSection, setActiveSection] = useState("Overview");
+
   const [profileData, setProfileData] = useState<{
     profile?: GetUserProfile;
     wishlist: GetWishlist[];
     checkout: GetCheckout[];
     products: GetProduct[];
+    savedLooks: GetSavedLook[];
   }>({
     wishlist: [],
     checkout: [],
     products: [],
+    savedLooks: [],
   });
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [profileRes, wishlistRes, checkoutRes, productsRes] =
-          await Promise.all([
-            fetch("http://localhost:3000/api/user/profile", {
-              cache: "no-store",
-            }),
-            fetch("http://localhost:3000/api/user/wishlist", {
-              cache: "no-store",
-            }),
-            fetch("http://localhost:3000/api/user/checkout", {
-              cache: "no-store",
-            }),
-            fetch("http://localhost:3000/api/user/product", {
-              cache: "no-store",
-            }),
-          ]);
+        const [
+          profileRes,
+          wishlistRes,
+          checkoutRes,
+          productsRes,
+          savedLooksRes,
+        ] = await Promise.all([
+          fetch("http://localhost:3000/api/user/profile", {
+            cache: "no-store",
+          }),
+          fetch("http://localhost:3000/api/user/wishlist", {
+            cache: "no-store",
+          }),
+          fetch("http://localhost:3000/api/user/checkout", {
+            cache: "no-store",
+          }),
+          fetch("http://localhost:3000/api/user/product", {
+            cache: "no-store",
+          }),
+          fetch("http://localhost:3000/api/user/try-on", {
+            cache: "no-store",
+          }),
+        ]);
 
         if (
           !profileRes.ok ||
@@ -63,15 +80,22 @@ export default function ProfilePage() {
         ) {
           throw new Error("Failed to load profile data");
         }
+        const [userProfile, wishlist, checkout, products, savedLooks] =
+          await Promise.all([
+            profileRes.json() as Promise<GetUserProfile>,
+            wishlistRes.json() as Promise<GetWishlist[]>,
+            checkoutRes.json() as Promise<GetCheckout[]>,
+            productsRes.json() as Promise<GetProduct[]>,
+            savedLooksRes.json() as Promise<GetSavedLook[]>,
+          ]);
 
-        const [userProfile, wishlist, checkout, products] = await Promise.all([
-          profileRes.json() as Promise<GetUserProfile>,
-          wishlistRes.json() as Promise<GetWishlist[]>,
-          checkoutRes.json() as Promise<GetCheckout[]>,
-          productsRes.json() as Promise<GetProduct[]>,
-        ]);
-
-        setProfileData({ profile: userProfile, wishlist, checkout, products });
+        setProfileData({
+          profile: userProfile,
+          wishlist,
+          checkout,
+          products,
+          savedLooks,
+        });
       } catch (error) {
         errorHandler(error);
       }
@@ -80,7 +104,7 @@ export default function ProfilePage() {
     fetchData();
   }, []);
 
-  const { profile, wishlist, checkout, products } = profileData;
+  const { profile, wishlist, checkout, products, savedLooks } = profileData;
   const profileName = profile?.userId?.[0]?.username ?? "You";
   const profileAddress =
     profile?.address || "Add your address to personalize your profile";
@@ -98,7 +122,7 @@ export default function ProfilePage() {
   const renderActiveSection = () => {
     switch (activeSection) {
       case "Saved Looks":
-        return <ProfileSavedLooks />;
+        return <ProfileSavedLooks savedLooks={savedLooks} />;
       case "Wishlist":
         return <ProfileWishlist />;
       case "Checkout History":

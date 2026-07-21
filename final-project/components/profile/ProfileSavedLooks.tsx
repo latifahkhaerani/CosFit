@@ -8,69 +8,23 @@ type Tab = "all" | "ready" | "wishlist";
 
 type SavedLook = {
   _id: string;
-  beforeImage: string;
-  afterImage: string;
-  character: string;
-  series: string;
-  status: "saved" | "ready" | "draft";
-  generatedAt: string;
-  tags: string[];
-  liked: boolean;
+  UserId: string;
+  UserImg: string;
+  AiImgUrl: string;
+  Name: string;
+  Theme: string;
+  createdAt: string;
 };
 
-export default function ProfileSavedLooks() {
+type Props = {
+  savedLooks: SavedLook[];
+};
+
+export default function ProfileSavedLooks({ savedLooks }: Props) {
   const [activeTab, setActiveTab] = useState<Tab>("all");
   const [view, setView] = useState<"grid" | "list">("grid");
 
-  // Dummy data (nanti ganti hasil fetch API)
-  const savedLooks: SavedLook[] = [
-    {
-      _id: "1",
-      beforeImage: "/images/profile/user-avatar.png",
-      afterImage: "/images/profile/cosplay-mikasa.png",
-      character: "Frieren Costume",
-      series: "Frieren",
-      status: "ready",
-      generatedAt: "21 July 2026",
-      tags: ["Frieren", "Magic"],
-      liked: true,
-    },
-    {
-      _id: "2",
-      beforeImage: "/images/profile/user-avatar.png",
-      afterImage: "/images/profile/cosplay-hutao.png",
-      character: "Hu Tao",
-      series: "Genshin Impact",
-      status: "saved",
-      generatedAt: "19 July 2026",
-      tags: ["Pyro", "Liyue"],
-      liked: true,
-    },
-    {
-      _id: "3",
-      beforeImage: "/images/profile/user-avatar.png",
-      afterImage: "/images/profile/cosplay-frieren.png",
-      character: "Changli",
-      series: "Wuthering Waves",
-      status: "draft",
-      generatedAt: "15 July 2026",
-      tags: ["Sword", "Fire"],
-      liked: false,
-    },
-  ];
-
-  const filteredLooks = useMemo(() => {
-    switch (activeTab) {
-      case "ready":
-        return savedLooks.filter((item) => item.status === "ready");
-
-      case "wishlist":
-        return savedLooks.filter((item) => item.liked);
-
-      default:
-        return savedLooks;
-    }
-  }, [activeTab]);
+  const filteredLooks = useMemo(() => savedLooks, [savedLooks]);
 
   return (
     <div className="space-y-6">
@@ -117,14 +71,14 @@ export default function ProfileSavedLooks() {
           {filteredLooks.map((look) => (
             <LookCard
               key={look._id}
-              beforeImage={look.beforeImage}
-              afterImage={look.afterImage}
-              character={look.character}
-              series={look.series}
-              status={look.status}
-              generatedAt={look.generatedAt}
-              tags={look.tags}
-              liked={look.liked}
+              beforeImage={look.UserImg}
+              afterImage={look.AiImgUrl}
+              character={look.Name}
+              series={look.Theme}
+              generatedAt={new Date(look.createdAt).toLocaleDateString("id-ID")}
+              status="saved"
+              tags={[]}
+              liked={false}
             />
           ))}
         </div>
