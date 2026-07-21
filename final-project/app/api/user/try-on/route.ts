@@ -12,6 +12,7 @@ export async function POST(req: Request)
         const yourImg = formData.get("User") as File;
         const cosImg = formData.get("Product") as string;
         const name = formData.get("CharName") as string;
+
         const response = await TryOnModel.UserTryOn(yourImg, cosImg, userId, name)
         return Response.json(response)
     } catch (error) {
