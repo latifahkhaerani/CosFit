@@ -29,7 +29,7 @@ export async function POST(req: Request) {
     const title = formData.get("title") as string;
     const desc = formData.get("desc") as string;
     const size = formData.get("size") as string;
-    const theme = formData.get("theme") as string;
+    const theme = formData.getAll("theme") as string[];
     const originalPrice = formData.get("originalPrice") as string;
     const stock = formData.get("stock") as string;
     const finalPrice = formData.get("finalPrice") as string;
