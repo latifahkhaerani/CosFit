@@ -192,6 +192,7 @@ function TryOnContent() {
       formData.append("User", userFile);
       formData.append("Product", selectedProduct.imgUrl);
       formData.append("CharName", selectedProduct.title);
+      formData.append("Theme", selectedProduct.theme);
 
       const response = await fetch("/api/user/try-on", {
         method: "POST",
