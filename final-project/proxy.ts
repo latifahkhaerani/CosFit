@@ -2,6 +2,7 @@ import { cookies } from "next/headers";
 import errorHandler from "./app/helpers/errorHandler";
 import { verify } from "jsonwebtoken";
 import { NextResponse } from "next/server";
+import ProductModel from "./db/models/productModel";
 
 export async function proxy(request: Request) {
   try {

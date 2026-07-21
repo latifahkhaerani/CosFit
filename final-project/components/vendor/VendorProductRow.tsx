@@ -10,7 +10,9 @@ type Props = {
   image: string;
   character: string;
   series: string;
-  price: number;
+  originalPrice: number;
+  finalPrice: number;
+  discount: number;
   availability: "Available" | "Low Stock" | "Out of Stock";
   rental: "Available" | "Rented";
   views: number;
@@ -22,7 +24,9 @@ export default function VendorProductRow({
   image,
   character,
   series,
-  price,
+  originalPrice,
+  finalPrice,
+  discount,
   views,
   wishlist,
   id,
@@ -70,17 +74,30 @@ export default function VendorProductRow({
 
       <td>
 
+        
+
         <p className="text-lg font-semibold text-[var(--primary)]">
 
-          Rp {price.toLocaleString("id-ID")}
+          Rp {finalPrice?.toLocaleString("id-ID")}
 
         </p>
 
-        <p className="mt-1 text-sm text-[var(--muted)]">
+        {discount? (
+          <div>
+            <p className="text-sm font-semibold text-[var(--muted)] line-through">
 
-          / 3 Days
+              Rp {originalPrice.toLocaleString("id-ID")}
 
-        </p>
+            </p>
+            <span className="p-1 rounded-md bg-green-300 text-lg font-semibold text-[var(--primary)]">
+              {discount} %
+            </span>
+          </div>
+        ):(
+          <div>
+            
+          </div>
+        )}
 
       </td>
 

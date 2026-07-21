@@ -2,6 +2,7 @@
 
 import { Sparkles, Heart, ArrowRight } from "lucide-react";
 import type { GetProduct, GetWishlist } from "@/app/types";
+import { useEffect, useState } from "react";
 
 export interface FeaturedCostumesProps {
   title?: string;
@@ -35,19 +36,85 @@ function formatPrice(amount: number, currency: string) {
 
 function CostumeCard({
   costume,
-  isFavorited,
   currency,
   detailsLabel,
   onSelect,
   onToggleFavorite,
 }: {
   costume: GetProduct;
-  isFavorited: boolean;
   currency: string;
   detailsLabel: string;
   onSelect?: (productId: string) => void;
   onToggleFavorite?: (productId: string) => void;
 }) {
+  const [isFavorited, setIsFavorited] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchWishlistStatus = async () => {
+      try {
+        const response = await fetch("/api/user/wishlist");
+        if (response.ok) {
+          const wishlist = await response.json();
+          console.log(wishlist, "<<<<<<");
+
+          if (Array.isArray(wishlist)) {
+            const isExist = wishlist.some((item: GetWishlist) => {
+              const targetId =
+                typeof item.productId === "object" && item.productId !== null
+                  ? item.product._id
+                  : item.productId;
+
+              return String(targetId) === String(costume._id);
+            });
+
+            setIsFavorited(isExist);
+          }
+        }
+      } catch (error) {
+        console.error("Gagal mengecek status wishlist:", error);
+      }
+    };
+
+    if (costume?._id) {
+      fetchWishlistStatus();
+    }
+  }, [costume?._id]);
+
+  const handleToggleFavorite = async () => {
+    if (isLoading) return;
+
+    const previousState = isFavorited;
+
+    // Optimistic Update UI
+    setIsFavorited(!isFavorited);
+    setIsLoading(true);
+
+    try {
+      if (!previousState) {
+        const response = await fetch("/api/user/wishlist", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ productId: costume._id }),
+        });
+
+        if (!response.ok) throw new Error("Gagal menambah wishlist");
+      } else {
+        const response = await fetch(`/api/user/wishlist/${costume._id}`, {
+          method: "DELETE",
+        });
+
+        if (!response.ok) throw new Error("Gagal menghapus wishlist");
+      }
+
+      onToggleFavorite?.(costume._id);
+    } catch (error) {
+      console.error(error);
+      setIsFavorited(previousState);
+    } finally {
+      setIsLoading(false);
+    }
+  };
   return (
     <div className="flex flex-col overflow-hidden rounded-2xl border border-border bg-surface">
       <div className="relative aspect-[3/4] w-full overflow-hidden bg-cream/30">
@@ -72,7 +139,7 @@ function CostumeCard({
         <button
           type="button"
           aria-label="Toggle favorite"
-          onClick={() => onToggleFavorite?.(costume._id)}
+          onClick={handleToggleFavorite}
           className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full bg-surface shadow-sm transition hover:bg-cream/40"
         >
           <Heart
@@ -139,7 +206,6 @@ export default function FeaturedCostumes({
           <CostumeCard
             key={costume._id}
             costume={costume}
-            isFavorited={favoritedIds.has(costume._id)}
             currency={currency}
             detailsLabel={detailsLabel}
             onSelect={onSelectCostume}
