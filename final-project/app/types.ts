@@ -13,6 +13,7 @@ export interface GetProduct {
   _id: string;
   imgUrl: string;
   title: string;
+  imgGalery?: string[];
   desc: string;
   size: string;
   theme: string;
@@ -23,6 +24,7 @@ export interface GetProduct {
   discount: number;
   finalPrice: number;
   wishlists: [GetWishlist];
+  slug: string;
 }
 
 export interface GetWishlist {
@@ -30,6 +32,7 @@ export interface GetWishlist {
   productId: string;
   userId: string;
   product: GetProduct;
+  vendor: GetVendor;
 }
 
 export interface GetUserProfile {
@@ -109,6 +112,7 @@ export interface PostUser {
 
 export interface PostProduct {
   imgUrl: string;
+  imgGalery?: string[];
   desc: string;
   size: string;
   theme: string;
@@ -169,7 +173,7 @@ export interface PostVendor {
   alamat: string;
   email: string;
   password: string;
-  no_rek?: [string];
+  no_rek?: string[];
   no_phone: string;
   webUrl?: string;
 }

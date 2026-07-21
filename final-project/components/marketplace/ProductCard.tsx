@@ -28,12 +28,13 @@ export function formatProductPrice(amount: number, currency: string) {
 
 export default function ProductCard({
   product,
-  currency = "USD",
+  currency = "IDR",
   detailsLabel = "View Details",
   onToggleFavorite,
 }: ProductCardProps) {
   const [isFavorited, setIsFavorited] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const hasDiscount = Boolean(product.discount && product.discount > 0);
 
   useEffect(() => {
     const fetchWishlistStatus = async () => {
@@ -41,7 +42,6 @@ export default function ProductCard({
         const response = await fetch("/api/user/wishlist");
         if (response.ok) {
           const wishlist = await response.json();
-          console.log(wishlist, "<<<<<<");
 
           if (Array.isArray(wishlist)) {
             const isExist = wishlist.some((item: GetWishlist) => {
@@ -104,7 +104,7 @@ export default function ProductCard({
     <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-surface transition hover:shadow-md">
       <div className="relative aspect-[4/5] w-full overflow-hidden bg-cream/30">
         <Link
-          href={`/marketplace/products/${product._id}`}
+          href={`/marketplace/products/${product.slug}`}
           className="block h-full w-full"
         >
           {product.imgUrl ? (
@@ -142,12 +142,28 @@ export default function ProductCard({
             {product.theme || "Series"}
           </p>
         </div>
-        <p className="text-2xl font-bold text-primary">
-          {formatProductPrice(product.originalPrice, currency)}
-        </p>
+        <div className="flex flex-col">
+          {hasDiscount ? (
+            <>
+              <span className="text-xs font-medium text-muted line-through opacity-75">
+                {formatProductPrice(Number(product.originalPrice), currency)}
+              </span>
+              <p className="text-2xl font-bold text-primary">
+                {formatProductPrice(
+                  Number(product.finalPrice || product.originalPrice),
+                  currency,
+                )}
+              </p>
+            </>
+          ) : (
+            <p className="text-2xl font-bold text-primary">
+              {formatProductPrice(Number(product.originalPrice), currency)}
+            </p>
+          )}
+        </div>
 
         <Link
-          href={`/marketplace/products/${product._id}`}
+          href={`/marketplace/products/${product.slug}`}
           className="mt-auto inline-flex items-center justify-center gap-2 rounded-xl border border-primary px-5 py-3 text-sm font-medium text-primary transition hover:bg-cream/40"
         >
           {detailsLabel}
