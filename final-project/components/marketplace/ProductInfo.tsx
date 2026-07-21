@@ -250,7 +250,7 @@ export default function ProductInfo({
               ? "Processing..."
               : checkoutLabel}
         </button>
-        <Link href={`/try-on?productId=${product._id}`}>
+        <Link href={`/try-on?productId=${product.slug}`}>
         <button
           type="button"
           onClick={handleTryOn}
