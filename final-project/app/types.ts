@@ -23,6 +23,7 @@ export interface GetProduct {
   discount: number;
   finalPrice: number;
   wishlists: [GetWishlist];
+  slug: string;
 }
 
 export interface GetWishlist {

@@ -104,7 +104,7 @@ export default function ProductCard({
     <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-surface transition hover:shadow-md">
       <div className="relative aspect-[4/5] w-full overflow-hidden bg-cream/30">
         <Link
-          href={`/marketplace/products/${product._id}`}
+          href={`/marketplace/products/${product.slug}`}
           className="block h-full w-full"
         >
           {product.imgUrl ? (
@@ -163,7 +163,7 @@ export default function ProductCard({
         </div>
 
         <Link
-          href={`/marketplace/products/${product._id}`}
+          href={`/marketplace/products/${product.slug}`}
           className="mt-auto inline-flex items-center justify-center gap-2 rounded-xl border border-primary px-5 py-3 text-sm font-medium text-primary transition hover:bg-cream/40"
         >
           {detailsLabel}
