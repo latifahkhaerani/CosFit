@@ -6,7 +6,6 @@ export default async function VendorProductDetail({params}: {params: Promise<{id
   const {id} = await params
   const data = await fetch(`http://localhost:3000/api/user/product/${id}`)
   const product = await data.json()
-  console.log(product);
   return (
     <main className="flex min-h-screen bg-[var(--background)]">
 
@@ -40,7 +39,7 @@ export default async function VendorProductDetail({params}: {params: Promise<{id
 
         </div>
         <div className="grid grid-cols-[2.1fr_1fr] gap-7">
-          <ProductGallery imgUrl={product.imgUrl} imgGalery={product.imgGalery}/>
+          <ProductGallery imgUrl={product.imgUrl} imgGalery={product.imgGalery} id={id} />
 
           <div className="space-y-7">
             <ProductInfoCard product={product}/>

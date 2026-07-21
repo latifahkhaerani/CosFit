@@ -3,6 +3,7 @@ import errorHandler from "./app/helpers/errorHandler";
 import { verify } from "jsonwebtoken";
 import { NextResponse } from "next/server";
 import ProductModel from "./db/models/productModel";
+import { id } from "zod/v4/locales";
 
 export async function proxy(request: Request) {
   try {
@@ -32,6 +33,7 @@ export async function proxy(request: Request) {
       role: string;
     };
 
+
     if (pathname.startsWith("/api/vendor") || pathname.startsWith("/vendor")) {
       if (decoded.role !== "Vendor") {
         throw {
@@ -42,7 +44,8 @@ export async function proxy(request: Request) {
     }
 
         if (pathname.startsWith("/api/vendor/product/")) {
-            const id = pathname.split("/").pop()!;
+            const segments = pathname.split("/");
+            const id = segments[4];
 
             const product = await ProductModel.getById(id);
 
