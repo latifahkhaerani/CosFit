@@ -67,17 +67,22 @@ export default class WishlistModel {
   }
 
   static async deleteWishlist(id: string, userId: string) {
-    const cek = await this.collection().findOne({
-      productId: new ObjectId(id),
+    let result = await this.collection().deleteOne({
+      _id: new ObjectId(id),
       userId: new ObjectId(userId),
     });
-    const result = await this.collection().deleteOne({
-      productId: new ObjectId(id),
-      userId: new ObjectId(userId),
-    });
+
+    if (result.deletedCount === 0) {
+      result = await this.collection().deleteOne({
+        productId: new ObjectId(id),
+        userId: new ObjectId(userId),
+      });
+    }
+
     if (result.deletedCount === 0) {
       throw new Error("Wishlist not found");
     }
+
     return "Wishlist deleted with ID: " + id;
   }
 }

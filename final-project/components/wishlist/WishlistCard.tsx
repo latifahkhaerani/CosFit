@@ -46,8 +46,6 @@ export default function WishlistCard({
   const router = useRouter();
 
   async function handleRemove() {
-    
-
     const res = await fetch(`/api/user/wishlist/${wishlistId}`, {
       method: "DELETE",
     });
@@ -74,7 +72,10 @@ export default function WishlistCard({
   }
 
   return (
-    <div className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
+    <div
+      onClick={() => router.push(`/wishlist/${wishlistId}`)}
+      className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
+    >
       {/* IMAGE */}
 
       <div className="relative aspect-4/5 w-full overflow-hidden bg-[#faf6f2]">
@@ -154,7 +155,10 @@ export default function WishlistCard({
           </Link>
 
           <button
-            onClick={handleCheckout}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleCheckout();
+            }}
             className="flex items-center justify-center gap-2 rounded-xl bg-[#B14744] py-2 text-sm font-medium text-white transition hover:bg-[#9A3B39]"
           >
             {/* <ShoppingBag size={15} /> */}
@@ -163,7 +167,10 @@ export default function WishlistCard({
         </div>
 
         <button
-          onClick={handleRemove}
+          onClick={(e) => {
+            e.stopPropagation();
+            handleRemove();
+          }}
           className="flex w-full items-center justify-center gap-2 rounded-xl border border-red-100 py-2 text-sm text-red-500 transition hover:bg-red-50"
         >
           <Trash2 size={14} />
