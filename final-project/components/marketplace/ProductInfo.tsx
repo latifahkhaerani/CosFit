@@ -250,15 +250,16 @@ export default function ProductInfo({
               ? "Processing..."
               : checkoutLabel}
         </button>
-
+        <Link href={`/try-on?productId=${product._id}`}>
         <button
           type="button"
           onClick={handleTryOn}
           className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-primary px-6 py-4 text-base font-medium text-primary transition hover:bg-cream/40"
-        >
+          >
           <Sparkles className="h-5 w-5" />
           {tryOnLabel}
         </button>
+          </Link>
 
         <button
           type="button"
