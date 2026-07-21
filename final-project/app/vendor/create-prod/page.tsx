@@ -1,4 +1,5 @@
 'use client'
+import ThemeCombobox from "@/components/ThemeCombobox";
 import { ArrowLeft, ImageIcon, Plus, Tags } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -12,10 +13,18 @@ export default function CreateProd(){
     const [imgGalery, setImgGalery] = useState<File[] | string[]>([])
     const [desc, setDesc] = useState("")
     const [size, setSize] = useState("")
-    const [theme, setTheme] = useState("")
+    const [themes, setThemes] = useState<string[]>([]);
     const [title, setTitle] = useState("")
     const [originalPrice, setOriginalPrice] = useState("")
     const [stock, setStock] = useState("")
+
+    const [themeOptions, setThemeOptions] = useState([
+      "Fantasy",
+      "Anime",
+      "School",
+      "Maid",
+      "Genshin",
+    ]);
 
     const router = useRouter()
 
@@ -32,7 +41,9 @@ export default function CreateProd(){
         formData.append("title", title);
         formData.append("desc", desc);
         formData.append("size", size);
-        formData.append("theme", theme);
+        themes.forEach((theme) => {
+          formData.append("theme", theme);
+        });
         formData.append("originalPrice", originalPrice);
         formData.append("stock", stock);
         formData.append("finalPrice", originalPrice)
@@ -129,7 +140,12 @@ export default function CreateProd(){
                 <input id="size" required className="input-soft w-full" placeholder="XL" value={size} onChange={(e) => {setSize(e.target.value)}} />
             </Field>
             <Field label="Theme" htmlFor="theme" icon={<Tags size={17} />} hint="Your product theme.">
-                <input id="theme" required className="input-soft w-full" placeholder="Fantasy" value={theme} onChange={(e) => {setTheme(e.target.value)}} />
+                <ThemeCombobox
+                  value={themes}
+                  onChange={setThemes}
+                  options={themeOptions}
+                  setOptions={setThemeOptions}
+                />
             </Field>
         </div>
 

@@ -3,7 +3,7 @@
 import React, { useState, useRef, useEffect, useCallback, Suspense } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ChevronRight, ChevronLeft, X, Camera, Loader2, Download, Gift } from "lucide-react";
+import { ChevronRight, ChevronLeft, X, Camera, Loader2, Download, Gift, Coins } from "lucide-react";
 import {
   ReactCompareSlider,
   ReactCompareSliderImage,
@@ -24,6 +24,7 @@ interface ProductType {
   views: number;
   discount: number;
   finalPrice: number;
+  slug: string
 }
 
 interface HistoryType {
@@ -31,6 +32,14 @@ interface HistoryType {
   UserId: string;
   AiImgUrl: string;
   Name: string;
+  Theme: string;
+  UserImg: string;
+  createdAt: Date;
+}
+
+interface StatTokenType {
+  token: number;
+  claimedAt: string | Date | null;
 }
 
 function TryOnContent() {
@@ -52,6 +61,7 @@ function TryOnContent() {
 
   const [product, setProduct] = useState<ProductType[]>([]);
   const [history, setHistory] = useState<HistoryType[]>([]);
+  const [tokenStatus, setTokenStatus] = useState<StatTokenType | null>(null);
 
   const fetchProduct = async () => {
     try {
@@ -77,6 +87,18 @@ function TryOnContent() {
     }
   };
 
+  const fetchToken = useCallback(async () => {
+    try {
+      const res = await fetch(`/api/user/token`);
+      if (res.ok) {
+        const data = await res.json();
+        setTokenStatus(data.result);
+      }
+    } catch (error) {
+      console.error("Failed to fetch token status", error);
+    }
+  }, []);
+
   const handleClaimToken = async () => {
     try {
       const res = await fetch(`/api/user/token`, {
@@ -96,6 +118,8 @@ function TryOnContent() {
         confirmButtonColor: "#c2410c",
       });
 
+      await fetchToken();
+
     } catch (error: any) {
       Swal.fire({
         icon: "error",
@@ -105,6 +129,25 @@ function TryOnContent() {
       });
     }
   };
+
+  const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
+  
+  const isClaimedRecently = useCallback(() => {
+    if (!tokenStatus?.claimedAt) return false;
+    const lastClaim = new Date(tokenStatus.claimedAt).getTime();
+    const now = new Date().getTime();
+    return now - lastClaim < SEVEN_DAYS_MS;
+  }, [tokenStatus?.claimedAt, SEVEN_DAYS_MS]);
+
+  const getSisaHari = () => {
+    if (!tokenStatus?.claimedAt) return 0;
+    const lastClaim = new Date(tokenStatus.claimedAt).getTime();
+    const now = new Date().getTime();
+    const diff = SEVEN_DAYS_MS - (now - lastClaim);
+    return Math.max(1, Math.ceil(diff / (1000 * 60 * 60 * 24)));
+  };
+
+  const isClaimed = isClaimedRecently();
 
   useEffect(() => {
     if (key) {
@@ -123,13 +166,14 @@ function TryOnContent() {
     }
     fetchProduct();
     fetchHistory();
+    fetchToken();
     
     return () => {
       if (userPreview) {
         URL.revokeObjectURL(userPreview);
       }
     };
-  }, [key, userPreview]);
+  }, [key, fetchToken]);
 
   const processSelectedFile = useCallback((file?: File) => {
     if (file) {
@@ -210,6 +254,8 @@ function TryOnContent() {
       } else if (data?.AiImgUrl || data?.url) {
         setAiResult(data.AiImgUrl || data.url);
       }
+
+      fetchToken();
     } catch (error: any) {
       Swal.fire({
         icon: "error",
@@ -373,18 +419,41 @@ function TryOnContent() {
           <span className="font-medium text-primary">Try On</span>
         </div>
 
-        {/* PAGE TITLE & CLAIM TOKEN BUTTON */}
+        {/* PAGE TITLE, TOKEN DISPLAY & CLAIM TOKEN BUTTON */}
         <div className="mb-8 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
           <div>
             <h1 className="text-[38px] font-bold text-gray-900">AI Virtual Try-On</h1>
             <p className="subtitle mt-2 text-gray-500">See how the costume looks on you before renting.</p>
           </div>
-          <button 
-            onClick={handleClaimToken}
-            className="flex items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-white shadow-md hover:bg-primary/90 transition cursor-pointer w-full sm:w-auto"
-          >
-            <Gift size={18} /> Claim Weekly Token
-          </button>
+
+          <div className="flex flex-wrap items-center gap-3">
+            {/* TOKEN BALANCE DISPLAY */}
+            <div className="flex items-center gap-2 rounded-2xl border border-orange-100 bg-[#FFF8F6] px-4 py-3 shadow-xs">
+              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                <Coins size={18} />
+              </div>
+              <div>
+                <p className="text-[11px] font-medium text-gray-500 uppercase tracking-wider">Your Tokens</p>
+                <p className="text-base font-bold text-gray-900">
+                  {tokenStatus?.token ?? 0} <span className="text-xs font-normal text-gray-500">Tokens</span>
+                </p>
+              </div>
+            </div>
+
+            {/* CLAIM WEEKLY TOKEN BUTTON */}
+            <button 
+              onClick={handleClaimToken}
+              disabled={isClaimed}
+              className={`flex items-center justify-center gap-2 rounded-2xl px-6 py-3.5 text-sm font-semibold transition-all shadow-sm ${
+                isClaimed 
+                  ? "bg-gray-100 text-gray-400 border border-gray-200 cursor-not-allowed" 
+                  : "bg-primary text-white shadow-md hover:bg-primary/90 cursor-pointer active:scale-95"
+              }`}
+            >
+              <Gift size={18} />
+              {isClaimed ? `Claimed (${getSisaHari()}d left)` : "Claim Weekly Token"}
+            </button>
+          </div>
         </div>
 
         {/* MAIN GRID LAYOUT */}
@@ -581,6 +650,7 @@ function TryOnContent() {
                         <p className="subtitle text-xs text-gray-500 mb-1">Rental Price</p>
                         <h3 className="text-2xl font-bold text-primary text-[#c2410c]">Rp{selectedProduct.finalPrice.toLocaleString("id-ID")}</h3>
                       </div>
+                      <Link href={`/marketplace/products/${selectedProduct.slug}`}><button className="rounded-lg bg-[#FFF8F6] px-10 py-3 text-xs font-medium text-primary hover:bg-primary/20 transition cursor-pointer">Detail</button></Link>
                     </div>
                   </div>
                 </>

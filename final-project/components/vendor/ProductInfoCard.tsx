@@ -11,6 +11,8 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { SubmitEvent, useEffect, useState } from "react";
+import DescriptionEditor from "../DescriptionEditor";
+import ThemeCombobox from "../ThemeCombobox";
 
 export default function ProductInfoCard({product}: {product: GetProduct}) {
 
@@ -18,12 +20,20 @@ export default function ProductInfoCard({product}: {product: GetProduct}) {
   const [isEdit, setIsEdit] = useState(false)
   const [desc, setDesc] = useState(product.desc)
   const [size, setSize] = useState(product.size)
-  const [theme, setTheme] = useState(product.theme)
+  const [themes, setThemes] = useState<string[]>(product.theme ?? [])
   const [title, setTitle] = useState(product.title)
   const [originalPrice, setOriginalPrice] = useState(product.originalPrice)
   const [stock, setStock] = useState(product.stock)
   const [discount, setDiscount] = useState(product.discount)
   const [finalPrice, setFinalPrice] = useState(product.finalPrice)
+
+  const [themeOptions, setThemeOptions] = useState([
+    "Anime",
+    "Game",
+    "Maid",
+    "Fantasy",
+    "School",
+  ]);
 
   const route = useRouter()
 
@@ -38,11 +48,11 @@ export default function ProductInfoCard({product}: {product: GetProduct}) {
         headers: {
           'Content-Type':'application/json'
         },
-        body: JSON.stringify({desc, size, theme, originalPrice, stock, finalPrice, discount})
+        body: JSON.stringify({desc, size, theme: themes, originalPrice, stock, finalPrice, discount})
       })
       
       setIsEdit(false)
-      route.push(`/vendor/product/${product._id}`)
+      route.push(`/vendor/product/${product.slug}`)
     } catch (error) {
       errorHandler(error)
     }
@@ -87,13 +97,14 @@ export default function ProductInfoCard({product}: {product: GetProduct}) {
           <InfoItem
             icon={<Palette size={18} />}
             title="Theme"
-            value={theme}
+            value={themes.join(",")}
           />
 
           <InfoItem
             icon={<TypeOutline size={18} />}
             title="Description"
             value={desc}
+            isHtml
           />
 
           <InfoItem
@@ -134,10 +145,18 @@ export default function ProductInfoCard({product}: {product: GetProduct}) {
             <input id="nameForum" required className="input-soft w-full" placeholder="e.g. Yae Miko XL" value={title} onChange={(e) => {setTitle(e.target.value)}}/>
             </Field>
             <Field label="Theme" htmlFor="Theme">
-            <input id="Theme" required className="input-soft w-full" placeholder="e.g. Yae Miko XL" value={theme} onChange={(e) => {setTheme(e.target.value)}}/>
+              <ThemeCombobox
+                value={themes}
+                onChange={setThemes}
+                options={themeOptions}
+                setOptions={setThemeOptions}
+              />
             </Field>
             <Field label="Description" htmlFor="desc">
-            <textarea id="desc" required rows={6} className="input-soft w-full resize-y" placeholder="Detail of your product, size, or materials of your product." value={desc} onChange={(e) => {setDesc(e.target.value)}} />
+            <DescriptionEditor
+              value={desc}
+              onChange={setDesc}
+            />
             </Field>
             <Field label="Stock" htmlFor="Stock">
             <input id="Stock" required className="input-soft w-full" placeholder="e.g. Yae Miko XL" value={stock} onChange={(e) => {setStock(+e.target.value)}}/>
@@ -171,59 +190,59 @@ function InfoItem({
   value,
   subtitle,
   badge,
+  isHtml,
 }: {
   icon: React.ReactNode;
   title: string;
   value?: string;
   subtitle?: string;
   badge?: string;
+  isHtml?: boolean;
 }) {
   return (
-    <div className="flex items-center justify-between rounded-2xl p-3 transition hover:bg-[#FCFBFA]">
-
+    <div className="flex justify-between items-start rounded-2xl p-3 transition hover:bg-[#FCFBFA]">
       <div className="flex items-center gap-4">
-
         <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#FFF5F0] text-[var(--primary)]">
-
           {icon}
-
         </div>
 
         <div>
-
-          <p className="text-sm text-[var(--muted)]">
-
-            {title}
-
-          </p>
-
+          <p className="text-sm text-[var(--muted)]">{title}</p>
         </div>
-
       </div>
 
       {badge ? (
-        <span className="badge-success">
-
-          {badge}
-
-        </span>
+        <span className="badge-success">{badge}</span>
       ) : (
-        <div className="text-right">
+        <div className="w-[200px] flex justify-end">
+          {isHtml ? (
+            <div
+              className="
+                w-full
+                text-right
+                [&>p]:mb-4
+                [&>p:last-child]:mb-0
+                [&>p]:text-right
+                [&>ul]:list-disc
+                [&>ul]:list-inside
+                [&>ul]:text-right
+                [&>ol]:list-decimal
+                [&>ol]:list-inside
+                [&>ol]:text-right
+              "
+              dangerouslySetInnerHTML={{ __html: value ?? "" }}
+            />
+          ) : (
+            <div className="text-right">
+              <p>{value}</p>
 
-          <h4 className="font-semibold">
-
-            {value}
-
-          </h4>
-
-          {subtitle && (
-            <p className="text-xs text-[var(--muted)]">
-
-              {subtitle}
-
-            </p>
+              {subtitle && (
+                <p className="text-xs text-[var(--muted)]">
+                  {subtitle}
+                </p>
+              )}
+            </div>
           )}
-
         </div>
       )}
     </div>
