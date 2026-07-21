@@ -16,7 +16,7 @@ export interface GetProduct {
   imgGalery?: string[];
   desc: string;
   size: string;
-  theme: string;
+  theme: string[];
   originalPrice: number;
   stock: number;
   vendorId: string;
@@ -115,7 +115,7 @@ export interface PostProduct {
   imgGalery?: string[];
   desc: string;
   size: string;
-  theme: string;
+  theme: string[];
   title: string;
   originalPrice: string;
   discount?: string;
@@ -183,6 +183,15 @@ export interface PostMonthlySales {
   vendorId: string;
 }
 
+export type GetSavedLook = {
+  _id: string;
+  UserId: string;
+  UserImg: string;
+  AiImgUrl: string;
+  Name: string;
+  Theme: string;
+  createdAt: string;
+};
 export interface ProductType {
   _id: string;
   imgUrl: string;
