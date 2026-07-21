@@ -7,7 +7,7 @@ export default class TryOnModel {
     return database.collection("cosplay");
   }
 
-  static async UserTryOn(yourImg: File, cosImg: string, userId: string, name: string) {
+  static async UserTryOn(yourImg: File, cosImg: string, userId: string, name: string, theme: string) {
     const user = await UserModel.collection().findOne({ "_id": new ObjectId(userId) });
     if (!user || user.token <= 0) {
       throw new Error("Insufficient tokens to perform Try-On.");
@@ -131,7 +131,9 @@ Balas HANYA dengan kata: true atau false.`,
         UserId: userId,
         AiImgUrl: AIimg,
         Name: name,
-        createdAt: new Date()
+        createdAt: new Date(),
+        Theme: theme,
+        UserImg: blob1.url
       };
 
       await Promise.all([

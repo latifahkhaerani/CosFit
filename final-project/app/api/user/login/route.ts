@@ -23,7 +23,6 @@ export async function POST(req: Request)
         if (!isPasswordMatch) {
             throw { message: "Invalid email or password", status: 401 };
         }
-        console.log(true);
         const token = sign(
             { id: user._id, email: user.email, role: "User" },
             process.env.JWT_SECRET as string,
