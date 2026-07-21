@@ -1,6 +1,6 @@
 "use client";
 
-import { Heart, LayoutGrid, List } from "lucide-react";
+import { BookMarked, Heart, LayoutGrid, List } from "lucide-react";
 import { useMemo, useState } from "react";
 import LookCard from "./LookCard";
 
@@ -33,7 +33,7 @@ export default function ProfileSavedLooks({ savedLooks }: Props) {
       <div className="flex flex-col justify-between gap-5 rounded-3xl border border-[#efe4db] bg-white p-8 lg:flex-row lg:items-center">
         <div className="flex items-start gap-4">
           <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#FFF3EF]">
-            <Heart className="fill-[#B14744] text-[#B14744]" size={24} />
+            <BookMarked className=" text-[#B14744]" size={24} />
           </div>
 
           <div>
@@ -50,7 +50,7 @@ export default function ProfileSavedLooks({ savedLooks }: Props) {
 
       {filteredLooks.length === 0 ? (
         <div className="rounded-3xl border border-dashed border-[#efe4db] bg-white py-24 text-center">
-          <Heart className="mx-auto mb-5 text-[#B14744]" size={42} />
+          <BookMarked className="mx-auto mb-5 text-[#B14744]" size={42} />
 
           <h2 className="text-xl font-semibold text-[#1f1a17]">
             No saved looks yet

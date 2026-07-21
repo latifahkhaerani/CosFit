@@ -33,11 +33,13 @@ export default function ProfileWishlist({
           </div>
         </div>
 
-        <div className="rounded-2xl border border-[#F3E7DD] bg-[#FCFAF8] px-6 py-4">
-          <p className="text-sm text-muted">Total Wishlist</p>
+        {/* <div className="rounded-xl border border-[#F3E7DD] px-4 py-3">
+          <p className="text-xs text-[#9C8E83]">Total Checkout</p>
 
-          <h2 className="text-3xl font-bold text-primary">{wishlist.length}</h2>
-        </div>
+          <p className="mt-1 text-2xl font-semibold text-primary text-right">
+            {wishlist.length}
+          </p>
+        </div> */}
       </div>
 
       {/* CONTENT */}
