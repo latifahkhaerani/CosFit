@@ -40,9 +40,4 @@ const body = {
     } catch (error) {
        return errorHandler(error);
     }
-    const result = await ForumModel.createForum(body, userId, img);
-    return Response.json({ message: result }, { status: 201 });
-  } catch (error) {
-    return errorHandler(error);
   }
-}
