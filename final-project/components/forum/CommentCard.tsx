@@ -53,9 +53,10 @@ export default function CommentCard({ roomId, initialMessages, currentUser, imag
     };
   }, [roomId]);
 
+  console.log(messages);
   return (
     <div className="flex w-full flex-col gap-6 p-4">
-      {messages.map((chat) => {
+      {messages?.map((chat) => {
         const username = chat?.user?.[0]?.username || "Unknown";
         const isMe = username === currentUser;
         const initialLetter = username.charAt(0).toUpperCase();

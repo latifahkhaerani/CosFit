@@ -5,11 +5,9 @@ export async function GET(req: Request, { params }: { params: Promise<{ roomId: 
     try {
         const {roomId} = await params;
         const userId = req.headers.get("x-user-id");
-        if(!userId){
-            throw {message: `invalid`, status: 500}
-        }
+        
         const response = await ChatModel.getChatRoomId(roomId, userId)
-
+        console.log(response);
         return Response.json(response)
     } catch (error) {
         return errorHandler(error) 

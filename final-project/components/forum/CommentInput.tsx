@@ -87,7 +87,8 @@ export default function CommentInput({ forumId, chatLength, image }: CommentInpu
 
       <form onSubmit={handleSubmit} className="flex gap-4">
         <div className="relative h-12 w-12 shrink-0">
-          <Image src={image} alt="My Avatar" fill className="rounded-full object-cover" />
+          {image? (<Image src={image} alt="My Avatar" fill className="rounded-full object-cover" />): (<></>)}
+          
         </div>
 
         <div className="flex-1">

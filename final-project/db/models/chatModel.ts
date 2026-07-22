@@ -7,7 +7,8 @@ export default class ChatModel {
         return database.collection("chats")
     }
 
-    static async getChatRoomId(roomId: string, userId: string) {
+    static async getChatRoomId(roomId: string, userId: string | null) {
+        console.log(roomId, "<<<< ROOOM IDDDDD");
         const agg = [
             { '$match': { 'roomId': new ObjectId(roomId) } },
             {
@@ -21,8 +22,12 @@ export default class ChatModel {
             { '$project': { 'user.password': false } }
         ];
         const chat = await this.collection().aggregate(agg).toArray()
-        const userDetail = await UserModel.collection().findOne({ "_id": new ObjectId(userId) })
-        return { message: chat, username: userDetail?.username, image:userDetail?.userImg , status: 200 }
+        if(!userId)
+        {
+            const userDetail = await UserModel.collection().findOne({ "_id": new ObjectId(userId as string) })
+            return { message: chat, username: userDetail?.username, image:userDetail?.userImg , status: 200 }
+        }
+        return { message: chat, status: 200 }
     }
 
     static async postChat(roomId: string, userId: string, body: string) {
