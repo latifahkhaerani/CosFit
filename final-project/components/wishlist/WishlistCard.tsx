@@ -49,18 +49,18 @@ export default function WishlistCard({
 }: WishlistCardProps) {
   const router = useRouter();
 
-async function handleRemove() {
-  const res = await fetch(`/api/user/wishlist/${wishlistId}`, {
-    method: "DELETE",
-  });
+  async function handleRemove() {
+    const res = await fetch(`/api/user/wishlist/${wishlistId}`, {
+      method: "DELETE",
+    });
 
-  if (!res.ok) {
-    console.error(await res.text());
-    return;
+    if (!res.ok) {
+      console.error(await res.text());
+      return;
+    }
+
+    await onRemoved?.();
   }
-
-  await onRemoved?.();
-}
 
   async function handleCheckout() {
     await fetch("/api/user/checkout", {
@@ -156,7 +156,7 @@ async function handleRemove() {
 
         <div className="mt-auto grid grid-cols-2 gap-2.5">
           <Link
-            href="/try-on"
+            href={`/try-on?productId=${productSlug}`}
             onClick={(e) => e.stopPropagation()}
             className="flex items-center justify-center gap-2 rounded-xl border border-[#B14744] py-2 text-sm font-medium text-[#B14744] transition hover:bg-[#FFF3EF]"
           >
