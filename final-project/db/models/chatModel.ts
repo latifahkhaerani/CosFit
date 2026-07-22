@@ -1,6 +1,7 @@
 import { ObjectId } from "mongodb";
 import { database } from "../config/mongodb";
 import UserModel from "./userModel";
+import VendorModel from "./vendorModel";
 
 export default class ChatModel {
     static collection() {
@@ -9,68 +10,50 @@ export default class ChatModel {
 
     static async getChatRoomId(roomId: string, userId: string | null) {
         const agg = [
-  // 1. Filter berdasarkan roomId
-  { 
-    $match: { roomId: new ObjectId(roomId) } 
-  },
-
-  // 2. Lookup ke collection 'users'
   {
-    $lookup: {
-      from: 'users',
-      localField: 'userId',
-      foreignField: '_id',
-      as: 'userData'
+    '$match': {
+      'roomId': new ObjectId(roomId)
     }
-  },
-
-  // 3. Lookup ke collection 'vendor'
-  {
-    $lookup: {
-      from: 'vendor',
-      localField: 'userId',
-      foreignField: '_id',
-      as: 'vendorData'
+  }, {
+    '$lookup': {
+      'from': 'vendors', 
+      'localField': 'userId', 
+      'foreignField': '_id', 
+      'as': 'vendor'
     }
-  },
-
-  // 4. Gabungkan hasil 'users' dan 'vendor' ke dalam field 'user'
-  // $concatArrays akan menggabungkan array, yang kosong [] akan terabaikan
-  {
-    $addFields: {
-      user: { $concatArrays: ["$userData", "$vendorData"] }
+  }, {
+    '$lookup': {
+      'from': 'users', 
+      'localField': 'userId', 
+      'foreignField': '_id', 
+      'as': 'user'
     }
-  },
-
-  // 5. Lookup ke collection 'profile' untuk mendapatkan userImg
-  {
-    $lookup: {
-      from: 'profile',
-      localField: 'userId',
-      foreignField: '_id',
-      as: 'userImg'
+  }, {
+    '$project': {
+      'user.password': false, 
+      'user._id': false, 
+      'user.email': false, 
+      'user.token': false, 
+      'user.createdAt': false, 
+      'user.updatedAt': false, 
+      'user.claimedAt': false, 
+      'user.namaToko': false, 
+      'user.alamat': false
     }
-  },
-
-  // 6. Proyeksi (hilangkan field yang tidak diinginkan)
-  { 
-    $project: { 
-      'userData': 0, // Hapus array temporary
-      'vendorData': 0, // Hapus array temporary
-      'user.password': 0, 
-      'userImg._id': 0, 
-      'userImg.userId': 0, 
-      'userImg.address': 0 
-    } 
   }
 ];
+
         const chat = await this.collection().aggregate(agg).toArray()
-        if(!userId)
-        {
+
+
             const userDetail = await UserModel.collection().findOne({ "_id": new ObjectId(userId as string) })
-            return { message: chat, username: userDetail?.username, image:userDetail?.userImg , status: 200 }
-        }
-        return { message: chat, status: 200 }
+            const vendorDetail = await VendorModel.collection().findOne({ "_id": new ObjectId(userId as string) })
+            if (!vendorDetail){
+                return { message: chat, username: userDetail?.username, image:userDetail?.userImg , status: 200 }
+            }
+            else if (!userDetail){
+                return { message: chat, username: vendorDetail?.namaToko, image:vendorDetail?.userImg , status: 200 }
+            }
     }
 
     static async postChat(roomId: string, userId: string, body: string) {
