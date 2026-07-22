@@ -24,19 +24,26 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault()
-    try {
-      const data = await fetch(`http://localhost:3000/api/user/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type':'application/json'
-        },
-        body: JSON.stringify({email, password})
-      })
 
-      route.push("/")
-      
+    try {
+      const response = await fetch(`/api/user/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(data?.message || "Login failed");
+      }
+
+      route.push("/");
+      route.refresh();
     } catch (error) {
-      errorHandler(error)
+      errorHandler(error);
     }
   }
 
