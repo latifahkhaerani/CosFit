@@ -1,9 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import { UploadCloud } from "lucide-react";
+import { UploadCloud, X } from "lucide-react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import errorHandler from "@/app/helpers/errorHandler";
 
 export default function ProductGallery({
   imgUrl,
@@ -22,6 +23,30 @@ export default function ProductGallery({
 
   const router = useRouter()
   
+  const handleDeleteImage = async (url: string) => {
+    console.log("Deleting:", url);
+
+    try {
+      const res = await fetch(
+        `/api/vendor/product/${id}/galery`,
+        {
+          method: "PUT",
+          body: JSON.stringify({ url }),
+        }
+      );
+
+      console.log("Status:", res.status);
+
+      const data = await res.json();
+      console.log(data);
+
+      if (!res.ok) throw data;
+
+      router.refresh();
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const handleUpload = async (file: File) => {
     setUploading(true);
@@ -79,25 +104,38 @@ export default function ProductGallery({
         {/* Thumbnails */}
         <div className="grid grid-cols-2 gap-4 auto-rows-max">
           {allImg.map((img) => (
-            <button
-              key={img}
-              type="button"
-              onClick={() => setSelected(img)}
-              className={`w-[120px] h-[180px] group overflow-hidden rounded-3xl border transition ${
-                selected === img
-                  ? "border-[var(--primary)] ring-2 ring-[#FCEAE3]"
-                  : "border-[var(--border)]"
-              }`}
-            >
-              <Image
-                src={img}
-                alt=""
-                width={300}
-                height={450}
-                unoptimized
-                className="h-full w-full object-cover transition duration-300 group-hover:scale-110"
-              />
-            </button>
+            <div key={img} className="relative group w-[120px] h-[180px]">
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  // handleDelete(img)
+                  handleDeleteImage(img)
+                }}
+                className="absolute top-2 right-2 z-20 flex h-7 w-7 items-center justify-center rounded-full bg-red-500 text-white shadow-lg transition-all duration-200 hover:scale-110 hover:bg-red-600 opacity-0 group-hover:opacity-100"
+              >
+                <X size={14} />
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setSelected(img)}
+                className={`h-full w-full overflow-hidden rounded-3xl border transition ${
+                  selected === img
+                    ? "border-[var(--primary)] ring-2 ring-[#FCEAE3]"
+                    : "border-[var(--border)]"
+                }`}
+              >
+                <Image
+                  src={img}
+                  alt=""
+                  width={300}
+                  height={450}
+                  unoptimized
+                  className="h-full w-full object-cover transition duration-300 group-hover:scale-110"
+                />
+              </button>
+            </div>
           ))}
 
           {/* Upload */}

@@ -52,7 +52,9 @@ export async function proxy(request: Request) {
       pathname === "/api/userDesign" ||
       pathname === "/api/user/try-on" ||
       pathname === "/api/user/history" ||
-      pathname === "/api/pay";
+      pathname === "/api/pay"||
+      pathname === "/api/topup" || 
+      pathname === "/credits";
 
     // Public routes (no login required)
     const isPublicRoute =

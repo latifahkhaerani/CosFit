@@ -206,8 +206,63 @@ export default class ProductModel {
   }
 
   static async decreaseQuantity(id: string, quantity: number | string){
-    console.log("MASUK DECREASE QUANTITY");
     const res = await this.collection().updateOne({_id: new ObjectId(id)}, {$inc: {stock: -quantity}})
     return res
+  }
+
+  static async deleteImage(id: string, url: string) {
+    const product = await this.collection().findOne({
+      _id: new ObjectId(id),
+    });
+
+    if (!product) {
+      throw new Error("Product not found");
+    }
+
+    // Normalize gallery to always be an array
+    const gallery = Array.isArray(product.imgGalery)
+      ? product.imgGalery
+      : product.imgGalery
+        ? [product.imgGalery]
+        : [];
+
+    // Deleting the main image
+    if (product.imgUrl === url) {
+      if (gallery.length === 0) {
+        throw new Error("Product must have at least one image.");
+      }
+
+      const [newMain, ...newGallery] = gallery;
+
+      await this.collection().updateOne(
+        { _id: product._id },
+        {
+          $set: {
+            imgUrl: newMain,
+            imgGalery: newGallery,
+          },
+        }
+      );
+
+      return {
+        message: "Main image deleted successfully.",
+      };
+    }
+
+    // Deleting a gallery image
+    const newGallery = gallery.filter((img) => img !== url);
+
+    await this.collection().updateOne(
+      { _id: product._id },
+      {
+        $set: {
+          imgGalery: newGallery,
+        },
+      }
+    );
+
+    return {
+      message: "Gallery image deleted successfully.",
+    };
   }
 }

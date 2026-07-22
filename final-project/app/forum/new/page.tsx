@@ -4,6 +4,7 @@ import { useState, type FormEvent, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Image as ImageIcon, Plus, Tags } from "lucide-react";
+import DescriptionEditor from "@/components/DescriptionEditor";
 
 export default function NewDiscussionPage() {
   const router = useRouter();
@@ -17,6 +18,27 @@ export default function NewDiscussionPage() {
 
 async function handleSubmit(event: FormEvent) {
     event.preventDefault();
+
+    const plainDescription = desc
+      .replace(/<[^>]*>/g, "")
+      .replace(/&nbsp;/g, " ")
+      .trim();
+
+    if (!nameForum.trim()) {
+      setError("Please enter a discussion title.");
+      return;
+    }
+
+    if (!plainDescription) {
+      setError("Please enter a description.");
+      return;
+    }
+
+    if (!tags.trim()) {
+      setError("Please enter at least one tag.");
+      return;
+    }
+
     if (!imageFile) {
       setError("Please choose an image for your discussion.");
       return;
@@ -28,25 +50,31 @@ async function handleSubmit(event: FormEvent) {
     try {
       const formData = new FormData();
 
-      formData.append("Image", imageFile); 
-      formData.append("nameForum", nameForum);
-      formData.append("desc", desc);
-      formData.append("tag", tags); 
+      formData.append("Image", imageFile);
+      formData.append("nameForum", nameForum.trim());
+      formData.append("desc", desc); // Keep the HTML from Tiptap
+      formData.append("tag", tags.trim());
 
       const res = await fetch("/api/forum", {
         method: "POST",
-        body: formData, 
+        body: formData,
       });
 
+      const data = await res.json().catch(() => null);
+
       if (!res.ok) {
-        const data = await res.json().catch(() => null);
         throw new Error(data?.message || "Failed to create your discussion.");
       }
 
       router.push("/forum");
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong.");
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Something went wrong."
+      );
+    } finally {
       setIsSubmitting(false);
     }
   }
@@ -85,15 +113,12 @@ async function handleSubmit(event: FormEvent) {
             </Field>
 
             <Field label="Description" htmlFor="desc">
-              <textarea
-                id="desc"
-                required
-                rows={6}
-                value={desc}
-                onChange={(event) => setDesc(event.target.value)}
-                className="input-soft w-full resize-y"
-                placeholder="Share the topic, question, or details you want to discuss."
-              />
+              <Field label="Description" htmlFor="desc">
+                <DescriptionEditor
+                  value={desc}
+                  onChange={setDesc}
+                />
+              </Field>
             </Field>
 
             <Field

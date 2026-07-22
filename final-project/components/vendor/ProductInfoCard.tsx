@@ -71,15 +71,16 @@ export default function ProductInfoCard({ product }: { product: GetProduct }) {
     <section className="card p-7">
       <div className="gap-5 flex">
         <button
-          className="secondary-btn"
+          className="secondary-btn transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 active:shadow-sm"
           onClick={() => {
             setIsEdit(true);
           }}
         >
           Edit
         </button>
+
         <button
-          className="secondary-btn"
+          className="secondary-btn transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 active:shadow-sm"
           onClick={() => {
             setIsEdit(false);
           }}
@@ -131,19 +132,19 @@ export default function ProductInfoCard({ product }: { product: GetProduct }) {
           <InfoItem
             icon={<Coins size={18} />}
             title="Original Price"
-            value={originalPrice + ""}
+            value={formatIDR(originalPrice) + ""}
           />
 
           <InfoItem
             icon={<Coins size={18} />}
             title="Discount"
-            value={(discount ?? 0) + ""}
+            value={`${discount ?? 0}%`}
           />
 
           <InfoItem
             icon={<Coins size={18} />}
             title="Final Price"
-            value={(finalPrice ?? 0) + ""}
+            value={formatIDR(originalPrice??0) + ""}
           />
         </div>
       ) : (
@@ -229,7 +230,10 @@ export default function ProductInfoCard({ product }: { product: GetProduct }) {
                 readOnly
               />
             </Field>
-            <button className="secondary-btn" type="submit">
+            <button
+              className="secondary-btn mt-6 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 active:shadow-sm"
+              type="submit"
+            >
               Submit
             </button>
           </form>
@@ -240,6 +244,13 @@ export default function ProductInfoCard({ product }: { product: GetProduct }) {
 }
 
 /* -------------------------- */
+
+const formatIDR = (value: number) =>
+  new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+    maximumFractionDigits: 0,
+  }).format(value);
 
 function InfoItem({
   icon,

@@ -68,13 +68,13 @@ export default function VendorDashboard() {
 
         {/* Statistics */}
 
-        <VendorStatCard
+        {/* <VendorStatCard
           title="Completed Rentals"
           value={56}
           growth="+15% from last month"
           icon="check"
           color="#16A34A"
-        />
+        /> */}
 
         <div className="mt-8">
           {/* LEFT */}

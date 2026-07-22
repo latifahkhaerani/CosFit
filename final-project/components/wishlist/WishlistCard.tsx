@@ -61,6 +61,8 @@ export default function WishlistCard({
     }
 
     await onRemoved?.();
+
+    router.refresh()
   }
 
   async function handleCheckout() {

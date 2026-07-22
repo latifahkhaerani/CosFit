@@ -70,6 +70,17 @@ export interface GetRoom {
   tag: [string];
 }
 
+export interface GetOrder {
+  _id: string,
+  orderId: string,
+  items: {productId: string, price: number, quantity: number, name: string}[],
+  total: number,
+  paymentStatus: string,
+  userId: string,
+  product: GetProduct[]
+  vendor: GetVendor
+}
+
 export interface GetOurEvent {
   _id: string;
   slug: string;

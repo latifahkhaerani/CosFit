@@ -230,10 +230,20 @@ export default function ProductInfo({
 
       {/* Deskripsi */}
       <div>
-        <p className="text-base font-semibold text-foreground">Description</p>
-        <p className="mt-3 text-base leading-relaxed text-muted">
-          {product.desc || "No description available for this product yet."}
+        <p className="text-base font-semibold text-foreground">
+          Description
         </p>
+
+        {product.desc ? (
+          <div
+            className="prose prose-neutral dark:prose-invert mt-3 max-w-none text-muted"
+            dangerouslySetInnerHTML={{ __html: product.desc }}
+          />
+        ) : (
+          <p className="mt-3 text-base leading-relaxed text-muted">
+            No description available for this product yet.
+          </p>
+        )}
       </div>
 
       {/* Action Buttons */}

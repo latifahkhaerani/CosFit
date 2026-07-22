@@ -114,11 +114,6 @@ export default function CreditHero() {
           {/* CTA */}
 
           <div className="mt-8 flex items-center gap-5">
-            <button className="primary-btn flex items-center gap-2 px-7 py-3">
-              <Coins size={18} />
-              Get More Credits
-            </button>
-
             <Link
               href="/profile"
               className="group flex items-center gap-2 text-[15px] font-semibold text-primary transition hover:gap-3"
@@ -151,30 +146,6 @@ export default function CreditHero() {
               priority
               className="rounded-[28px]"
             />
-
-            <div className="absolute bottom-7 left-7 right-7 rounded-3xl border border-[#F4E5D9] bg-white/95 p-5 shadow-xl backdrop-blur">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-xs uppercase tracking-wider text-[#8B857F]">
-                    Current Balance
-                  </p>
-
-                  <h3 className="mt-1 text-3xl font-bold text-foreground">
-                    {credits}
-
-                    <span className="ml-2 text-lg font-medium text-muted">
-                      Credits
-                    </span>
-                  </h3>
-                </div>
-
-                <div className="rounded-2xl bg-[#F2FFF3] px-4 py-2">
-                  <span className="text-sm font-semibold text-[#2F9D50]">
-                    Ready to Generate
-                  </span>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </div>

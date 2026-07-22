@@ -42,22 +42,25 @@ export default function CheckoutExperience({
 
   const subtotal = selectedItems.reduce(
     (total, item) =>
-      total + Number(item.product.originalPrice) * (item.quantity || 0),
+      total + Number(item.product.finalPrice) * (item.quantity || 0),
     0,
   );
 
-  const protection = 25000;
-  const serviceFee = 22500;
-  const shipping = 15000;
-  const total = subtotal + protection + serviceFee + shipping;
+ 
+  const total = subtotal
 
   const updateQuantity = (id: string, nextValue: number) => {
     setQuantities((current) => ({
       ...current,
       [id]: Math.max(0, nextValue),
     }));
+
   };
 
+  const onQuantityZero = async (productId: string) => {
+    await fetch(`/api/user/checkout/${productId}`, {method: "DELETE"})
+    route.refresh()
+  }
 
   const handlePay = async () => {
   try {
@@ -68,18 +71,17 @@ export default function CheckoutExperience({
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        items: groupedProducts,
+        items: selectedItems,
       }),
     });
 
     const data = await res.json();
 
-    console.log(window.snap);
-    console.log(data.token);
     window.snap.pay(data.token, {
       onSuccess: async (result) => {
         console.log(result);
         await fetch("/api/pay", {method: "PATCH", body: JSON.stringify({orderId: data.orderId, status: "Success"})})
+        route.refresh()
       },
       onPending: async (result) => {
         console.log(result);
@@ -94,12 +96,12 @@ export default function CheckoutExperience({
       },
     });
 
-    route.push("/wishlist")
     route.refresh()
   } catch (error) {
     return errorHandler(error);
   }
 };
+
 
   return (
     <main className="min-h-screen bg-[#f8f6f2] px-3 py-4 sm:px-5 lg:px-6 xl:px-8">
@@ -137,7 +139,7 @@ export default function CheckoutExperience({
 
               <div className="space-y-4">
                 {selectedItems?.map(({ product, quantity }) => {
-                  const unitPrice = Number(product.originalPrice);
+                  const unitPrice = Number(product.finalPrice);
                   return (
                     <div
                       key={product._id}
@@ -175,10 +177,6 @@ export default function CheckoutExperience({
                             <span className="rounded-full bg-[#f4efe9] px-2.5 py-1 text-[11px] font-medium text-foreground/75">
                               Size {product.size}
                             </span>
-
-                            <span className="rounded-full bg-[#eef8ef] px-2.5 py-1 text-[11px] font-medium text-emerald-700">
-                              ✓ Good Match
-                            </span>
                           </div>
                         </div>
                       </div>
@@ -196,9 +194,14 @@ export default function CheckoutExperience({
                           <div className="inline-flex items-center rounded-full border border-border/80 bg-white shadow-sm">
                             <button
                               type="button"
-                              onClick={() =>
-                                updateQuantity(product._id, quantity - 1)
-                              }
+                              onClick={() => {
+                                if (quantity <= 1) {
+                                  // quantity would become 0
+                                  onQuantityZero(product._id); // your function
+                                } else {
+                                  updateQuantity(product._id, quantity - 1);
+                                }
+                              }}
                               className="flex h-9 w-9 items-center justify-center rounded-l-full border-r border-border/70 text-foreground transition-all duration-200 hover:bg-primary hover:text-white"
                             >
                               <Minus size={16} />
@@ -237,22 +240,10 @@ export default function CheckoutExperience({
 
               <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                 <div className="flex items-center gap-4">
-                  <Image
-                    src="/images/vendor-avatar.jpg"
-                    alt="Vendor"
-                    width={64}
-                    height={64}
-                    className="rounded-full"
-                  />
 
                   <div>
                     <h4 className="text-lg font-semibold">{vendor?.namaToko}</h4>
-                    <p className="text-sm text-muted">{vendor?.alamat}</p>
-
-                    <div className="mt-2 flex flex-wrap items-center gap-4 text-sm text-muted">
-                      <span>⭐ 4.9 (128) | no rating yet</span>
-                      <span className="text-emerald-600">98% Positive</span>
-                    </div>
+                    <p className="text-sm text-muted">Alamat: {vendor?.alamat}</p>
                   </div>
                 </div>
 
@@ -457,7 +448,7 @@ export default function CheckoutExperience({
                       <h3 className="mt-2 text-sm text-primary font-semibold text-foreground">
                         Rp{" "}
                         {(
-                          Number(product.originalPrice) * quantity
+                          Number(product.finalPrice) * quantity
                         ).toLocaleString("id-ID")}
                       </h3>
                     </div>
@@ -472,27 +463,6 @@ export default function CheckoutExperience({
                   <span className="text-muted">Costume Rental</span>
                   <span className="text-foreground">
                     Rp {subtotal.toLocaleString("id-ID")}
-                  </span>
-                </div>
-
-                <div className="flex justify-between">
-                  <span className="text-muted">Rental Protection</span>
-                  <span className="text-foreground">
-                    Rp {protection.toLocaleString("id-ID")}
-                  </span>
-                </div>
-
-                <div className="flex justify-between">
-                  <span className="text-muted">Service Fee</span>
-                  <span className="text-foreground">
-                    Rp {serviceFee.toLocaleString("id-ID")}
-                  </span>
-                </div>
-
-                <div className="flex justify-between">
-                  <span className="text-muted">Shipping</span>
-                  <span className="text-foreground">
-                    Rp {shipping.toLocaleString("id-ID")}
                   </span>
                 </div>
               </div>

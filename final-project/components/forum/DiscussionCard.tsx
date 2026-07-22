@@ -37,6 +37,8 @@ export default function DiscussionCard({
   verified = false,
   onLike,
 }: Props) {
+
+  console.log(description);
   return (
     <article className="group relative overflow-hidden rounded-2xl border border-white/80 bg-white/70 p-6 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-[#be2727]/30 hover:bg-white hover:shadow-[0_12px_30px_-4px_rgba(190,39,39,0.12)]">
       
@@ -77,9 +79,15 @@ export default function DiscussionCard({
           <h3 className="mt-1.5 text-lg sm:text-xl font-bold text-gray-900 transition-colors duration-200 group-hover:text-[#be2727] line-clamp-1">
             {title}
           </h3>
-          <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-gray-600 font-normal">
-            {description}
-          </p>
+          <div
+            className="prose prose-sm mt-2 max-w-none overflow-hidden text-gray-600"
+            style={{
+              display: "-webkit-box",
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: "vertical",
+            }}
+            dangerouslySetInnerHTML={{ __html: description }}
+          />
           
           {/* Footer Card (Tags & Stats) */}
           <div className="mt-6 flex flex-col justify-between gap-4 pt-4 border-t border-gray-100/80 sm:flex-row sm:items-center">

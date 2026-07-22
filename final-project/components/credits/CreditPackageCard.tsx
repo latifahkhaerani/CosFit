@@ -1,6 +1,8 @@
 "use client";
 
+import errorHandler from "@/app/helpers/errorHandler";
 import { Coins, Sparkles, Crown } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 type Props = {
   title: string;
@@ -17,6 +19,37 @@ export default function CreditPackageCard({
   description,
   popular = false,
 }: Props) {
+
+  const route = useRouter()
+
+  const handlePurchase = async () => {
+  try {
+    const res = await fetch("/api/topup", {
+      method: "POST",
+      body: JSON.stringify({ credits }),
+    });
+
+    const data = await res.json();
+
+    window.snap.pay(data.token, {
+      onSuccess: async () => {
+        await fetch("/api/topup", {method: "PATCH", body: JSON.stringify({credit: credits})})
+        route.refresh();
+      },
+
+      onPending: () => {
+        alert("Waiting for payment");
+      },
+
+      onError: () => {
+        alert("Payment failed");
+      },
+    });
+  } catch (error) {
+    errorHandler(error);
+  }
+};
+
   return (
     <div
       className={`
@@ -114,7 +147,7 @@ export default function CreditPackageCard({
 
       </div>
 
-      <button className="primary-btn mt-10 w-full">
+      <button className="primary-btn mt-10 w-full" onClick={handlePurchase}>
 
         Purchase Credits
 

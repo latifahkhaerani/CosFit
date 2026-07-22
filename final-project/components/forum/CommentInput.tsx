@@ -4,6 +4,7 @@ import Image from "next/image";
 import { ImagePlus, Smile, Send } from "lucide-react";
 import { useState, useEffect } from "react";
 import { socket } from "@/socket"; 
+import ReplyEditor from "../ReplyEditor";
 
 interface CommentInputProps {
   forumId: string;
@@ -92,13 +93,12 @@ export default function CommentInput({ forumId, chatLength, image }: CommentInpu
         </div>
 
         <div className="flex-1">
-          <textarea
-            rows={4}
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            placeholder="Write your reply..."
-            className="input-soft min-h-30 w-full resize-none rounded-xl border p-3 focus:outline-none focus:ring-2 focus:ring-primary"
-          />
+          <div className="flex-1">
+            <ReplyEditor
+              value={message}
+              onChange={setMessage}
+            />
+          </div>
 
           <div className="mt-3 flex items-center justify-between">
             <div className="flex gap-2">
