@@ -349,7 +349,7 @@ function TryOnContent() {
                         src={p.imgUrl}
                         alt={p.title}
                         fill
-                        className="object-cover"
+                        className="object-contain"
                         unoptimized
                       />
                     </div>
@@ -487,22 +487,10 @@ function TryOnContent() {
       />
 
       <div className="page-container px-6 py-8 max-w-[1400px] mx-auto">
-        {/* Breadcrumb */}
-        <div className="mb-8 flex items-center gap-3 text-sm">
-          <Link
-            href="/wishlist"
-            className="flex items-center gap-2 text-muted hover:text-primary transition"
-          >
-            <ChevronLeft size={16} /> Wishlist
-          </Link>
-          <ChevronRight size={15} className="text-muted" />
-          <span className="font-medium text-primary">Try On</span>
-        </div>
-
         {/* PAGE TITLE, TOKEN DISPLAY & CLAIM TOKEN BUTTON */}
         <div className="mb-8 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
           <div>
-            <h1 className="text-[38px] font-bold text-gray-900">
+            <h1 className="text-3xl font-semibold tracking-[-0.02em] text-(--text) sm:text-3xl">
               AI Virtual Try-On
             </h1>
             <p className="subtitle mt-2 text-gray-500">
@@ -512,18 +500,18 @@ function TryOnContent() {
 
           <div className="flex flex-wrap items-center gap-3">
             {/* TOKEN BALANCE DISPLAY */}
-            <div className="flex items-center gap-2 rounded-2xl border border-orange-100 bg-[#FFF8F6] px-4 py-3 shadow-xs">
+            <div className="flex items-center gap-2 rounded-2xl border border-orange-100 bg-[#FFF8F6] px-4 py-1 shadow-xs">
               <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-primary/10 text-primary">
                 <Coins size={18} />
               </div>
               <div>
-                <p className="text-[11px] font-medium text-gray-500 uppercase tracking-wider">
-                  Your Tokens
+                <p className="text-[8px] font-medium text-gray-500 uppercase tracking-wider">
+                  Your credits
                 </p>
                 <p className="text-base font-bold text-gray-900">
                   {tokenStatus?.token ?? 0}{" "}
-                  <span className="text-xs font-normal text-gray-500">
-                    Tokens
+                  <span className="text-xs font-normal text-gray-500 mt-0">
+                    credits
                   </span>
                 </p>
               </div>
@@ -683,11 +671,11 @@ function TryOnContent() {
             <div className="card p-6 bg-white rounded-[32px] shadow-sm">
               <div className="mb-6 flex items-center justify-between">
                 <div>
-                  <h2 className="section-title text-xl font-bold text-gray-800">
-                    AI Virtual Try-On
+                  <h2 className="section-title text-lg font-bold text-gray-700">
+                    AI Preview
                   </h2>
                   <p className="subtitle mt-1 text-gray-500">
-                    Preview generated using your body profile.
+                    Preview generated using your full body photo.
                   </p>
                 </div>
                 {aiResult && !isLoading && (
@@ -709,24 +697,13 @@ function TryOnContent() {
                     </p>
                   </div>
                 ) : aiResult ? (
-                  // tampilkan hasil AI
-                  // <Image
-                  //   src={aiResult}
-                  //   alt="Generated Preview"
-                  //   width={900}
-                  //   height={900}
-                  //   unoptimized
-                  //   className="h-[600px] w-full object-contain py-2"
-                  // />
-
-                  // sini
                   <div className="h-150">
                     <ReactCompareSlider
                       itemOne={
                         <ReactCompareSliderImage
                           src={userPreview || "/images/placeholder-user.png"}
                           alt="Before"
-                          className="h-150 w-full object-contain "
+                          className="h-150 w-full object-cover"
                           style={{ objectPosition: "center bottom" }}
                         />
                       }
@@ -734,7 +711,7 @@ function TryOnContent() {
                         <ReactCompareSliderImage
                           src={aiResult}
                           alt="After"
-                          className="h-150 w-full object-contain"
+                          className="h-150 w-full object-cover"
                           style={{ objectPosition: "center bottom" }}
                         />
                       }
@@ -750,32 +727,44 @@ function TryOnContent() {
                     className="h-[600px] w-full object-cover"
                   />
                 )}
-                {/* <div className="absolute left-5 top-5 rounded-full bg-white/90 px-4 py-2 shadow-sm backdrop-blur">
-                  <p className="text-xs font-medium text-primary text-[#c2410c]">
-                    {!aiResult ? (
-                      <button>Generate</button>
-                    ) : (
-                      <div className="flex gap-3">
-                        <button>Download</button>
-
-                        <button>Generate Again</button>
-
-                        <button>Save Look</button>
-                      </div>
-                    )}
-                  </p>
-                </div> */}
               </div>
 
+              {aiResult && !isLoading && (
+                <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+                  <button
+                    onClick={() =>
+                      downloadImage(aiResult, `cosfit-tryon-${Date.now()}.png`)
+                    }
+                    className="flex items-center gap-2 rounded-xl border border-border bg-primary text-white px-5 py-3 text-sm font-medium transition hover:bg-primary"
+                  >
+                    <Download size={16} />
+                    Download
+                  </button>
+
+                  <button
+                    onClick={handleGenerate}
+                    className="flex items-center gap-2 rounded-xl border border-border bg-white text-primary px-5 py-3 text-sm font-medium transition hover:bg-[#FFF8F6]"
+                  >
+                    <Sparkles size={16} />
+                    Generate Again
+                  </button>
+                </div>
+              )}
+
               <div className="mt-6 justify-center">
-                <button
-                  onClick={handleGenerate}
-                  disabled={isLoading || !selectedProduct || !userFile}
-                  className="primary-btn w-full cursor-pointer flex justify-center items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed bg-primary text-white py-3.5 rounded-xl font-semibold hover:bg-primary/90 transition text-lg"
-                >
-                  {isLoading && <Loader2 className="animate-spin" size={18} />}
-                  {isLoading ? "Generating..." : "Click Here to Generate"}
-                </button>
+                {!aiResult && (
+                  <button
+                    onClick={handleGenerate}
+                    disabled={isLoading || !selectedProduct || !userFile}
+                    className="primary-btn mt-6 flex w-full items-center justify-center gap-2 rounded-xl py-3.5 text-lg font-semibold disabled:cursor-not-allowed disabled:opacity-70"
+                  >
+                    {isLoading && (
+                      <Loader2 className="animate-spin" size={18} />
+                    )}
+
+                    {isLoading ? "Generating..." : "Click Here to Generate"}
+                  </button>
+                )}
               </div>
             </div>
 
