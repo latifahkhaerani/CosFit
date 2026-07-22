@@ -57,7 +57,7 @@ export default function Navbar({
 
   const visibleLinks = isLoggedIn
     ? links.filter((link) => link.id !== "vendor")
-    : links.filter((link) => link.id !== "wishlist" && link.id !== "try-on" && link.id !== "forum");
+    : links.filter((link) => link.id !== "wishlist" && link.id !== "try-on");
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-surface/90 backdrop-blur">

@@ -65,7 +65,9 @@ export async function proxy(request: Request) {
       pathname === "/api/user/register" ||
       pathname === "/api/user/login" ||
       pathname === "/api/vendor/register" ||
-      pathname === "/api/vendor/login";
+      pathname === "/api/vendor/login"||
+      pathname === "/api/forum" ||
+      pathname === "/api/forum/:slug";
 
     if (isPublicRoute) {
       return NextResponse.next({

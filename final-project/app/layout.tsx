@@ -30,7 +30,6 @@ export default async function RootLayout({
   const headerList = await headers();
 
   const role = headerList.get("x-user-role");
-  console.log(role);
 
   return (
     <html
