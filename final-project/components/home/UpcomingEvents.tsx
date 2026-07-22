@@ -51,8 +51,9 @@ function EventCard({
         <p className="line-clamp-2 text-base text-muted">
           {event.description || "Short description of this event."}
         </p>
+
         <div className="mt-auto pt-4">
-          <Link href={`/event/${event.slug}`}>
+          <Link href={`/events/${event.slug}`}>
             <button
               type="button"
               onClick={() => onSelect?.(event._id)}
@@ -66,6 +67,7 @@ function EventCard({
       </div>
     </div>
   );
+
 }
 
 export default function UpcomingEvents({

@@ -8,19 +8,62 @@ export default class ChatModel {
     }
 
     static async getChatRoomId(roomId: string, userId: string | null) {
-        console.log(roomId, "<<<< ROOOM IDDDDD");
         const agg = [
-            { '$match': { 'roomId': new ObjectId(roomId) } },
-            {
-                '$lookup': {
-                    'from': 'users',
-                    'localField': 'userId',
-                    'foreignField': '_id',
-                    'as': 'user'
-                }
-            },
-            { '$project': { 'user.password': false } }
-        ];
+  // 1. Filter berdasarkan roomId
+  { 
+    $match: { roomId: new ObjectId(roomId) } 
+  },
+
+  // 2. Lookup ke collection 'users'
+  {
+    $lookup: {
+      from: 'users',
+      localField: 'userId',
+      foreignField: '_id',
+      as: 'userData'
+    }
+  },
+
+  // 3. Lookup ke collection 'vendor'
+  {
+    $lookup: {
+      from: 'vendor',
+      localField: 'userId',
+      foreignField: '_id',
+      as: 'vendorData'
+    }
+  },
+
+  // 4. Gabungkan hasil 'users' dan 'vendor' ke dalam field 'user'
+  // $concatArrays akan menggabungkan array, yang kosong [] akan terabaikan
+  {
+    $addFields: {
+      user: { $concatArrays: ["$userData", "$vendorData"] }
+    }
+  },
+
+  // 5. Lookup ke collection 'profile' untuk mendapatkan userImg
+  {
+    $lookup: {
+      from: 'profile',
+      localField: 'userId',
+      foreignField: '_id',
+      as: 'userImg'
+    }
+  },
+
+  // 6. Proyeksi (hilangkan field yang tidak diinginkan)
+  { 
+    $project: { 
+      'userData': 0, // Hapus array temporary
+      'vendorData': 0, // Hapus array temporary
+      'user.password': 0, 
+      'userImg._id': 0, 
+      'userImg.userId': 0, 
+      'userImg.address': 0 
+    } 
+  }
+];
         const chat = await this.collection().aggregate(agg).toArray()
         if(!userId)
         {
