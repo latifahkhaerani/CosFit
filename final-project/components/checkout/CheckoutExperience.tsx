@@ -203,31 +203,6 @@ export default function CheckoutExperience({
 
             <div className="rounded-[28px] border border-border/70 bg-white p-5 shadow-[0_16px_44px_-28px_rgba(15,23,42,0.2)] lg:p-6">
               <div className="mb-5 flex items-center gap-3 border-b border-border/70 pb-4">
-                <CircleNumber number={2} />
-
-                <h3 className="text-base font-semibold tracking-[-0.01em]">
-                  Rental Duration
-                </h3>
-              </div>
-
-              <div className="grid gap-4 lg:grid-cols-[1fr_auto_1fr_auto]">
-                <InfoBox title="Pickup" value="24 May 2025" sub="10:00 AM" />
-
-                <div className="flex items-center justify-center">
-                  <ArrowRight className="text-primary/70" />
-                </div>
-
-                <InfoBox title="Return" value="27 May 2025" sub="10:00 AM" />
-
-                <button className="flex h-12 items-center justify-center gap-2 rounded-2xl border border-border/70 bg-white px-5 text-sm font-medium text-foreground transition-all duration-200 hover:border-primary/40 hover:bg-[#fff8f3]">
-                  <CalendarDays size={18} />
-                  Change
-                </button>
-              </div>
-            </div>
-
-            <div className="rounded-[28px] border border-border/70 bg-white p-5 shadow-[0_16px_44px_-28px_rgba(15,23,42,0.2)] lg:p-6">
-              <div className="mb-5 flex items-center gap-3 border-b border-border/70 pb-4">
                 <CircleNumber number={3} />
 
                 <h3 className="text-base font-semibold tracking-[-0.01em]">
@@ -512,53 +487,6 @@ export default function CheckoutExperience({
               </div>
             </div>
 
-            <div className="rounded-[28px] border border-border/70 bg-white p-5 shadow-[0_16px_44px_-28px_rgba(15,23,42,0.2)] lg:p-6">
-              <h3 className="mb-4 text-base font-semibold tracking-[-0.01em]">
-                Payment Method
-              </h3>
-
-              <div className="space-y-3">
-                <PaymentCard active title="Credit / Debit Card" icon="💳" />
-                <PaymentCard title="Bank Transfer" icon="🏦" />
-                <PaymentCard title="E-Wallet" icon="📱" />
-                <PaymentCard title="ShopeePay" icon="🛍️" />
-                <PaymentCard title="PayLater" icon="💰" />
-              </div>
-            </div>
-
-            <div className="rounded-3xl border border-[#efe5d9] bg-[#fcf7ef] p-4">
-              <div className="flex gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white">
-                  🛡️
-                </div>
-
-                <div>
-                  <h4 className="font-semibold text-foreground">
-                    Secure Checkout
-                  </h4>
-
-                  <p className="mt-1 text-sm text-muted">
-                    All payment information is encrypted and protected.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="rounded-[24px] border border-border/70 bg-white p-4 shadow-sm">
-              <h4 className="font-semibold text-foreground">Have a Coupon?</h4>
-
-              <div className="mt-4 flex gap-3">
-                <input
-                  placeholder="Promo Code"
-                  className="flex-1 rounded-2xl border border-border/70 bg-[#fcfbfa] px-4 py-3 text-sm outline-none transition focus:border-primary/50 focus:ring-2 focus:ring-primary/10"
-                />
-
-                <button className="rounded-2xl bg-primary px-5 text-sm font-medium text-white transition-all duration-200 hover:-translate-y-0.5 hover:opacity-90">
-                  Apply
-                </button>
-              </div>
-            </div>
-
             <div className="rounded-[24px] border border-border/70 bg-white p-4 shadow-sm">
               <button className="h-12 w-full rounded-2xl bg-primary text-sm font-semibold text-white shadow-[0_10px_32px_-16px_rgba(230,73,80,0.7)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_12px_34px_-14px_rgba(230,73,80,0.68)]">
                 Place Order
@@ -576,76 +504,7 @@ export default function CheckoutExperience({
           </aside>
         </div>
 
-        <div className="mt-12 space-y-8 xl:mt-16">
-          <section>
-            <div className="grid gap-5 lg:grid-cols-3">
-              <BenefitCard
-                icon="🤖"
-                title="AI Size Matching"
-                description="Every recommendation is generated based on your body profile."
-              />
-
-              <BenefitCard
-                icon="🛡️"
-                title="Rental Protection"
-                description="Protected transactions and trusted cosplay rental partners."
-              />
-
-              <BenefitCard
-                icon="🚚"
-                title="Flexible Pickup"
-                description="Pickup in store or request delivery from your vendor."
-              />
-            </div>
-          </section>
-
-          <section className="rounded-[28px] border border-border/70 bg-white p-6 shadow-[0_16px_44px_-28px_rgba(15,23,42,0.2)]">
-            <div className="flex flex-col items-center justify-between gap-8 lg:flex-row">
-              <div>
-                <h3 className="text-xl font-semibold tracking-[-0.01em]">
-                  Need Help Before Checkout?
-                </h3>
-
-                <p className="mt-2 text-sm leading-6 text-muted">
-                  Our cosplay specialists are happy to assist you with sizing,
-                  rental policies, and costume recommendations.
-                </p>
-              </div>
-
-              <div className="flex flex-wrap gap-3">
-                <button className="rounded-2xl border border-border/70 bg-white px-5 py-3 text-sm font-medium text-foreground transition-all duration-200 hover:border-primary/40 hover:bg-[#fff8f3]">
-                  Chat Support
-                </button>
-
-                <button className="rounded-2xl bg-primary px-5 py-3 text-sm font-medium text-white transition-all duration-200 hover:-translate-y-0.5 hover:opacity-90">
-                  Contact Vendor
-                </button>
-              </div>
-            </div>
-          </section>
-
-          <section>
-            <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-              <div>
-                <h2 className="text-2xl font-semibold tracking-[-0.01em]">
-                  You May Also Like
-                </h2>
-
-                <p className="mt-2 text-sm text-muted">
-                  Similar costumes recommended for you.
-                </p>
-              </div>
-
-              <button className="rounded-2xl border border-border/70 bg-white px-5 py-2 text-sm font-medium text-foreground transition-all duration-200 hover:border-primary/40 hover:bg-[#fff8f3]">
-                View All
-              </button>
-            </div>
-
-            <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
-              <div className="rounded-[28px] border border-border/70 bg-white p-6 shadow-sm" />
-            </div>
-          </section>
-        </div>
+        <div className="mt-12 space-y-8 xl:mt-16"></div>
       </div>
     </main>
   );
