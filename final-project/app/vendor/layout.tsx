@@ -8,7 +8,7 @@ export default function VendorLayout({
 }) {
   return (
     <div className="flex min-h-screen">
-        <ConditionalVendorSidebar/>
+        {/* <ConditionalVendorSidebar/> */}
       <main className="flex-1">
         {children}
       </main>

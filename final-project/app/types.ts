@@ -77,8 +77,18 @@ export interface GetOurEvent {
   eventName: string;
   category: string;
   imgUrl: string;
-  forumId: string;
+  forumId?: string;
   description: string;
+  startDate?: string;
+  endDate?: string;
+  locationName?: string;
+  address?: string;
+  externalLink?: string;
+  eventType?: EventType;
+  entries?: EventEntry[];
+  status?: "upcoming" | "active" | "ended";
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface GetUserDesign {
@@ -156,12 +166,67 @@ export interface PostRoom {
   tag: string[];
 }
 
+export type EventType = "external_convention" | "internal_contest";
+
+export interface EventEntry {
+  _id?: string;
+  userId: string;
+  entryTitle: string;
+  entryImage?: string;
+  voteCount: number;
+}
+
+export interface GetEvent {
+  _id: string;
+  title: string;
+  description: string;
+  category?: string;
+  forumId?: string;
+  coverImage?: string;
+  startDate: string;
+  endDate?: string;
+  locationName?: string;
+  address?: string;
+  externalLink?: string;
+  eventType: EventType;
+  entries?: EventEntry[];
+  status?: "upcoming" | "active" | "ended";
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface PostEvent {
+  title: string;
+  description: string;
+  category?: string;
+  imgUrl?: string;
+  forumId?: string;
+  coverImage?: string;
+  startDate: string;
+  endDate?: string;
+  locationName?: string;
+  address?: string;
+  externalLink?: string;
+  eventType: EventType;
+  entries?: EventEntry[];
+  status?: "upcoming" | "active" | "ended";
+}
+
 export interface PostOurEvent {
   eventName: string;
   category: string;
   imgUrl: string;
-  forumId: string;
+  forumId?: string;
   description: string;
+  startDate?: string;
+  endDate?: string;
+  locationName?: string;
+  address?: string;
+  externalLink?: string;
+  eventType?: EventType;
+  entries?: EventEntry[];
+  status?: "upcoming" | "active" | "ended";
+  updatedAt?: string;
 }
 
 export interface PostUserDesign {
@@ -192,3 +257,33 @@ export type GetSavedLook = {
   Theme: string;
   createdAt: string;
 };
+export interface ProductType {
+  _id: string;
+  imgUrl: string;
+  title: string;
+  desc: string;
+  size: string;
+  theme: string;
+  originalPrice: number;
+  stock: number;
+  vendorId: string;
+  views: number;
+  discount: number;
+  finalPrice: number;
+  slug: string;
+}
+
+export interface HistoryType {
+  _id: string;
+  UserId: string;
+  AiImgUrl: string;
+  Name: string;
+  Theme: string;
+  UserImg: string;
+  createdAt: Date;
+}
+
+export interface StatTokenType {
+  token: number;
+  claimedAt: string | Date | null;
+}

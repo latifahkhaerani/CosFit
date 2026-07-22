@@ -10,7 +10,7 @@ import DiscussionCard from "@/components/forum/DiscussionCard";
 import TrendingPosts from "@/components/forum/TrendingPosts";
 import PopularTags from "@/components/forum/PopularTags";
 import OnlineMembers from "@/components/forum/OnlineMembers";
-import ForumSidebar from "@/components/forum/ ForumSidebar"; 
+import ForumSidebar from "@/components/forum/ ForumSidebar";
 
 interface creatorType {
   _id: string;
@@ -25,7 +25,7 @@ interface forumType {
   tag: string[] | string;
   creatorId: string;
   image: string;
-  chatId: string[]
+  chatId: string[];
   createdAt: string;
   creator: creatorType;
 }
@@ -36,21 +36,21 @@ function getTimeAgo(dateString: string) {
   const now = new Date();
   const past = new Date(dateString);
   const diffMs = now.getTime() - past.getTime();
-  
+
   const diffSecs = Math.floor(diffMs / 1000);
   const diffMins = Math.floor(diffSecs / 60);
   const diffHours = Math.floor(diffMins / 60);
   const diffDays = Math.floor(diffHours / 24);
 
   if (diffSecs < 60) return "Just now";
-  if (diffMins < 60) return `${diffMins} min${diffMins > 1 ? 's' : ''} ago`;
-  if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
-  if (diffDays < 7) return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
+  if (diffMins < 60) return `${diffMins} min${diffMins > 1 ? "s" : ""} ago`;
+  if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? "s" : ""} ago`;
+  if (diffDays < 7) return `${diffDays} day${diffDays > 1 ? "s" : ""} ago`;
 
-  return past.toLocaleDateString("en-US", { 
-    year: 'numeric', 
-    month: 'short', 
-    day: 'numeric' 
+  return past.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
   });
 }
 
@@ -64,19 +64,21 @@ export default function ForumPage() {
       try {
         setIsLoading(true);
         setError("");
-        
+
         const res = await fetch(`/api/forum`);
         if (!res.ok) throw new Error("Failed to fetch discussions.");
-        
+
         const dataJson = await res.json();
-        
+
         if (Array.isArray(dataJson)) {
           setData(dataJson);
         } else {
           setData([]);
         }
       } catch (err) {
-        setError(err instanceof Error ? err.message : "An unexpected error occurred");
+        setError(
+          err instanceof Error ? err.message : "An unexpected error occurred",
+        );
         console.error("Gagal mengambil data forum:", err);
       } finally {
         setIsLoading(false);
@@ -109,7 +111,6 @@ export default function ForumPage() {
 
       {/* Layout - Dibuat responsif (1 kolom di HP, 2 di tablet, 3 di desktop besar) */}
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-[250px_1fr] xl:grid-cols-[280px_1fr_330px]">
-        
         {/* LEFT SIDEBAR (Sembunyi di HP, muncul di tablet+) */}
         <div className="hidden space-y-6 lg:block">
           <ForumSidebar />
@@ -124,7 +125,9 @@ export default function ForumPage() {
             {isLoading ? (
               <div className="flex flex-col items-center justify-center py-12">
                 <div className="h-8 w-8 animate-spin rounded-full border-4 border-[var(--primary)] border-t-transparent"></div>
-                <p className="mt-4 text-[var(--muted)]">Loading discussions...</p>
+                <p className="mt-4 text-[var(--muted)]">
+                  Loading discussions...
+                </p>
               </div>
             ) : error ? (
               <div className="flex flex-col items-center justify-center rounded-2xl bg-red-50 py-10 text-red-600">
@@ -133,29 +136,38 @@ export default function ForumPage() {
               </div>
             ) : data.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-12 text-center">
-                <p className="text-lg font-semibold text-[var(--text)]">No discussions yet</p>
-                <p className="text-[var(--muted)]">Be the first to start a conversation!</p>
+                <p className="text-lg font-semibold text-[var(--text)]">
+                  No discussions yet
+                </p>
+                <p className="text-[var(--muted)]">
+                  Be the first to start a conversation!
+                </p>
               </div>
             ) : (
               data.map((item) => (
-                <Link key={item._id}
-                href={`/forum/${item.slug}`}>
-                <DiscussionCard
-                  key={item._id}
-                  avatar={item.image} 
-                  author={item.creator?.username || "Anonymous"} 
-                  verified={false}
-                  time={getTimeAgo(item.createdAt)} 
-                  title={item.nameForum}
-                  description={item.desc}
-                  tag={item.tag && item.tag.length > 0 ? item.tag : "General"}
-                  tagColor="#06B6D4"
-                  comments={item.chatId?.length || 0} 
-                  likes={0}  
-                  views={0}   
-                  pinned={false} 
+                <Link key={item._id} href={`/forum/${item.slug}`}>
+                  <DiscussionCard
+                    key={item._id}
+                    avatar={item.image}
+                    author={item.creator?.username || "Anonymous"}
+                    verified={false}
+                    time={getTimeAgo(item.createdAt)}
+                    title={item.nameForum}
+                    description={item.desc}
+                    tag={
+                      Array.isArray(item.tag)
+                        ? item.tag
+                        : item.tag
+                          ? [item.tag]
+                          : ["General"]
+                    }
+                    tagColor="#06B6D4"
+                    comments={item.chatId?.length || 0}
+                    likes={0}
+                    views={0}
+                    pinned={false}
                   />
-                  </Link>
+                </Link>
               ))
             )}
           </div>

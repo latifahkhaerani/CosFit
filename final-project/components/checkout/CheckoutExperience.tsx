@@ -111,7 +111,7 @@ export default function CheckoutExperience({
               </div>
 
               <div className="space-y-4">
-                {selectedItems.map(({ product, quantity }) => {
+                {selectedItems?.map(({ product, quantity }) => {
                   const unitPrice = Number(product.originalPrice);
                   return (
                     <div
@@ -246,8 +246,8 @@ export default function CheckoutExperience({
                   />
 
                   <div>
-                    <h4 className="text-lg font-semibold">{vendor.namaToko}</h4>
-                    <p className="text-sm text-muted">{vendor.alamat}</p>
+                    <h4 className="text-lg font-semibold">{vendor?.namaToko}</h4>
+                    <p className="text-sm text-muted">{vendor?.alamat}</p>
 
                     <div className="mt-2 flex flex-wrap items-center gap-4 text-sm text-muted">
                       <span>⭐ 4.9 (128) | no rating yet</span>
@@ -325,9 +325,9 @@ export default function CheckoutExperience({
                   </div>
 
                   <div className="mt-5 border-t border-border pt-4 text-sm leading-7">
-                    <p className="font-medium">{vendor.namaToko}</p>
+                    <p className="font-medium">{vendor?.namaToko}</p>
 
-                    <p className="text-muted">{vendor.alamat}</p>
+                    <p className="text-muted">{vendor?.alamat}</p>
 
                     <p className="mt-3 flex items-center gap-2 text-muted">
                       🕒 24 May 2025 • 10:00 AM
@@ -433,7 +433,7 @@ export default function CheckoutExperience({
               </h3>
 
               <div className="space-y-3">
-                {selectedItems.map(({ product, quantity }) => (
+                {selectedItems?.map(({ product, quantity }) => (
                   <div
                     key={product._id}
                     className="flex items-start gap-3 rounded-2xl border border-border/70 bg-[#fcfbfa] p-3"
