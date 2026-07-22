@@ -54,7 +54,9 @@ export default function ProfileSavedLooks({ savedLooks }: Props) {
           </div>
 
           <div>
-            <h1 className="text-3xl font-bold text-[#1f1a17]">Saved Looks</h1>
+            <h1 className="text-3xl font-bold text-[#1f1a17]">
+              Generated Looks
+            </h1>
 
             <p className="mt-1 text-[#7d746d]">
               All your AI generated cosplay previews.
