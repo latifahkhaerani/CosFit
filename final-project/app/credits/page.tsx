@@ -1,3 +1,7 @@
+"use client";
+
+import { useEffect, useState } from "react";
+
 import CreditHero from "@/components/credits/CreditHero";
 import HowItWorks from "@/components/credits/HowItWorks";
 import CreditPackageCard from "@/components/credits/CreditPackageCard";
@@ -5,7 +9,34 @@ import UsageHistory from "@/components/credits/UsageHistory";
 import FAQ from "@/components/credits/FAQ";
 import CreditsCTA from "@/components/credits/CreditsCTA";
 
+import { GetSavedLook } from "../types";
+import errorHandler from "../helpers/errorHandler";
+
 export default function CreditsPage() {
+  const [savedLooks, setSavedLooks] = useState<GetSavedLook[]>([]);
+
+  useEffect(() => {
+    const fetchHistory = async () => {
+      try {
+        const res = await fetch("/api/user/history", {
+          cache: "no-store",
+        });
+
+        if (!res.ok) {
+          throw new Error("Failed to load history");
+        }
+
+        const data: GetSavedLook[] = await res.json();
+
+        setSavedLooks(data);
+      } catch (error) {
+        errorHandler(error);
+      }
+    };
+
+    fetchHistory();
+  }, []);
+
   return (
     <main className="page-container space-y-16">
       <CreditHero />
@@ -50,7 +81,7 @@ export default function CreditsPage() {
         </p>
       </section>
 
-      <UsageHistory />
+      <UsageHistory history={savedLooks} />
 
       <FAQ />
 

@@ -1,114 +1,69 @@
 "use client";
 
+import { GetSavedLook } from "@/app/types";
 import UsageHistoryRow from "./UsageHistoryRow";
+import Link from "next/link";
 
-const history = [
-  {
-    date: "May 20, 2025",
-    image: "/images/costume1.jpg",
-    costume: "Frieren Costume",
-    character: "Frieren",
-    credit: 1,
-  },
-  {
-    date: "May 18, 2025",
-    image: "/images/costume2.jpg",
-    costume: "Saber Dress",
-    character: "Saber",
-    credit: 1,
-  },
-  {
-    date: "May 16, 2025",
-    image: "/images/costume3.jpg",
-    costume: "Zero Two Pilot Suit",
-    character: "Zero Two",
-    credit: 1,
-  },
-  {
-    date: "May 15, 2025",
-    image: "/images/costume4.jpg",
-    costume: "Shenhe Costume",
-    character: "Shenhe",
-    credit: 1,
-  },
-  {
-    date: "May 12, 2025",
-    image: "/images/costume5.jpg",
-    costume: "Scarlet Witch",
-    character: "Wanda",
-    credit: 1,
-  },
-];
+type Props = {
+  history: GetSavedLook[];
+};
 
-export default function UsageHistory() {
+export default function UsageHistory({ history }: Props) {
   return (
     <section className="card p-8">
-
       <div className="mb-8 flex items-center justify-between">
-
         <div>
+          <h2 className="card-title">Usage History</h2>
 
-          <h2 className="card-title">
-
-            Usage History
-
-          </h2>
-
-          <p className="card-subtitle">
-
-            Your previous AI generations.
-
-          </p>
-
+          <p className="card-subtitle">Your previous AI generations.</p>
         </div>
 
-        <button className="secondary-btn">
-
+        <Link href="/profile" className="secondary-btn">
           View All
-
-        </button>
-
+        </Link>
       </div>
 
-      <div className="overflow-x-auto">
+      {history.length === 0 ? (
+        <div className="flex h-56 items-center justify-center rounded-2xl border border-dashed border-border bg-[#FCFAF8]">
+          <div className="text-center">
+            <h3 className="text-lg font-semibold text-[#1f1a17]">
+              No generation history
+            </h3>
 
-        <table className="w-full">
+            <p className="mt-2 text-sm text-muted">
+              Your AI try-on history will appear here.
+            </p>
+          </div>
+        </div>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead>
+              <tr className="border-b border-border text-left text-sm text-muted">
+                <th className="pb-4">Date</th>
+                <th className="pb-4">Generated Look</th>
+                <th className="pb-4">Theme</th>
+                <th className="pb-4">Credits</th>
+                <th className="pb-4">Status</th>
+              </tr>
+            </thead>
 
-          <thead>
-
-            <tr className="text-left text-sm text-[var(--muted)]">
-
-              <th className="pb-4">Date</th>
-
-              <th>Costume</th>
-
-              <th>Character</th>
-
-              <th>Credits</th>
-
-              <th>Status</th>
-
-            </tr>
-
-          </thead>
-
-          <tbody>
-
-            {history.map((item) => (
-
-              <UsageHistoryRow
-                key={item.date + item.costume}
-                {...item}
-              />
-
-            ))}
-
-          </tbody>
-
-        </table>
-
-      </div>
-
+            <tbody>
+              {history.map((item) => (
+                <UsageHistoryRow
+                  key={item._id}
+                  date={new Date(item.createdAt).toLocaleDateString("id-ID")}
+                  image={item.AiImgUrl}
+                  costume={item.Name}
+                  character={item.Theme}
+                  credit={1}
+                  status="Completed"
+                />
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </section>
   );
 }
