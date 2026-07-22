@@ -11,10 +11,13 @@ interface chatType {
   userId: string;
   roomId: string;
   createdAt: string;
+  vendor: {
+    namaToko: string;
+    role: string
+  }[];
   user: {
-    _id: string;
     username: string;
-    email: string;
+    role: string;
   }[];
 }
 
@@ -57,10 +60,9 @@ export default function CommentCard({ roomId, initialMessages, currentUser, imag
   return (
     <div className="flex w-full flex-col gap-6 p-4">
       {messages?.map((chat) => {
-        const username = chat?.user?.[0]?.username || "Unknown";
+        const username = chat?.user?.[0]?.username || chat?.vendor?.[0]?.namaToko ||"Unknown";
         const isMe = username === currentUser;
-        const initialLetter = username.charAt(0).toUpperCase();
-        const role = isMe ? "You" : "Someone";
+        const role = isMe ? "You" : chat?.user[0]?.role || chat?.vendor[0]?.role ;
 
         return (
           <div key={chat._id} className="card rounded-xl border border-border bg-white p-6 shadow-sm">

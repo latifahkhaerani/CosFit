@@ -31,14 +31,13 @@ function CharacterCard({
   onTryOn?: (productId: string) => void;
 }) {
   return (
-    <div className="flex flex-col overflow-hidden rounded-2xl border border-border bg-surface">
+    <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-surface">
       <button
         type="button"
         onClick={() => onSelect?.(character._id)}
         className="aspect-[3/4] w-full overflow-hidden bg-cream/30 text-left"
       >
         {character.imgUrl ? (
-          // eslint-disable-next-line @next/next/no-img-element
           <img
             src={character.imgUrl}
             alt={character.title || "Character"}
@@ -59,16 +58,18 @@ function CharacterCard({
           <p className="text-base text-muted">{character.theme || "Series"}</p>
         </div>
 
-        <Link href={`/try-on?productId=${character.slug}`}>
-        <button
-          type="button"
-          onClick={() => onTryOn?.(character._id)}
-          className="mt-auto inline-flex items-center justify-center gap-2 rounded-xl border border-primary px-4 py-2.5 text-base font-medium text-primary transition hover:bg-cream/40"
-          >
-          {tryOnLabel}
-          <ArrowRight className="h-5 w-5" />
-        </button>
+        <div className="mt-auto pt-3">
+          <Link href={`/try-on?productId=${character.slug}`}>
+            <button
+              type="button"
+              onClick={() => onTryOn?.(character._id)}
+              className="inline-flex items-center justify-center gap-2 rounded-xl border border-primary px-4 py-2.5 text-base font-medium text-primary transition hover:bg-cream/40"
+            >
+              {tryOnLabel}
+              <ArrowRight className="h-5 w-5" />
+            </button>
           </Link>
+        </div>
       </div>
     </div>
   );

@@ -1,11 +1,7 @@
-
 import CommentCard from "@/components/forum/CommentCard";
 import CommentInput from "@/components/forum/CommentInput";
 import DiscussionBreadcrumb from "@/components/forum/DiscussionBreadcrumb";
 import DiscussionDetail from "@/components/forum/DiscussionDetail";
-import DiscussionInfo from "@/components/forum/DiscussionInfo";
-import RelatedDiscussion from "@/components/forum/RelatedDiscussion";
-import TopContributors from "@/components/forum/TopContributors";
 import { ArrowLeft, MessageCircle } from "lucide-react";
 import Link from "next/link";
 import { cookies } from "next/headers";
@@ -24,7 +20,15 @@ export default async function DiscussionPage({ params }: Props) {
       Cookie: cookieStore.toString(),
     },
   });
-  if (!res.ok) return <main className="page-container py-20 text-center">Forum tidak ditemukan.</main>;
+  
+  if (!res.ok) {
+    return (
+      <main className="flex min-h-[50vh] items-center justify-center text-center font-medium text-gray-500">
+        Forum tidak ditemukan.
+      </main>
+    );
+  }
+  
   const forumById = await res.json();
 
   const res2 = await fetch(`http://localhost:3000/api/chat/${forumById._id}`, {
@@ -33,60 +37,69 @@ export default async function DiscussionPage({ params }: Props) {
     },
   });
   const chatData = await res2.json();
-  // console.log(chatData);
 
   return (
-    <main className="page-container">
-      <DiscussionBreadcrumb />
+    <main className="min-h-screen px-4 pb-24 pt-8 md:px-8 lg:mx-auto lg:max-w-[1280px]">
+      {/* BREADCRUMB */}
+      <div className="mb-6">
+        <DiscussionBreadcrumb />
+      </div>
 
-      <div className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_340px]">
+      <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_340px]">
+        {/* BACK BUTTON */}
         <Link
           href="/forum"
-          className="fixed bottom-8 left-8 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-white shadow-soft transition hover:scale-105"
+          className="fixed bottom-8 left-8 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-white shadow-lg border border-gray-100 text-gray-600 transition-all hover:scale-110 hover:text-gray-900"
+          aria-label="Kembali ke Forum"
         >
-          <ArrowLeft />
+          <ArrowLeft size={24} strokeWidth={2} />
         </Link>
         
         {/* LEFT COLUMN */}
-        <section className="space-y-8">
-          <DiscussionDetail key={forumById._id} detail={forumById} />
+        <section className="flex flex-col space-y-6">
+          <div className="w-full">
+            <DiscussionDetail key={forumById._id} detail={forumById} />
+          </div>
 
-          <CommentInput 
-            forumId={forumById._id} 
-            chatLength={chatData?.message?.length || 0} 
-            image={chatData?.image}
-          />
-
-          <div className="space-y-5">
-            <CommentCard 
-              key={forumById._id} 
-              roomId={forumById._id} 
-              initialMessages={chatData?.message || []} 
-              currentUser={chatData?.username || ""}
+          <div className="w-full">
+            <CommentInput 
+              forumId={forumById._id} 
+              chatLength={chatData?.message?.length || 0} 
               image={chatData?.image}
             />
-            
-            {(!chatData?.message || chatData.message.length === 0) && (
-              <div className="card py-20 text-center">
-                <MessageCircle size={48} className="mx-auto mb-4 text-muted-foreground" />
-                <h3>No replies yet</h3>
-                <p className="subtitle">Be the first one to help.</p>
+          </div>
+
+          <div className="flex flex-col space-y-4">
+            {chatData?.message && chatData.message.length > 0 ? (
+              <CommentCard 
+                key={forumById._id} 
+                roomId={forumById._id} 
+                initialMessages={chatData?.message || []} 
+                currentUser={chatData?.username || ""}
+                image={chatData?.image}
+              />
+            ) : (
+              <div className="flex flex-col items-center justify-center rounded-2xl bg-white py-16 text-center shadow-sm border border-gray-100">
+                <MessageCircle size={48} className="mx-auto mb-4 text-gray-300" />
+                <h3 className="text-lg font-semibold text-gray-800">No replies yet</h3>
+                <p className="text-sm text-gray-500 mt-1">Be the first one to help.</p>
               </div>
             )}
 
+            {/* LOAD MORE BUTTON */}
             {chatData?.message?.length > 0 && (
-              <section className="mt-8 flex justify-center">
-                <button className="secondary-btn px-10 hover:shadow-card">
+              <div className="mt-8 flex justify-center pb-4">
+                <button className="rounded-full bg-white px-8 py-2.5 text-sm font-semibold text-gray-600 shadow-sm border border-gray-200 transition-all hover:bg-gray-50 hover:shadow-md hover:text-gray-900">
                   Load More Comments
                 </button>
-              </section>
+              </div>
             )}
           </div>
         </section>
 
         {/* RIGHT COLUMN */}
-        <aside className="sticky top-6 h-fit space-y-6">
-            <TrendingPosts/>
+        <aside className="sticky top-8 h-fit w-full">
+          <TrendingPosts/>
         </aside>
       </div>
     </main>

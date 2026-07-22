@@ -41,7 +41,7 @@ export default class UserModel {
 
         parsedData.password = hashSync(parsedData.password, 10)
 
-        const result = await this.collection().insertOne({...parsedData, token: 5, createdAt: new Date(), updatedAt: new Date(), claimedAt: new Date(), UserImg: "https://i.pinimg.com/originals/8a/e9/e9/8ae9e92fa4e69967aa61bf2bda967b7b.jpg?nii=t"})
+        const result = await this.collection().insertOne({...parsedData, token: 5, role: "User", createdAt: new Date(), updatedAt: new Date(), claimedAt: new Date(), UserImg: "https://i.pinimg.com/originals/8a/e9/e9/8ae9e92fa4e69967aa61bf2bda967b7b.jpg?nii=t"})
         return {msg: "User created with ID: " + result.insertedId, insertedId: result.insertedId}
     }
 

@@ -47,7 +47,7 @@ export default function DiscussionDetail({ detail }: { detail: detailType }) {
                 {detail.creator.username}
               </h3>
               <span className="badge-warning text-xs px-2.5 py-0.5 rounded-full font-medium bg-amber-100 text-amber-800">
-                User
+                Creator
               </span>
               <BadgeCheck size={18} className="fill-sky-500 text-white" />
             </div>

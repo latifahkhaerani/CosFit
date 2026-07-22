@@ -60,7 +60,6 @@ export default function ForumPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 5; 
 
-  // ID sementara, silakan ubah dengan real data dari context/session login
   const currentUserId = "6a5a03af171de2d91bb21a79"; 
 
   const handleFilterChange = (newFilter: string) => {
@@ -111,8 +110,6 @@ export default function ForumPage() {
 
   const popularTags = useMemo(() => {
     const tagCounts: Record<string, number> = {};
-    
-    // Warna di-tweak agar terlihat harmoni dengan merah CosFit
     const colors = ["#D64C4C", "#E87C7C", "#F4A261", "#E76F51", "#8B5CF6", "#06B6D4"];
 
     allForums.forEach(forum => {
@@ -183,109 +180,136 @@ export default function ForumPage() {
   const isLastPage = data.length < ITEMS_PER_PAGE;
 
   return (
-    <main className="container mx-auto max-w-[1400px] px-4 py-8">
-      {/* Header Section */}
-      <div className="mb-10 flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
-        <div>
-          <h1 className="text-[32px] font-bold text-gray-900 tracking-tight">Forum</h1>
-          <p className="mt-2 text-[15px] text-gray-500">
-            Temukan jawaban, bagikan ilmu, dan terhubung dengan komunitas.
-          </p>
-        </div>
-        {/* Tombol dengan warna CosFit Red */}
-        <Link 
-          href="/forum/new" 
-          className="flex items-center gap-2 rounded-lg bg-[#be2727] px-5 py-2.5 text-sm font-medium text-white shadow-sm transition-all hover:bg-[#EF4444] hover:shadow-md"
-        >
-          <Plus size={18} />
-          <span>Create New Forum</span>
-        </Link>
-      </div>
+    <main className="relative min-h-screen bg-[#FDFBF7] text-gray-800 selection:bg-[#be2727]/10 selection:text-[#be2727] overflow-hidden">
+      {/* Pola Latar Belakang Geometris */}
+      <div 
+        className="pointer-events-none absolute inset-0 opacity-40 z-0"
+        style={{
+          backgroundImage: `
+            radial-gradient(circle at 10% 90%, rgba(190, 39, 39, 0.05) 0%, transparent 40%),
+            radial-gradient(circle at 90% 10%, rgba(244, 162, 97, 0.05) 0%, transparent 40%),
+            linear-gradient(to right, rgba(0, 0, 0, 0.015) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(0, 0, 0, 0.015) 1px, transparent 1px)
+          `,
+          backgroundSize: '100% 100%, 100% 100%, 48px 48px, 48px 48px'
+        }}
+      />
 
-      {/* Grid Layout - Menggunakan minmax(0, 1fr) agar kolom tengah tidak overflow */}
-      <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-[250px_minmax(0,1fr)] xl:grid-cols-[260px_minmax(0,1fr)_320px]">
-        
-        {/* Kiri: Popular Tags */}
-        <div className="hidden lg:block sticky top-8">
-          <PopularTags tags={popularTags} isLoading={isTagsLoading} />
-        </div>
-
-        {/* Tengah: Feed Diskusi */}
-        <section className="min-w-0">
-          <DiscussionFilter 
-            currentFilter={activeFilter} 
-            onFilterChange={handleFilterChange} 
-          />
-
-          <div className="mt-6 space-y-4">
-            {isLoading ? (
-              <div className="flex h-40 items-center justify-center rounded-xl border border-gray-100 bg-gray-50">
-                <p className="text-gray-500 animate-pulse">Loading...</p>
-              </div>
-            ) : error ? (
-              <div className="flex flex-col items-center justify-center gap-2 rounded-xl border border-red-100 bg-red-50 p-8 text-center text-red-600">
-                <AlertCircle size={32} />
-                <p>{error}</p>
-              </div>
-            ) : data.length === 0 ? (
-              <div className="flex h-40 items-center justify-center rounded-xl border border-gray-100 bg-gray-50">
-                <p className="text-gray-500">Belum ada diskusi yang ditemukan.</p>
-              </div>
-            ) : (
-              <>
-                {data.map((item) => {
-                  const isLiked = Array.isArray(item.likes) 
-                    ? item.likes.includes(currentUserId) 
-                    : false;
-
-                  return (
-                    <Link key={item._id} href={`/forum/${item.slug}`} className="block">
-                      <DiscussionCard
-                        avatar={item.image || "/default-avatar.png"} 
-                        author={item.creator?.username || "Anonymous"} 
-                        verified={false}
-                        time={getTimeAgo(item.createdAt)} 
-                        title={item.nameForum}
-                        description={item.desc}
-                        tag={Array.isArray(item.tag) && item.tag.length > 0 ? item.tag : typeof item.tag === 'string' ? [item.tag] : ["General"]}
-                        tagColor="#D64C4C"
-                        comments={item.chatCount || 0} 
-                        likes={item.likeCount || item.likes?.length || 0} 
-                        isLiked={isLiked}
-                        onLike={(e) => handleLike(e, item.slug, isLiked)}
-                        views={0}   
-                        pinned={false} 
-                      />
-                    </Link>
-                  )
-                })}
-
-                {/* Pagination (Merah theme) */}
-                <div className="mt-8 flex items-center justify-between border-t pt-6">
-                  <button
-                    disabled={currentPage === 1}
-                    onClick={() => setCurrentPage(p => p - 1)}
-                    className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50 hover:text-[#D64C4C] disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    Sebelumnya
-                  </button>
-                  <span className="text-sm font-medium text-gray-500">Halaman {currentPage}</span>
-                  <button
-                    disabled={isLastPage}
-                    onClick={() => setCurrentPage(p => p + 1)}
-                    className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50 hover:text-[#D64C4C] disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    Selanjutnya
-                  </button>
-                </div>
-              </>
-            )}
+      <div className="relative z-10 container mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 py-10">
+        {/* Header Section */}
+        <div className="mb-10 flex flex-col items-start justify-between gap-5 md:flex-row md:items-end border-b border-gray-200/60 pb-8">
+          <div>
+            <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight">
+              Forum
+            </h1>
+            <p className="mt-2 text-base text-gray-600 font-normal">
+              Temukan jawaban, bagikan ilmu, dan terhubung dengan komunitas.
+            </p>
           </div>
-        </section>
+          <Link 
+            href="/forum/new" 
+            className="group flex items-center gap-2.5 rounded-xl bg-gradient-to-r from-[#be2727] to-[#d33333] px-6 py-3 text-sm font-semibold text-white shadow-[0_4px_14px_0_rgba(190,39,39,0.39)] transition-all duration-300 hover:shadow-[0_6px_20px_rgba(190,39,39,0.5)] hover:-translate-y-0.5 active:translate-y-0"
+          >
+            <Plus size={18} className="transition-transform duration-300 group-hover:rotate-90" />
+            <span>Create New Forum</span>
+          </Link>
+        </div>
 
-        {/* Kanan: Trending Posts */}
-        <div className="hidden xl:block sticky top-8">
-          <TrendingPosts />
+        {/* Layout 2 Kolom: Kiri (Main Discussion Feed), Kanan (Floating Widgets) */}
+        <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-[minmax(0,1fr)_340px] xl:grid-cols-[minmax(0,1fr)_360px]">
+          
+          {/* KOLOM KIRI: Filter & Feed Diskusi (Ditarik lebih panjang/lebar ke kiri) */}
+          <section className="min-w-0 w-full">
+            <DiscussionFilter 
+              currentFilter={activeFilter} 
+              onFilterChange={handleFilterChange} 
+            />
+
+            <div className="mt-6 space-y-5">
+              {isLoading ? (
+                <div className="flex h-56 flex-col items-center justify-center rounded-2xl border border-white/60 bg-white/60 backdrop-blur-md shadow-sm">
+                  <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#be2727] border-t-transparent mb-3"></div>
+                  <p className="text-sm font-medium text-gray-500 animate-pulse">Memuat diskusi...</p>
+                </div>
+              ) : error ? (
+                <div className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-red-200/80 bg-red-50/80 backdrop-blur-md p-10 text-center text-red-600 shadow-sm">
+                  <AlertCircle size={36} className="text-red-500" />
+                  <p className="font-medium">{error}</p>
+                </div>
+              ) : data.length === 0 ? (
+                <div className="flex h-56 flex-col items-center justify-center rounded-2xl border border-white/60 bg-white/60 backdrop-blur-md p-8 text-center shadow-sm">
+                  <p className="text-base font-medium text-gray-600">Belum ada diskusi yang ditemukan.</p>
+                  <p className="text-sm text-gray-400 mt-1">Jadilah yang pertama untuk membuat topik baru!</p>
+                </div>
+              ) : (
+                <>
+                  {data.map((item) => {
+                    const isLiked = Array.isArray(item.likes) 
+                      ? item.likes.includes(currentUserId) 
+                      : false;
+
+                    return (
+                      <Link key={item._id} href={`/forum/${item.slug}`} className="block focus:outline-none">
+                        <DiscussionCard
+                          avatar={item.image || "/default-avatar.png"} 
+                          author={item.creator?.username || "Anonymous"} 
+                          verified={false}
+                          time={getTimeAgo(item.createdAt)} 
+                          title={item.nameForum}
+                          description={item.desc}
+                          tag={Array.isArray(item.tag) && item.tag.length > 0 ? item.tag : typeof item.tag === 'string' ? [item.tag] : ["General"]}
+                          tagColor="#be2727"
+                          comments={item.chatCount || 0} 
+                          likes={item.likeCount || item.likes?.length || 0} 
+                          isLiked={isLiked}
+                          onLike={(e) => handleLike(e, item.slug, isLiked)}
+                          views={0}   
+                          pinned={false} 
+                        />
+                      </Link>
+                    );
+                  })}
+
+                  {/* ==================================================== */}
+                  {/* PAGINATION PREMIUM                                   */}
+                  {/* ==================================================== */}
+                  <div className="mt-10 flex items-center justify-between rounded-2xl border border-white/80 bg-white/70 backdrop-blur-md px-6 py-4 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)]">
+                    <button
+                      disabled={currentPage === 1}
+                      onClick={() => setCurrentPage(p => p - 1)}
+                      className="flex items-center gap-2 rounded-xl border border-gray-200/80 bg-white px-5 py-2.5 text-sm font-semibold text-gray-700 shadow-sm transition-all duration-200 hover:border-[#be2727] hover:bg-[#be2727]/5 hover:text-[#be2727] active:scale-95 disabled:opacity-40 disabled:pointer-events-none disabled:shadow-none"
+                    >
+                      <span>← Previous</span>
+                    </button>
+                    
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-semibold uppercase tracking-wider text-gray-400">Page</span>
+                      <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#be2727] text-sm font-bold text-white shadow-md shadow-[#be2727]/30">
+                        {currentPage}
+                      </span>
+                    </div>
+
+                    <button
+                      disabled={isLastPage}
+                      onClick={() => setCurrentPage(p => p + 1)}
+                      className="flex items-center gap-2 rounded-xl border border-gray-200/80 bg-white px-5 py-2.5 text-sm font-semibold text-gray-700 shadow-sm transition-all duration-200 hover:border-[#be2727] hover:bg-[#be2727]/5 hover:text-[#be2727] active:scale-95 disabled:opacity-40 disabled:pointer-events-none disabled:shadow-none"
+                    >
+                      <span>Next →</span>
+                    </button>
+                  </div>
+                  {/* ==================================================== */}
+
+                </>
+              )}
+            </div>
+          </section>
+
+          {/* KOLOM KANAN: Trending Forum & Popular Tags (Floating/Sticky) */}
+          <aside className="hidden lg:block sticky top-8 space-y-6">
+            <TrendingPosts />
+            <PopularTags tags={popularTags} isLoading={isTagsLoading} />
+          </aside>
+
         </div>
       </div>
     </main>
