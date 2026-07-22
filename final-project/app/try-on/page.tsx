@@ -79,6 +79,9 @@ function TryOnContent() {
     useState<HistoryType | null>(null);
   const [aiResult, setAiResult] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isProductsLoading, setIsProductsLoading] = useState<boolean>(true);
+  const [isHistoryLoading, setIsHistoryLoading] = useState<boolean>(true);
+  const [isSelectedProductLoading, setIsSelectedProductLoading] = useState<boolean>(false);
 
   const [product, setProduct] = useState<ProductType[]>([]);
   const [history, setHistory] = useState<HistoryType[]>([]);
@@ -86,6 +89,7 @@ function TryOnContent() {
 
   const fetchProduct = async () => {
     try {
+      setIsProductsLoading(true);
       const res = await fetch(`/api/user/product`);
       if (res.ok) {
         const data: ProductType[] = await res.json();
@@ -93,11 +97,14 @@ function TryOnContent() {
       }
     } catch (error) {
       console.error("Failed to fetch products", error);
+    } finally {
+      setIsProductsLoading(false);
     }
   };
 
   const fetchHistory = async () => {
     try {
+      setIsHistoryLoading(true);
       const res = await fetch(`/api/user/history`);
       if (res.ok) {
         const data: HistoryType[] = await res.json();
@@ -105,6 +112,8 @@ function TryOnContent() {
       }
     } catch (error) {
       console.error("Failed to fetch history", error);
+    } finally {
+      setIsHistoryLoading(false);
     }
   };
 
@@ -174,6 +183,7 @@ function TryOnContent() {
     if (key) {
       const getPassedTryOn = async () => {
         try {
+          setIsSelectedProductLoading(true);
           const res = await fetch(`/api/user/product/${key}`);
           if (res.ok) {
             const data: ProductType = await res.json();
@@ -181,9 +191,13 @@ function TryOnContent() {
           }
         } catch (error) {
           console.error("Failed to fetch selected product detail:", error);
+        } finally {
+          setIsSelectedProductLoading(false);
         }
       };
       getPassedTryOn();
+    } else {
+      setIsSelectedProductLoading(false);
     }
     fetchProduct();
     fetchHistory();
@@ -319,7 +333,7 @@ function TryOnContent() {
       {/* Pop-up All Products */}
       {showAllProducts && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-4xl max-h-[85vh] overflow-y-auto rounded-[32px] bg-white p-8 shadow-2xl">
+          <div className="w-full max-w-4xl max-h-[85vh] overflow-y-auto rounded-4xl bg-white p-8 shadow-2xl">
             <div className="mb-6 flex items-center justify-between sticky top-0 bg-white z-10 py-2">
               <div>
                 <h2 className="text-3xl font-bold">All Products</h2>
@@ -381,7 +395,7 @@ function TryOnContent() {
       {/* Pop-up All History */}
       {showAllHistory && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-4xl max-h-[85vh] overflow-y-auto rounded-[32px] bg-white p-8 shadow-2xl">
+          <div className="w-full max-w-4xl max-h-[85vh] overflow-y-auto rounded-4xl bg-white p-8 shadow-2xl">
             <div className="mb-6 flex items-center justify-between sticky top-0 bg-white z-10 py-2">
               <div>
                 <h2 className="text-3xl font-bold">Generation History</h2>
@@ -440,8 +454,8 @@ function TryOnContent() {
 
       {/* Pop-up Single History Image Detail */}
       {selectedHistoryItem && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/80 p-4 backdrop-blur-md">
-          <div className="relative w-full max-w-xl rounded-[32px] bg-white p-6 shadow-2xl">
+        <div className="fixed inset-0 z-60 flex items-center justify-center bg-black/80 p-4 backdrop-blur-md">
+          <div className="relative w-full max-w-xl rounded-4xl bg-white p-6 shadow-2xl">
             <div className="mb-4 flex items-center justify-between">
               <h3 className="text-xl font-bold line-clamp-1">
                 {selectedHistoryItem.Name}
@@ -540,7 +554,7 @@ function TryOnContent() {
           {/* LEFT SECTION */}
           <section className="space-y-7">
             {/* YOUR PHOTO */}
-            <div className="card p-5 bg-white rounded-[32px] shadow-sm">
+            <div className="card p-5 bg-white rounded-4xl shadow-sm">
               <div className="mb-4 flex items-center justify-between">
                 <h3 className="font-semibold text-lg text-gray-800">
                   Your Photo
@@ -606,7 +620,7 @@ function TryOnContent() {
             </div>
 
             {/* GENERATION HISTORY */}
-            <div className="card p-5 bg-white rounded-[32px] shadow-sm">
+            <div className="card p-5 bg-white rounded-4xl shadow-sm">
               <div className="mb-5 flex items-center justify-between">
                 <div>
                   <h3 className="font-semibold text-lg text-gray-800">
@@ -625,7 +639,19 @@ function TryOnContent() {
               </div>
 
               <div className="space-y-4">
-                {history.length > 0 ? (
+                {isHistoryLoading ? (
+                  // Skeleton Loading untuk History
+                  [...Array(3)].map((_, index) => (
+                    <div key={index} className="flex items-center gap-3 rounded-2xl border border-gray-100 p-3 animate-pulse">
+                      <div className="h-16 w-16 bg-gray-200 rounded-xl shrink-0" />
+                      <div className="flex-1 space-y-2">
+                        <div className="h-4 bg-gray-200 rounded w-3/4" />
+                        <div className="h-3 bg-gray-200 rounded w-1/2" />
+                      </div>
+                      <div className="h-8 w-14 bg-gray-200 rounded-lg shrink-0" />
+                    </div>
+                  ))
+                ) : history.length > 0 ? (
                   history.slice(0, 3).map((item) => (
                     <div
                       key={item._id}
@@ -668,7 +694,7 @@ function TryOnContent() {
           {/* CENTER SECTION */}
           <section className="space-y-7">
             {/* TRY ON MAIN PREVIEW */}
-            <div className="card p-6 bg-white rounded-[32px] shadow-sm">
+            <div className="card p-6 bg-white rounded-4xl shadow-sm">
               <div className="mb-6 flex items-center justify-between">
                 <div>
                   <h2 className="section-title text-lg font-bold text-gray-700">
@@ -685,9 +711,9 @@ function TryOnContent() {
                 )}
               </div>
 
-              <div className="relative overflow-hidden rounded-[28px] bg-[#F7F4F1] min-h-[400px]">
+              <div className="relative overflow-hidden rounded-[28px] bg-[#F7F4F1] min-h-100">
                 {isLoading ? (
-                  <div className="flex h-[600px] w-full flex-col items-center justify-center bg-white/80 backdrop-blur-sm">
+                  <div className="flex h-150 w-full flex-col items-center justify-center bg-white/80 backdrop-blur-sm">
                     <Loader2 className="h-12 w-12 animate-spin text-primary mb-3" />
                     <p className="font-semibold text-lg text-gray-800 animate-pulse">
                       Generating your AI Cosplay...
@@ -835,7 +861,7 @@ function TryOnContent() {
           {/* RIGHT SECTION */}
           <section className="space-y-7">
             {/* SELECTED COSTUME */}
-            <div className="card p-5 bg-white rounded-[32px] shadow-sm">
+            <div className="card p-5 bg-white rounded-4xl shadow-sm">
               <div className="mb-5 flex items-center justify-between">
                 <div>
                   <h3 className="font-semibold text-lg text-gray-800">
@@ -855,7 +881,18 @@ function TryOnContent() {
                 )}
               </div>
 
-              {selectedProduct ? (
+              {isSelectedProductLoading ? (
+                <div className="animate-pulse space-y-4">
+                  <div className="h-67.5 w-full bg-gray-200 rounded-3xl" />
+                  <div className="h-6 w-3/4 bg-gray-200 rounded" />
+                  <div className="h-4 w-1/2 bg-gray-200 rounded" />
+                  <div className="h-12 w-full bg-gray-200 rounded-xl" />
+                  <div className="flex justify-between items-center pt-2">
+                    <div className="h-8 w-1/3 bg-gray-200 rounded" />
+                    <div className="h-10 w-24 bg-gray-200 rounded-lg" />
+                  </div>
+                </div>
+              ) : selectedProduct ? (
                 <>
                   <div className="relative overflow-hidden rounded-3xl group">
                     <Image
@@ -915,7 +952,7 @@ function TryOnContent() {
               ) : (
                 <div
                   onClick={() => setShowAllProducts(true)}
-                  className={`flex h-[380px] w-full cursor-pointer flex-col items-center justify-center rounded-[28px] border-2 border-dashed border-gray-200 bg-gray-50 hover:bg-gray-100 transition-all`}
+                  className={`flex h-95 w-full cursor-pointer flex-col items-center justify-center rounded-[28px] border-2 border-dashed border-gray-200 bg-gray-50 hover:bg-gray-100 transition-all`}
                 >
                   <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-sm mb-4">
                     <Camera size={24} className="text-primary" />
@@ -931,7 +968,7 @@ function TryOnContent() {
             </div>
 
             {/* CHOOSE PRODUCTS (LIMIT 3) */}
-            <div className="card p-5 bg-white rounded-[32px] shadow-sm">
+            <div className="card p-5 bg-white rounded-4xl shadow-sm">
               <div className="mb-5 flex items-center justify-between">
                 <h3 className="font-semibold text-lg text-gray-800">
                   Products

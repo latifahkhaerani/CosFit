@@ -12,9 +12,16 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "cdn.fashn.ai",
       },
+      {
+        protocol: "https",
+        hostname: "i.pinimg.com",
+      },
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
+      },
     ],
   },
 };
 
 export default nextConfig;
-

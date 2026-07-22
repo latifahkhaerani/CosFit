@@ -2,29 +2,97 @@ import { PostUserDesign } from "@/app/types";
 import { database } from "../config/mongodb";
 import { ObjectId } from "mongodb";
 
-export default class UserDesignModel{
-    static collection(){
-        return database.collection('userDesigns')
-    }
+export default class UserDesignModel {
+  static collection() {
+    return database.collection("userDesigns");
+  }
 
-    static async getAllUserDesigns(){
-        const userDesigns = await this.collection().find().toArray()
-        return userDesigns
-    }
+  static async getAllUserDesigns() {
+    const userDesigns = await this.collection().find().toArray();
+    return userDesigns;
+  }
 
-    static async createUserDesign(userDesignData: PostUserDesign, userId: string){
-        const result = await this.collection().insertOne({...userDesignData, userId: new ObjectId(userId)})
-        return "User Design created with ID: " + result.insertedId
-    }
+  static async getByEventId(eventId: string) {
+    return this.collection()
+      .aggregate([
+        { $match: { eventId: new ObjectId(eventId) } },
+        {
+          $lookup: {
+            from: "users",
+            localField: "userId",
+            foreignField: "_id",
+            as: "user",
+          },
+        },
+        { $addFields: { user: { $arrayElemAt: ["$user", 0] } } },
+        {
+          $project: {
+            _id: 1,
+            eventId: 1,
+            entryTitle: 1,
+            imgUrl: 1,
+            vote: 1,
+            userId: 1,
+            username: { $ifNull: ["$user.username", "Unknown user"] },
+          },
+        },
+      ])
+      .toArray();
+  }
 
-    static async voteUserDesign(id: string, vote: number){
-        const result = await this.collection().updateOne(
-            { _id: new ObjectId(id) },
-            { $inc: { vote: vote } }
-        );
-        if (result.matchedCount === 0) {
-            throw new Error("User Design not found");
-        }
-        return "User Design with ID: " + id + " has been voted. New vote count: " + vote;
+  static async createUserDesign(
+    userDesignData: PostUserDesign,
+    userId: string,
+  ) {
+    const eventObjectId = new ObjectId(userDesignData.eventId);
+    const result = await this.collection().insertOne({
+      ...userDesignData,
+      userId: new ObjectId(userId),
+      eventId: eventObjectId,
+    });
+
+    const entryPayload = {
+      _id: result.insertedId,
+      userId: new ObjectId(userId),
+      entryTitle: userDesignData.entryTitle,
+      entryImage: userDesignData.imgUrl,
+      voteCount: Number(userDesignData.vote ?? 0),
+    };
+
+    const currentEvent = await database
+      .collection("ourEvents")
+      .findOne({ _id: eventObjectId });
+    const existingEntries = Array.isArray(currentEvent?.entries)
+      ? currentEvent.entries
+      : [];
+
+    await database
+      .collection("ourEvents")
+      .updateOne(
+        { _id: eventObjectId },
+        { $set: { entries: [...existingEntries, entryPayload] } },
+      );
+
+    return "User Design created with ID: " + result.insertedId;
+  }
+
+  static async hasUserEntry(eventId: string, userId: string) {
+    return this.collection().findOne({
+      eventId: new ObjectId(eventId),
+      userId: new ObjectId(userId),
+    });
+  }
+
+  static async voteUserDesign(id: string, vote: number) {
+    const result = await this.collection().updateOne(
+      { _id: new ObjectId(id) },
+      { $inc: { vote: vote } },
+    );
+    if (result.matchedCount === 0) {
+      throw new Error("User Design not found");
     }
+    return (
+      "User Design with ID: " + id + " has been voted. New vote count: " + vote
+    );
+  }
 }

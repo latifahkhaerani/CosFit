@@ -4,6 +4,7 @@ import { Inter, Poppins } from "next/font/google";
 import ConditionalFooter from "@/components/ConditionalFooter";
 import "./globals.css";
 import ConditionalNavbar from "@/components/ConditionalNavbar";
+import { headers } from "next/headers";
 
 export const poppins = Poppins({
   subsets: ["latin"],
@@ -21,20 +22,24 @@ export const metadata: Metadata = {
   description: "AI Virtual Fitting for Cosplay",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const headerList = await headers();
+
+  const role = headerList.get("x-user-role");
+
   return (
     <html
       lang="en"
       className={`${poppins.variable} ${inter.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
-        <ConditionalNavbar />
-        <main className="grow">{children}</main>
-        <ConditionalFooter />
+      <body>
+        <ConditionalNavbar role={role}>
+          {children}
+        </ConditionalNavbar>
       </body>
     </html>
   );

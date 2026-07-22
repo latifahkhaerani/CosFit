@@ -9,11 +9,14 @@ export interface EventCardProps {
   joinLabel?: string;
 }
 
-export default function EventCard({ event, joinLabel = "Join Event" }: EventCardProps) {
+export default function EventCard({
+  event,
+  joinLabel = "Join Event",
+}: EventCardProps) {
   return (
     <article className="card group flex h-full flex-col overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-soft">
       <Link
-        href={`/events/${event._id}`}
+        href={`/events/${event.slug}`}
         className="relative block aspect-video w-full flex-shrink-0 overflow-hidden bg-[#FCFBFA]"
       >
         {event.imgUrl ? (
@@ -37,7 +40,7 @@ export default function EventCard({ event, joinLabel = "Join Event" }: EventCard
       </Link>
 
       <div className="flex flex-1 flex-col p-8">
-        <Link href={`/events/${event._id}`}>
+        <Link href={`/events/${event.slug}`}>
           <h3 className="line-clamp-2 text-xl font-semibold leading-snug transition-colors group-hover:text-[var(--primary)]">
             {event.eventName || "Event Name"}
           </h3>
@@ -48,7 +51,7 @@ export default function EventCard({ event, joinLabel = "Join Event" }: EventCard
         </p>
 
         <Link
-          href={`/events/${event._id}`}
+          href={`/events/${event.slug}`}
           className="secondary-btn mt-auto flex w-full items-center justify-center gap-2 hover:bg-[var(--primary)] hover:text-white"
         >
           {joinLabel}

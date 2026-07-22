@@ -3,6 +3,8 @@ import { ObjectId } from "mongodb";
 import { put } from "@vercel/blob";
 import { database } from "../config/mongodb";
 
+
+
 export default class ProfileModel {
   static collection() {
     return database.collection("profiles");
@@ -34,7 +36,7 @@ export default class ProfileModel {
   }
 
     static async createProfile(profileData: PostUserProfile, userId: string){
-        const result = await this.collection().insertOne({...profileData, userId: new ObjectId(userId), token: "5"})
+        const result = await this.collection().insertOne({...profileData, userId: new ObjectId(userId)})
         return "Profile created with ID: " + result.insertedId
     }
 

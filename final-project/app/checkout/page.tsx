@@ -22,7 +22,7 @@ export default async function CheckoutPage() {
   }
 
   const checkout = await getCheckout();
-  const vendor = checkout[0].vendor;
+  const vendor = checkout?.[0]?.vendor;
 
   const groupedProducts = Object.values(
     checkout.reduce(

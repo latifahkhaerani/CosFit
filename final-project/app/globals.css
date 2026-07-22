@@ -13,10 +13,10 @@
   --surface: #ffffff;
   --text: #4d565c;
   --muted: #849282;
-  --border: #ECE8E2;
-  --tertiary: #B17144;
-  --gold: #D8A363;
-  --cream: #E1BD9C;
+  --border: #ece8e2;
+  --tertiary: #b17144;
+  --gold: #d8a363;
+  --cream: #e1bd9c;
 }
 
 @theme inline {
@@ -69,7 +69,9 @@ body {
   background: var(--background);
 }
 
-h1, h2, h3 {
+h1,
+h2,
+h3 {
   font-family: var(--font-heading);
 }
 
@@ -109,11 +111,10 @@ p {
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
   }
 
-  .card{
-      @apply bg-white rounded-[28px];
-      border:1px solid #F7F1EB;
-      box-shadow:
-          0 6px 24px rgba(0,0,0,.04);
+  .card {
+    @apply bg-white rounded-[28px];
+    border: 1px solid #f7f1eb;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.04);
   }
 
   .section-title {
@@ -169,38 +170,68 @@ p {
   }
 
   .card-hover {
-    transition: all .25s ease;
+    transition: all 0.25s ease;
   }
 
   .card-hover:hover {
     transform: translateY(-4px);
-    box-shadow:
-      0 10px 35px rgba(0,0,0,.06);
+    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.06);
   }
 
-  .icon-wrapper{
+  .icon-wrapper {
     @apply flex items-center justify-center rounded-2xl;
-    width:56px;
-    height:56px;
+    width: 56px;
+    height: 56px;
   }
 
-  .section-spacing{
+  .section-spacing {
     @apply mt-8;
   }
 
-  .hover-scale{
-    transition:.25s;
+  .hover-scale {
+    transition: 0.25s;
   }
 
-  .hover-scale:hover{
-    transform:scale(1.04);
+  .hover-scale:hover {
+    transform: scale(1.04);
   }
 
-  .badge{
+  .badge {
     @apply inline-flex items-center rounded-full px-3 py-1 text-xs font-medium;
   }
 
-  .divider{
-    border-color:#F5F1EC;
+  .divider {
+    border-color: #f5f1ec;
   }
+}
+
+/* =========================================
+   React Datepicker Overrides
+   ========================================= */
+
+/* Memaksa kalender dan panel jam berdampingan */
+.react-datepicker {
+  display: flex !important;
+  font-family: var(--font-body); /* Mengikuti font aplikasi Anda */
+  border: 1px solid var(--border) !important;
+  border-radius: 1rem !important; /* Menyesuaikan style membulat aplikasi */
+  overflow: hidden;
+}
+
+/* Memastikan input mengambil 100% lebar parent Tailwind (w-full) */
+.react-datepicker-wrapper,
+.react-datepicker__input-container {
+  display: block;
+  width: 100%;
+}
+
+/* Merapikan garis pembatas antara kalender dan panel waktu */
+.react-datepicker__time-container {
+  border-left: 1px solid var(--border) !important;
+}
+
+/* Menyesuaikan warna header kalender agar cocok dengan tema */
+.react-datepicker__header {
+  background-color: var(--background) !important;
+  border-bottom: 1px solid var(--border) !important;
 }

@@ -27,22 +27,18 @@ export default function ThemeCombobox({
     if (!query) return options;
 
     return options.filter((theme) =>
-      theme.toLowerCase().includes(query.toLowerCase())
+      theme.toLowerCase().includes(query.toLowerCase()),
     );
   }, [query, options]);
 
   const themeExists = useMemo(() => {
-    return options.some(
-      (theme) => theme.toLowerCase() === query.toLowerCase()
-    );
+    return options.some((theme) => theme.toLowerCase() === query.toLowerCase());
   }, [options, query]);
 
   function handleSelect(theme: string) {
     // Prevent duplicate selected themes
     if (
-      value.some(
-        (selected) => selected.toLowerCase() === theme.toLowerCase()
-      )
+      value.some((selected) => selected.toLowerCase() === theme.toLowerCase())
     ) {
       setQuery("");
       return;
@@ -50,9 +46,7 @@ export default function ThemeCombobox({
 
     // If this theme doesn't exist yet, save it
     if (
-      !options.some(
-        (option) => option.toLowerCase() === theme.toLowerCase()
-      )
+      !options.some((option) => option.toLowerCase() === theme.toLowerCase())
     ) {
       setOptions((prev) => [...prev, theme]);
     }
@@ -80,7 +74,13 @@ export default function ThemeCombobox({
         ))}
       </div>
 
-      <Combobox value={null} onChange={handleSelect}>
+      <Combobox
+        value={null}
+        onChange={(theme: string | null) => {
+          if (!theme) return;
+          handleSelect(theme);
+        }}
+      >
         <ComboboxInput
           className="input-soft w-full"
           placeholder="Search or create theme..."

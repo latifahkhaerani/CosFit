@@ -33,7 +33,7 @@ const discussions = [
 export default function RelatedDiscussion() {
   return (
     <section className="card p-6">
-      <h3 className="card-title mb-6">Related Discussions</h3>
+      <h3 className="card-title mb-6">Trending Discussions</h3>
 
       <div className="space-y-5">
         {discussions.map((item) => (

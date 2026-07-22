@@ -1,91 +1,59 @@
 "use client";
 
-const tags = [
-  {
-    name: "#CosplayTips",
-    posts: "2.4k",
-    color: "#F97316",
-  },
-  {
-    name: "#Anime",
-    posts: "3.2k",
-    color: "#8B5CF6",
-  },
-  {
-    name: "#Photography",
-    posts: "1.8k",
-    color: "#06B6D4",
-  },
-  {
-    name: "#Armor",
-    posts: "1.2k",
-    color: "#EF4444",
-  },
-  {
-    name: "#Events",
-    posts: "1.1k",
-    color: "#10B981",
-  },
-  {
-    name: "#WigStyling",
-    posts: "1.5k",
-    color: "#EC4899",
-  },
-];
+type TagData = {
+  name: string;
+  posts: number;
+  color: string;
+};
 
-export default function PopularTags() {
+type Props = {
+  tags: TagData[];
+  isLoading?: boolean;
+};
+
+export default function PopularTags({ tags, isLoading }: Props) {
   return (
     <section className="card p-6">
-
       <div className="mb-6">
-
-        <h3 className="card-title">
-
-          Popular Tags
-
-        </h3>
-
+        <h3 className="card-title">Popular Tags</h3>
       </div>
 
-      <div className="flex flex-wrap gap-3">
-
-        {tags.map((tag) => (
-
-          <button
-            key={tag.name}
-            className="
-            rounded-full
-            border
-            border-[var(--border)]
-            px-4
-            py-2
-            transition
-            hover:-translate-y-0.5
-            hover:shadow-card
-            "
-            style={{
-              color: tag.color,
-            }}
-          >
-
-            <div className="font-medium">
-
-              {tag.name}
-
-            </div>
-
-            <div className="text-xs opacity-70">
-
-              {tag.posts} posts
-
-            </div>
-
-          </button>
-
-        ))}
-
-      </div>
-
+      {isLoading ? (
+        <div className="flex justify-center py-4">
+          <div className="h-5 w-5 animate-spin rounded-full border-2 border-[var(--primary)] border-t-transparent"></div>
+        </div>
+      ) : tags.length === 0 ? (
+        <p className="text-sm text-[var(--muted)]">No tags available.</p>
+      ) : (
+        <div className="flex flex-wrap gap-3">
+          {tags.map((tag) => (
+            <button
+              key={tag.name}
+              className="
+                rounded-full
+                border
+                px-4
+                py-2
+                transition
+                hover:-translate-y-0.5
+                hover:shadow-card
+              "
+              style={{
+                color: tag.color,
+                borderColor: `${tag.color}40`,
+                backgroundColor: `${tag.color}10`,
+              }}
+            >
+              <div className="font-medium">
+                {tag.name.startsWith('#') ? tag.name : `#${tag.name}`}
+              </div>
+              <div className="text-xs opacity-70">
+                {tag.posts} {tag.posts === 1 ? "post" : "posts"}
+              </div>
+            </button>
+          ))}
+        </div>
+      )}
     </section>
   );
 }

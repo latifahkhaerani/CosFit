@@ -47,6 +47,7 @@ export default function ProfilePage() {
     products: [],
     savedLooks: [],
   });
+
   const fetchData = async () => {
     try {
       const [profileRes, wishlistRes, checkoutRes, productsRes, savedLooksRes] =
@@ -97,6 +98,50 @@ export default function ProfilePage() {
     }
   };
 
+  const handleUpdateImg = async (file: File) => {
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const res = await fetch(`/api/user/profile`, {
+        method: "PATCH",
+        body: formData,
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to update profile image");
+      }
+
+      // Refresh data setelah update berhasil
+      fetchData();
+      setOpenEditModal(false);
+    } catch (error) {
+      errorHandler(error);
+    }
+  };
+
+  const handleUpdateOther = async (address: string) => {
+    try {
+      const res = await fetch(`/api/user/profile`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ address }),
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to update address");
+      }
+
+      // Refresh data setelah update berhasil
+      fetchData();
+      setOpenEditModal(false);
+    } catch (error) {
+      errorHandler(error);
+    }
+  };
+
   useEffect(() => {
     fetchData();
   }, []);
@@ -105,16 +150,9 @@ export default function ProfilePage() {
   const profileName = profile?.userId?.[0]?.username ?? "You";
   const profileAddress =
     profile?.address || "Add your address to personalize your profile";
-  const profileCompletion = Math.min(
-    100,
-    (profile?.photo ? 40 : 0) +
-      (profile?.address ? 30 : 0) +
-      (profile?.userId?.[0]?.email ? 30 : 0),
-  );
   const previewProducts = products.slice(0, 4);
   const previewWishlist = wishlist.slice(0, 3);
   const previewCheckout = checkout.slice(0, 3);
-  const previewEvents = checkout.slice(0, 2);
   const previewSavedLooks = savedLooks.slice(0, 3);
 
   const renderActiveSection = () => {
@@ -498,8 +536,6 @@ export default function ProfilePage() {
                       </div>
                     </div>
 
-                    {/* kosong */}
-
                     {/* wishlist */}
                     <div className="rounded-3xl border border-[#efe4db] bg-white/80 p-5 shadow-[0_10px_32px_rgba(15,23,42,0.04)]">
                       <div className="mb-5 flex items-start justify-between gap-4">
@@ -582,149 +618,20 @@ export default function ProfilePage() {
                         </div>
                       </div>
                     </div>
-
-                    {/* <div className="rounded-3xl border border-[#efe4db] bg-white/80 p-5 shadow-[0_10px_32px_rgba(15,23,42,0.04)]">
-                    <div className="mb-5 flex items-start justify-between gap-4">
-                      <div>
-                        <h3 className="text-xl font-semibold text-[#1f1a17]">
-                          Active Rentals
-                        </h3>
-
-                        <p className="mt-1 text-sm text-muted">
-                          Your current checkout activity
-                        </p>
-                      </div>
-
-                      <button className="text-sm font-medium text-primary transition hover:text-[#bc5f2f]">
-                        Calendar →
-                      </button>
-                    </div>
-
-                    <div className="space-y-3">
-                      {previewEvents.map((item) => {
-                        const product = item.product;
-
-                        return (
-                          <div
-                            key={item._id}
-                            className="flex items-center gap-3 rounded-2xl border border-[#f3e8df] bg-[#fcfaf8] p-3 transition duration-200 hover:-translate-y-0.5 hover:border-[#f3caa9] hover:shadow-sm"
-                          >
-                            <div className="flex h-16 w-16 shrink-0 flex-col items-center justify-center rounded-2xl bg-[#fff4eb]">
-                              <span className="text-[10px] uppercase tracking-[0.2em] text-muted">
-                                {item.status.slice(0, 3).toUpperCase()}
-                              </span>
-
-                              <span className="text-2xl font-semibold text-primary">
-                                {item.status.length > 3 ? "•" : "1"}
-                              </span>
-                            </div>
-
-                            <div className="flex-1">
-                              <h4 className="font-semibold text-[#2f2723]">
-                                {product.title}
-                              </h4>
-
-                              <p className="mt-1 text-sm text-muted">
-                                {item.vendor?.namaToko || "CosFit Vendor"}
-                              </p>
-
-                              <p className="mt-1 text-xs text-muted">
-                                {product.theme}
-                              </p>
-
-                              <div className="mt-3 flex items-center justify-between">
-                                <span className="rounded-full bg-green-100 px-2 py-1 text-[10px] font-medium text-green-700">
-                                  {item.status}
-                                </span>
-
-                                <button className="text-sm text-primary transition hover:text-[#bc5f2f]">
-                                  View
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div> */}
                   </div>
                 </div>{" "}
               </>
             ) : (
               <div className="w-full">{renderActiveSection()}</div>
             )}
-
-            {/* Banner profile completed */}
-            {/* 
-            <div className="overflow-hidden rounded-4xl border border-[#efe4db] bg-linear-to-r from-[#fff6ee] via-[#fffdfb] to-[#fef4ea] shadow-[0_16px_60px_rgba(15,23,42,0.04)]">
-              <div className="flex flex-col items-start justify-between gap-8 p-6 sm:p-8 lg:flex-row lg:items-center lg:p-9">
-                <div className="flex items-center gap-5">
-                  <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-3xl bg-white/90 shadow-sm">
-                    🎯
-                  </div>
-
-                  <div>
-                    <h2 className="text-2xl font-semibold tracking-tight text-[#1f1a17] sm:text-3xl">
-                      Complete Your Profile
-                    </h2>
-
-                    <p className="mt-2 max-w-xl leading-7 text-muted">
-                      A complete profile helps CosFit AI generate a much more
-                      accurate virtual try-on and recommend costumes that truly
-                      fit your body.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="w-full max-w-md rounded-3xl border border-[#f2e4db] bg-white/90 p-6 shadow-[0_10px_30px_rgba(15,23,42,0.04)]">
-                  <div className="mb-5 flex items-center justify-between">
-                    <span className="font-semibold text-[#2f2723]">
-                      Profile Completion
-                    </span>
-
-                    <span className="font-semibold text-primary">
-                      {profileCompletion}%
-                    </span>
-                  </div>
-
-                  <div className="mb-6 h-3 overflow-hidden rounded-full bg-[#efeae4]">
-                    <div
-                      className="h-full rounded-full bg-primary"
-                      style={{ width: `${profileCompletion}%` }}
-                    />
-                  </div>
-
-                  <div className="space-y-3">
-                    <CheckItem
-                      checked={!!profile?.photo}
-                      title="Upload Full Body Photo"
-                    />
-
-                    <CheckItem
-                      checked={!!profile?.address}
-                      title="Add Your Address"
-                    />
-
-                    <CheckItem
-                      checked={!!profile?.userId?.[0]?.email}
-                      title="Verify Email"
-                    />
-
-                    <CheckItem title="Complete Your Profile" />
-                  </div>
-
-                  <button className="mt-6 h-12 w-full rounded-2xl bg-primary font-semibold text-white transition hover:opacity-95">
-                    Complete Profile
-                  </button>
-                </div>
-              </div>
-            </div> */}
           </section>
         </div>
         <EditProfileModal
           open={openEditModal}
           onClose={() => setOpenEditModal(false)}
           profile={profile}
+          onUpdateImg={handleUpdateImg}
+          onUpdateAddress={handleUpdateOther}
         />
       </div>
     </main>

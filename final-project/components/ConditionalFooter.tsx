@@ -8,7 +8,8 @@ const HIDDEN_ON = ["/login", "/register", "/vendor/login", "/vendor/register"];
 export default function ConditionalFooter() {
   const pathname = usePathname();
 
-  if (HIDDEN_ON.includes(pathname)) return null;
+  if (HIDDEN_ON.includes(pathname) || pathname.startsWith("/admin"))
+    return null;
 
   return <Footer />;
 }

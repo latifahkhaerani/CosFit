@@ -23,6 +23,7 @@ export default function LoginVendorForm()
                 body: JSON.stringify({email, password})
             })
             router.push("/vendor")
+            router.refresh()
         } catch (error) {
             errorHandler(error)
         }

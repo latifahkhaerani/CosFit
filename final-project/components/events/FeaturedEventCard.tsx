@@ -11,6 +11,7 @@ export interface FeaturedEventCardProps {
 
 const placeholderEvent: GetOurEvent = {
   _id: "featured-event",
+  slug: "featured-event",
   eventName: "",
   category: "",
   imgUrl: "",
@@ -32,7 +33,7 @@ export default function FeaturedEventCard({
       <div className="grid gap-8 lg:grid-cols-[1.15fr_1fr]">
         {/* LEFT: image */}
         <Link
-          href={`/events/${event._id}`}
+          href={`/events/${event.slug}`}
           className="group relative block min-h-[320px] overflow-hidden rounded-[32px] bg-[#FCFBFA]"
         >
           {event.imgUrl ? (
@@ -82,7 +83,7 @@ export default function FeaturedEventCard({
           </div>
 
           <Link
-            href={`/events/${event._id}`}
+            href={`/events/${event.slug}`}
             className="primary-btn mt-8 flex items-center justify-center gap-3 py-4 text-lg hover:scale-[1.01]"
           >
             {joinLabel}

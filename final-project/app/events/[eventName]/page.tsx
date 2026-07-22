@@ -1,9 +1,13 @@
 import { notFound } from "next/navigation";
+import { cookies } from "next/headers";
 import EventDetailHero from "@/components/events/EventDetailHero";
 import EventDetailInfo from "@/components/events/EventDetailInfo";
-import EventForumPreview from "@/components/events/EventForumPreview";
+import EventForumPreview, {
+  type EventDiscussionMessage,
+} from "@/components/events/EventForumPreview";
 import DesignChallengeForm from "@/components/events/DesignChallengeForm";
 import OurEventModel from "@/db/models/ourEventModel";
+import UserDesignModel from "@/db/models/userDesignModel";
 import ForumModel from "@/db/models/forumModel";
 import serializeEvent from "@/app/helpers/serializeEvent";
 import serializeRoom from "@/app/helpers/serializeRoom";
@@ -15,12 +19,14 @@ interface EventDetailPageProps {
   params: Promise<{ eventName: string }>;
 }
 
-export default async function EventDetailPage({ params }: EventDetailPageProps) {
-  const { eventName } = await params;
+export default async function EventDetailPage({
+  params,
+}: EventDetailPageProps) {
+  const { eventName: slug } = await params;
 
   let doc;
   try {
-    doc = await OurEventModel.getEventById(eventName);
+    doc = await OurEventModel.getEventBySlug(slug);
   } catch {
     doc = null;
   }
@@ -28,12 +34,44 @@ export default async function EventDetailPage({ params }: EventDetailPageProps) 
   if (!doc) notFound();
 
   const event = serializeEvent(doc);
+  const cookieStore = await cookies();
+  const contestEntries =
+    event.eventType === "internal_contest"
+      ? await UserDesignModel.getByEventId(event._id)
+      : [];
 
   let forum: GetRoom | null = null;
+  let initialMessages: EventDiscussionMessage[] = [];
+  let currentUser = "";
   if (event.forumId) {
     try {
       const forumDoc = await ForumModel.getForumById(event.forumId);
       forum = forumDoc ? serializeRoom(forumDoc) : null;
+
+      if (forum?._id) {
+        try {
+          const chatRes = await fetch(
+            `http://localhost:3000/api/chat/${forum._id}`,
+            {
+              headers: {
+                Cookie: cookieStore.toString(),
+              },
+              cache: "no-store",
+            },
+          );
+
+          if (chatRes.ok) {
+            const chatData = await chatRes.json();
+            initialMessages = Array.isArray(chatData?.message)
+              ? chatData.message
+              : [];
+            currentUser = chatData?.username || "";
+          }
+        } catch {
+          initialMessages = [];
+          currentUser = "";
+        }
+      }
     } catch {
       forum = null;
     }
@@ -43,8 +81,18 @@ export default async function EventDetailPage({ params }: EventDetailPageProps) 
     <main className="page-container space-y-10">
       <EventDetailHero event={event} />
       <EventDetailInfo event={event} />
-      {event.category === "Fashion Design" ? <DesignChallengeForm /> : null}
-      <EventForumPreview forum={forum} />
+      {event.eventType === "internal_contest" ? (
+        <DesignChallengeForm
+          eventId={event._id}
+          entryCount={contestEntries.length}
+          maxEntries={event.maxEntries}
+        />
+      ) : null}
+      <EventForumPreview
+        forum={forum}
+        initialMessages={initialMessages}
+        currentUser={currentUser}
+      />
     </main>
   );
 }
