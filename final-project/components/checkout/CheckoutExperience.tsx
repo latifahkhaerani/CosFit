@@ -4,6 +4,10 @@ import Image from "next/image";
 import { Check, Sparkles, Minus, Plus } from "lucide-react";
 import { useMemo, useState } from "react";
 import { GetProduct, GetVendor } from "../../app/types";
+import Swal from "sweetalert2";
+import errorHandler from "@/app/helpers/errorHandler";
+import Script from "next/script";
+import { useRouter } from "next/navigation";
 
 type GroupedProduct = {
   product: GetProduct;
@@ -19,12 +23,12 @@ export default function CheckoutExperience({
   groupedProducts,
   vendor,
 }: CheckoutExperienceProps) {
+  const route = useRouter()
   const [quantities, setQuantities] = useState<Record<string, number>>(() =>
     Object.fromEntries(
       groupedProducts.map((item) => [item.product._id, item.quantity]),
     ),
   );
-
   const selectedItems = useMemo(
     () =>
       groupedProducts
@@ -54,11 +58,52 @@ export default function CheckoutExperience({
     }));
   };
 
-  const [deliveryMethod, setDeliveryMethod] = useState<"pickup" | "delivery">(
-    "pickup",
-  );
+
+  const handlePay = async () => {
+  try {
+    
+    const res = await fetch("/api/pay", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        items: groupedProducts,
+      }),
+    });
+
+    const data = await res.json();
+
+    console.log(window.snap);
+    console.log(data.token);
+    window.snap.pay(data.token, {
+      onSuccess: async (result) => {
+        console.log(result);
+        await fetch("/api/pay", {method: "PATCH", body: JSON.stringify({orderId: data.orderId, status: "Success"})})
+      },
+      onPending: async (result) => {
+        console.log(result);
+        await fetch("/api/pay", {method: "PATCH", body: JSON.stringify({orderId: data.orderId, status: "Pending"})})
+      },
+      onError: async (result) => {
+        console.log(result);
+        await fetch("/api/pay", {method: "DELETE", body: JSON.stringify({orderId: data.orderId})})
+      },
+      onClose: () => {
+        console.log("Payment popup closed");
+      },
+    });
+
+    route.push("/wishlist")
+    route.refresh()
+  } catch (error) {
+    return errorHandler(error);
+  }
+};
+
   return (
     <main className="min-h-screen bg-[#f8f6f2] px-3 py-4 sm:px-5 lg:px-6 xl:px-8">
+      
       <div className="mx-auto flex w-full max-w-360 flex-col gap-2 px-1 pb-4 pt-3 sm:px-2 lg:px-0">
         <h2 className="flex items-center gap-2 text-2xl font-semibold tracking-[-0.02em] sm:text-3xl">
           Checkout
@@ -66,7 +111,7 @@ export default function CheckoutExperience({
         </h2>
 
         <p className="max-w-2xl text-sm leading-6 text-muted lg:text-base">
-          Almost there! Complete your rental.
+          Almost there! Complete your rental. 
         </p>
       </div>
 
@@ -104,7 +149,7 @@ export default function CheckoutExperience({
                             src={product.imgUrl}
                             alt={product.title}
                             fill
-                            className="object-cover"
+                            className="object-cover object-top"
                           />
                         </div>
 
@@ -183,7 +228,7 @@ export default function CheckoutExperience({
 
             <div className="rounded-[28px] border border-border/70 bg-white p-5 shadow-[0_16px_44px_-28px_rgba(15,23,42,0.2)] lg:p-6">
               <div className="mb-5 flex items-center gap-3 border-b border-border/70 pb-4">
-                <CircleNumber number={3} />
+                <CircleNumber number={2} />
 
                 <h3 className="text-base font-semibold tracking-[-0.01em]">
                   Vendor Information
@@ -211,7 +256,7 @@ export default function CheckoutExperience({
                   </div>
                 </div>
 
-                <div className="flex flex-wrap gap-3">
+                {/* <div className="flex flex-wrap gap-3">
                   <button className="rounded-2xl border border-border/70 bg-white px-5 py-2 text-sm font-medium text-foreground transition-all duration-200 hover:border-primary/40 hover:bg-[#fff8f3]">
                     View Shop
                   </button>
@@ -219,11 +264,11 @@ export default function CheckoutExperience({
                   <button className="rounded-2xl bg-primary px-5 py-2 text-sm font-medium text-white transition-all duration-200 hover:-translate-y-0.5 hover:opacity-90">
                     Chat Vendor
                   </button>
-                </div>
+                </div> */}
               </div>
             </div>
 
-            <div className="rounded-[28px] border border-border/70 bg-white p-5 shadow-[0_16px_44px_-28px_rgba(15,23,42,0.2)] lg:p-6">
+            {/* <div className="rounded-[28px] border border-border/70 bg-white p-5 shadow-[0_16px_44px_-28px_rgba(15,23,42,0.2)] lg:p-6">
               <div className="mb-5 flex items-center gap-3 border-b border-border/70 pb-4">
                 <CircleNumber number={4} />
 
@@ -233,7 +278,6 @@ export default function CheckoutExperience({
               </div>
 
               <div className="grid gap-4 md:grid-cols-2">
-                {/* PICKUP */}
 
                 <button
                   type="button"
@@ -290,7 +334,6 @@ export default function CheckoutExperience({
                   </div>
                 </button>
 
-                {/* DELIVERY */}
 
                 <button
                   type="button"
@@ -302,7 +345,6 @@ export default function CheckoutExperience({
         : "border-border/70 bg-[#fcfbfa] hover:border-primary/35 hover:shadow-sm"
     }`}
                 >
-                  {/* HEADER */}
                   <div className="flex items-start justify-between">
                     <div className="flex items-start gap-4">
                       <div
@@ -337,7 +379,6 @@ export default function CheckoutExperience({
                     </div>
                   </div>
 
-                  {/* BODY */}
                   <div className="mt-5 flex-1 border-t border-border pt-4">
                     <div className="space-y-3 text-sm">
                       <div className="flex items-start gap-2">
@@ -352,9 +393,9 @@ export default function CheckoutExperience({
                   </div>
                 </button>
               </div>
-            </div>
+            </div> */}
 
-            <div className="rounded-[28px] border border-border/70 bg-white p-5 shadow-[0_16px_44px_-28px_rgba(15,23,42,0.2)] lg:p-6">
+            {/* <div className="rounded-[28px] border border-border/70 bg-white p-5 shadow-[0_16px_44px_-28px_rgba(15,23,42,0.2)] lg:p-6">
               <div className="mb-5 flex items-center gap-3 border-b border-border/70 pb-4">
                 <CircleNumber number={5} />
 
@@ -378,7 +419,7 @@ export default function CheckoutExperience({
                   <p className="mt-2 text-right text-xs text-muted">0 / 300</p>
                 </div>
               </div>
-            </div>
+            </div> */}
           </section>
 
           <aside className="sticky top-24 h-fit space-y-4">
@@ -398,7 +439,7 @@ export default function CheckoutExperience({
                         src={product.imgUrl}
                         alt={product.title}
                         fill
-                        className="object-cover"
+                        className="object-cover object-top"
                       />
                     </div>
 
@@ -468,7 +509,7 @@ export default function CheckoutExperience({
             </div>
 
             <div className="rounded-[24px] border border-border/70 bg-white p-4 shadow-sm">
-              <button className="h-12 w-full rounded-2xl bg-primary text-sm font-semibold text-white shadow-[0_10px_32px_-16px_rgba(230,73,80,0.7)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_12px_34px_-14px_rgba(230,73,80,0.68)]">
+              <button onClick={handlePay} className="h-12 w-full rounded-2xl bg-primary text-sm font-semibold text-white shadow-[0_10px_32px_-16px_rgba(230,73,80,0.7)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_12px_34px_-14px_rgba(230,73,80,0.68)]">
                 Place Order
               </button>
 

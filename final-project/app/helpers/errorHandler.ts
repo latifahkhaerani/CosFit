@@ -9,7 +9,6 @@ export default function errorHandler(err: unknown) {
         message = err.issues.map((e) => e.message).join(", ");
         status = 400;
     }
-
     return Response.json(
         {
             message: message || "Internal Server Error",

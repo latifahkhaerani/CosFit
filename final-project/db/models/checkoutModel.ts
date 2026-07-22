@@ -59,4 +59,10 @@ export default class CheckoutModel {
     });
     return "Checkout created with ID: " + result.insertedId;
   }
+
+  static async deleteCheckoutByProductAndUserId(userId: string, productId: string){
+    console.log("MASUK DELETE CHECKOUT");
+    const res = await this.collection().deleteOne({userId: new ObjectId(userId), productId: new ObjectId(productId)})
+    return res
+  }
 }

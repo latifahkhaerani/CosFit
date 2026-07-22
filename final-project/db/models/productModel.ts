@@ -204,4 +204,10 @@ export default class ProductModel {
 
     return product;
   }
+
+  static async decreaseQuantity(id: string, quantity: number | string){
+    console.log("MASUK DECREASE QUANTITY");
+    const res = await this.collection().updateOne({_id: new ObjectId(id)}, {$inc: {stock: -quantity}})
+    return res
+  }
 }

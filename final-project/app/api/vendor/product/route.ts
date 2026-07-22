@@ -52,7 +52,7 @@ export async function POST(req: Request) {
     })
 );
     const imgUrl = blob.url
-    const result = await ProductModel.postProduct({imgUrl, title, desc, size, theme, originalPrice, stock, finalPrice, imgGalery}, vendorId);
+    const result = await ProductModel.postProduct({imgUrl, title, desc, size, theme, originalPrice, stock: +stock, finalPrice, imgGalery}, vendorId);
     return Response.json(result);
   } catch (error) {
     return errorHandler(error);

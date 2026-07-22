@@ -131,7 +131,7 @@ export interface PostProduct {
   originalPrice: string;
   discount?: string;
   finalPrice?: string;
-  stock: string;
+  stock: number;
 }
 
 export interface PostWishlist {
