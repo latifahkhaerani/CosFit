@@ -61,22 +61,24 @@ export default class OurEventModel {
 
   static async getClosestEvents() {
     const agg = [
-      {
-        $match: {
-          $expr: {
-            $gt: ["$startDate", "$$NOW"],
-          },
-        },
-      },
-      {
-        $sort: {
-          startDate: 1,
-        },
-      },
-      {
-        $limit: 4,
-      },
-    ];
+  {
+    '$match': {
+      '$expr': {
+        '$gt': [
+          {
+            '$toDate': '$startDate'
+          }, '$$NOW'
+        ]
+      }
+    }
+  }, {
+    '$sort': {
+      'startDate': 1
+    }
+  }, {
+    '$limit': 4
+  }
+];
     const data = await this.collection().aggregate(agg).toArray();
     return data;
   }
