@@ -5,6 +5,7 @@ import ConditionalFooter from "@/components/ConditionalFooter";
 import "./globals.css";
 import ConditionalNavbar from "@/components/ConditionalNavbar";
 import { headers } from "next/headers";
+import Script from "next/script";
 
 export const poppins = Poppins({
   subsets: ["latin"],
@@ -36,6 +37,11 @@ export default async function RootLayout({
       lang="en"
       className={`${poppins.variable} ${inter.variable} h-full antialiased`}
     >
+      <Script
+        src="https://app.sandbox.midtrans.com/snap/snap.js"
+        data-client-key={process.env.MIDTRANS_CLIENT_KEY}
+        strategy="beforeInteractive"
+      />
       <body>
         <ConditionalNavbar role={role}>
           {children}

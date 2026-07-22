@@ -51,7 +51,8 @@ export async function proxy(request: Request) {
       pathname.startsWith("/api/user/checkout") ||
       pathname === "/api/userDesign" ||
       pathname === "/api/user/try-on" ||
-      pathname === "/api/user/history";
+      pathname === "/api/user/history" ||
+      pathname === "/api/pay";
 
     // Public routes (no login required)
     const isPublicRoute =
