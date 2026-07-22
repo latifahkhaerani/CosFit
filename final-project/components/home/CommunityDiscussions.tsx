@@ -1,44 +1,33 @@
 "use client";
 
-import { Sparkles, MessagesSquare, ArrowRight } from "lucide-react";
+import { Sparkles, MessagesSquare, ArrowRight, Flame } from "lucide-react";
 import type { GetRoom } from "@/app/types";
+import { useEffect, useState } from "react";
+import { forumType } from "../forum/TrendingPosts";
+import Link from "next/link";
 
 export interface CommunityDiscussionsProps {
   title?: string;
   viewAllLabel?: string;
-  /** Forum rooms users can join to discuss a topic. */
   rooms?: GetRoom[];
   joinLabel?: string;
-  onViewAll?: () => void;
-  onSelectRoom?: (roomId: string) => void;
 }
-
-const placeholderRooms: GetRoom[] = Array.from({ length: 4 }, (_, i) => ({
-  _id: `room-${i}`,
-  nameForum: "",
-  desc: "",
-  img: "",
-  tag: [""],
-}));
 
 function RoomCard({
   room,
   joinLabel,
-  onSelect,
 }: {
-  room: GetRoom;
+  room: forumType;
   joinLabel: string;
-  onSelect?: (roomId: string) => void;
 }) {
-  const tagLabel = room.tag?.[0];
+  const tagLabel = room.tag;
 
   return (
-    <div className="flex flex-col overflow-hidden rounded-2xl border border-border bg-surface">
+    <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-surface">
       <div className="aspect-video w-full overflow-hidden bg-cream/30">
-        {room.img ? (
-          // eslint-disable-next-line @next/next/no-img-element
+        {room.image ? (
           <img
-            src={room.img}
+            src={room.image}
             alt={room.nameForum || "Forum room"}
             className="h-full w-full object-cover"
           />
@@ -62,54 +51,86 @@ function RoomCard({
         <p className="line-clamp-2 text-base text-muted">
           {room.desc || "Short description of what this room is about."}
         </p>
-
-        <button
-          type="button"
-          onClick={() => onSelect?.(room._id)}
-          className="mt-4 inline-flex items-center justify-center gap-2 rounded-xl border border-primary px-4 py-2.5 text-base font-medium text-primary transition hover:bg-cream/40"
-        >
-          {joinLabel}
-          <ArrowRight className="h-5 w-5" />
-        </button>
+        <div className="mt-auto pt-4">
+          <Link href={`/forum/${room.slug}`}>
+            <button
+              type="button"
+              className="inline-flex items-center justify-center gap-2 rounded-xl border border-primary px-4 py-2.5 text-base font-medium text-primary transition hover:bg-cream/40"
+            >
+              {joinLabel}
+              <ArrowRight className="h-5 w-5" />
+            </button>
+          </Link>
+        </div>
       </div>
     </div>
   );
 }
 
 export default function CommunityDiscussions({
-  title = "Community Discussions",
+  title = "Trending Forum",
   viewAllLabel = "Visit Forum",
-  rooms = placeholderRooms,
-  joinLabel = "Join Room",
-  onViewAll,
-  onSelectRoom,
+  joinLabel = "Go to Room",
 }: CommunityDiscussionsProps) {
+
+const [posts, setPosts] = useState<forumType[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const fetchTrendingPosts = async () => {
+      try {
+        setIsLoading(true);
+        setError("");
+        const res = await fetch(`/api/forum?sort=trending&page=1`);
+        if (!res.ok) throw new Error("Failed to fetch trending.");
+
+        const dataJson = await res.json();
+
+        if (Array.isArray(dataJson)) {
+          setPosts(dataJson.slice(0, 5));
+        } else if (dataJson && Array.isArray(dataJson.data)) {
+          setPosts(dataJson.data.slice(0, 5));
+        } else {
+          setPosts([]);
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Error loading trending");
+        console.error("Gagal mengambil data trending:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchTrendingPosts();
+  }, []);
+
   return (
     <section className="mx-auto max-w-7xl px-6 py-10 lg:px-8">
       <div className="mb-6 flex items-center justify-between">
         <h2 className="flex items-center gap-2 font-serif text-3xl font-semibold text-foreground">
           {title}
-          <Sparkles className="h-5 w-5 text-accent" />
+          <Flame className="h-5 w-5 text-accent" />
         </h2>
+        <Link href={`/forum`}>
         <button
           type="button"
-          onClick={onViewAll}
           className="text-base font-medium text-primary hover:text-secondary hover:underline"
-        >
+          >
           {viewAllLabel} &rarr;
         </button>
+          </Link>
       </div>
 
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-        {rooms.map((room) => (
-          <RoomCard
-            key={room._id}
-            room={room}
-            joinLabel={joinLabel}
-            onSelect={onSelectRoom}
-          />
-        ))}
-      </div>
+  {posts.slice(0, 4).map((room) => (
+    <RoomCard
+      key={room._id}
+      room={room}
+      joinLabel={joinLabel}
+    />
+  ))}
+</div>
     </section>
   );
 }
