@@ -35,7 +35,7 @@ export default class VendorModel {
 
     parsedData.password = hashSync(parsedData.password, 10);
 
-    const result = await this.collection().insertOne(parsedData);
+    const result = await this.collection().insertOne({...parsedData, role: "Vendor", userImg: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTA-J3va8GAjJlVToUyMEcYWVD_8l9zau-wM2NdOgUh-w&s=10"});
     return "Vendor created with ID: " + result.insertedId;
   }
 
