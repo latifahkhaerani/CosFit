@@ -216,7 +216,7 @@ export default function CreateProd() {
                 id="price"
                 required
                 className="input-soft w-full"
-                placeholder="$0"
+                placeholder="Rp 0"
                 value={originalPrice}
                 onChange={(e) => {
                   setOriginalPrice(e.target.value);

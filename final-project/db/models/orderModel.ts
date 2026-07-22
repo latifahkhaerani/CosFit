@@ -36,4 +36,39 @@ export default class OrderModel {
     const res = await this.collection().findOne({orderId: orderId})
     return res
   }
+
+  static async getByUserId(userId: string){
+    const agg = [
+        {
+            $match: {
+                userId: new ObjectId(userId)
+            }
+        },
+        {
+            '$lookup': {
+            'from': 'products', 
+            'localField': 'items.productId', 
+            'foreignField': '_id', 
+            'as': 'product'
+            }
+        }, {
+            '$lookup': {
+            'from': 'vendors', 
+            'localField': 'product.vendorId', 
+            'foreignField': '_id', 
+            'as': 'vendor'
+            }
+        }, {
+            '$project': {
+            'vendor.password': false, 
+            'vendor.role': false
+            }
+        } 
+    ];
+
+
+    const res = await this.collection().aggregate(agg).toArray()
+    return res
+  }
+  
 }

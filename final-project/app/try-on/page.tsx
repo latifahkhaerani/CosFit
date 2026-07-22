@@ -755,6 +755,10 @@ function TryOnContent() {
                 )}
               </div>
 
+              <div className="text-sm text-muted">
+                 This preview didnt match your exact body size, only for looks
+              </div>
+
               {aiResult && !isLoading && (
                 <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
                   <button

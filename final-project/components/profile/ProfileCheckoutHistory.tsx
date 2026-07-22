@@ -1,11 +1,11 @@
 "use client";
 
 import { Clock3 } from "lucide-react";
-import { GetCheckout } from "@/app/types";
+import { GetOrder } from "@/app/types";
 import CheckoutCard from "./CheckoutCard";
 
 type Props = {
-  checkout: GetCheckout[];
+  checkout: GetOrder[];
 };
 
 export default function ProfileCheckoutHistory({ checkout }: Props) {
@@ -54,16 +54,10 @@ export default function ProfileCheckoutHistory({ checkout }: Props) {
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
-            {checkout.map((item) => (
+            {checkout?.map((item) => (
               <CheckoutCard
                 key={item._id}
-                image={item.product.imgUrl}
-                character={item.product.title}
-                series={item.product.theme}
-                vendor={item.vendor?.namaToko || "CosFit Vendor"}
-                price={Number(item.product.originalPrice)}
-                status={item.status}
-                slug={item.product.slug}
+                order={item}
               />
             ))}
           </div>

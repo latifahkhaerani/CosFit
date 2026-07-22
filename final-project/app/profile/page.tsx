@@ -20,6 +20,7 @@ import ProfileSavedLooks from "@/components/profile/ProfileSavedLooks";
 import ProfileWishlist from "@/components/profile/ProfileWishlist";
 import {
   GetCheckout,
+  GetOrder,
   GetProduct,
   GetSavedLook,
   GetUserProfile,
@@ -38,7 +39,7 @@ export default function ProfilePage() {
   const [profileData, setProfileData] = useState<{
     profile?: GetUserProfile;
     wishlist: GetWishlist[];
-    checkout: GetCheckout[];
+    checkout: GetOrder[];
     products: GetProduct[];
     savedLooks: GetSavedLook[];
   }>({
@@ -58,7 +59,7 @@ export default function ProfilePage() {
           fetch("http://localhost:3000/api/user/wishlist", {
             cache: "no-store",
           }),
-          fetch("http://localhost:3000/api/user/checkout", {
+          fetch("http://localhost:3000/api/pay", {
             cache: "no-store",
           }),
           fetch("http://localhost:3000/api/user/product", {
@@ -81,7 +82,7 @@ export default function ProfilePage() {
         await Promise.all([
           profileRes.json() as Promise<GetUserProfile>,
           wishlistRes.json() as Promise<GetWishlist[]>,
-          checkoutRes.json() as Promise<GetCheckout[]>,
+          checkoutRes.json() as Promise<GetOrder[]>,
           productsRes.json() as Promise<GetProduct[]>,
           savedLooksRes.json() as Promise<GetSavedLook[]>,
         ]);
@@ -172,6 +173,8 @@ export default function ProfilePage() {
         return <ProfileOverview />;
     }
   };
+
+  console.log(previewCheckout);
 
   return (
     <main className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(255,244,238,0.55),transparent_28%),linear-gradient(180deg,#f8f4ef_0%,#fcfbf8_100%)]">
@@ -494,7 +497,6 @@ export default function ProfilePage() {
 
                       <div className="space-y-3">
                         {previewCheckout.map((item) => {
-                          const product = item.product;
 
                           return (
                             <div
@@ -504,10 +506,10 @@ export default function ProfilePage() {
                               <div className="relative h-20 w-16 shrink-0 overflow-hidden rounded-xl">
                                 <Image
                                   src={
-                                    product.imgUrl ||
+                                    item.product[0].imgUrl ||
                                     "/images/register-girl.png"
                                   }
-                                  alt={product.title}
+                                  alt={item.product[0].title}
                                   fill
                                   className="object-cover"
                                 />
@@ -516,18 +518,18 @@ export default function ProfilePage() {
                               <div className="min-w-0 flex-1">
                                 <div className="flex items-start justify-between gap-2">
                                   <h4 className="truncate font-semibold text-[#2f2723]">
-                                    {product.title}
+                                    {item.vendor[0].namaToko}
                                   </h4>
 
-                                  <StatusBadge status={item.status} />
+                                  {/* <StatusBadge status={item.status} /> */}
                                 </div>
 
                                 <p className="text-xs text-muted">
-                                  {product.theme}
+                                  {/* {product.theme} */}
                                 </p>
 
                                 <p className="mt-2 text-xs text-muted">
-                                  {item.vendor?.namaToko || "CosFit Vendor"}
+                                  {item.vendor[0].alamat || "CosFit Vendor"}
                                 </p>
                               </div>
                             </div>

@@ -37,12 +37,12 @@ export default async function RootLayout({
       lang="en"
       className={`${poppins.variable} ${inter.variable} h-full antialiased`}
     >
-      <Script
-        src="https://app.sandbox.midtrans.com/snap/snap.js"
-        data-client-key={process.env.MIDTRANS_CLIENT_KEY}
-        strategy="beforeInteractive"
-      />
       <body>
+        <Script
+          src="https://app.sandbox.midtrans.com/snap/snap.js"
+          data-client-key={process.env.MIDTRANS_CLIENT_KEY}
+          strategy="beforeInteractive"
+        />
         <ConditionalNavbar role={role}>
           {children}
         </ConditionalNavbar>

@@ -7,9 +7,21 @@ import errorHandler from "@/app/helpers/errorHandler";
 import { ObjectId } from "mongodb";
 import CheckoutModel from "@/db/models/checkoutModel";
 
+export async function GET(req: Request) {
+    try {
+        const userId = req.headers.get("x-user-id") as string;
+        const res = await OrderModel.getByUserId(userId)
+        return NextResponse.json(res)
+    } catch (error) {
+        return errorHandler(error)
+    }
+}
+
 export async function POST(req: Request) {
   try {
+    const userId = req.headers.get("x-user-id") as string;
     const body = await req.json();
+
 
     const items = [];
     let grossAmount = 0;
@@ -26,15 +38,14 @@ export async function POST(req: Request) {
       }
 
       grossAmount += product.finalPrice * cartItem.quantity;
-
+      console.log(product, cartItem.quantity);
       items.push({
-        productId: new ObjectId(product._id),
+        productId: product._id,
         price: product.finalPrice,
         quantity: cartItem.quantity,
         name: product.title,
       });
     }
-
 
     const orderId = crypto.randomUUID();
 
@@ -43,6 +54,7 @@ export async function POST(req: Request) {
       items: items,
       total: grossAmount,
       paymentStatus: "Pending",
+      userId: new ObjectId(userId)
     });
 
     const transaction = await snap.createTransaction({
