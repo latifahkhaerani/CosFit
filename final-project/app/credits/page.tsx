@@ -83,9 +83,6 @@ export default function CreditsPage() {
 
       <UsageHistory history={savedLooks} />
 
-      <FAQ />
-
-      <CreditsCTA />
     </main>
   );
 }

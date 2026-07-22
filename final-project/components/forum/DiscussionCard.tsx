@@ -77,9 +77,15 @@ export default function DiscussionCard({
           <h3 className="mt-2 text-xl font-bold text-gray-900 transition-colors group-hover:text-[#D64C4C]">
             {title}
           </h3>
-          <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-gray-600">
-            {description}
-          </p>
+          <div
+            className="prose prose-sm mt-2 max-w-none overflow-hidden text-gray-600"
+            style={{
+              display: "-webkit-box",
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: "vertical",
+            }}
+            dangerouslySetInnerHTML={{ __html: description }}
+          />
           
           {/* Footer Card (Tags & Stats) */}
           <div className="mt-6 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">

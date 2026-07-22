@@ -101,9 +101,17 @@ export default function CommentCard({ roomId, initialMessages, currentUser, imag
                   </button>
                 </div>
 
-                <p className="mt-4 whitespace-pre-line leading-8 text-(--text)">
-                  {chat.content}
-                </p>
+                <div
+                  className="
+                    prose prose-sm max-w-none
+                    [&>p:last-child]:mb-0
+                    [&>ul]:list-disc
+                    [&>ol]:list-decimal
+                    [&>ul]:ml-5
+                    [&>ol]:ml-5
+                  "
+                  dangerouslySetInnerHTML={{ __html: chat.content }}
+                />
 
                 <div className="mt-5 flex gap-6 text-sm text-muted-foreground">
                   <button className="flex items-center gap-2 transition-colors hover:text-primary">

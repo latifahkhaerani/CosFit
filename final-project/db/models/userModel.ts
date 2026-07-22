@@ -95,4 +95,9 @@ if (Date.now() - checkToken.claimedAt.getTime() < oneWeek) {
 const result = await this.collection().aggregate(agg).toArray()
 return result[0]
     }
+
+    static async topUpToken(userId: string, credit: number){
+      const res = await this.collection().updateOne({_id: new ObjectId(userId)}, {$inc:{token: +credit}})
+      return res
+    }
 }

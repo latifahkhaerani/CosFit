@@ -145,9 +145,14 @@ export default function ProductCard({
         <div className="flex flex-col">
           {hasDiscount ? (
             <>
+            <div className="flex items-center">
+              <span className="rounded-md bg-red-100 px-2.5 py-1 text-sm font-bold text-red-600">
+                Hemat {product.discount}%
+              </span>
               <span className="text-xs font-medium text-muted line-through opacity-75">
                 {formatProductPrice(Number(product.originalPrice), currency)}
               </span>
+            </div>
               <p className="text-2xl font-bold text-primary">
                 {formatProductPrice(
                   Number(product.finalPrice || product.originalPrice),
