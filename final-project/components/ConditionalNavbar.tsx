@@ -24,9 +24,7 @@ export default function ConditionalNavbar({
     return (
       <div className="flex min-h-screen">
         <VendorSidebar />
-        <main className="flex-1 overflow-x-hidden">
-          {children}
-        </main>
+        <main className="flex-1 overflow-x-hidden">{children}</main>
       </div>
     );
   }
