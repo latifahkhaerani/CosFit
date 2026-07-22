@@ -24,9 +24,15 @@ export async function PUT(req: Request) {
 
 export async function PATCH(req: Request) {
   const userId = req.headers.get("x-user-id") as string;
-  const body = await req.json();
+  
   try {
-    const result = await ProfileModel.patchProfile(body, userId);
+    const formData = await req.formData();
+    const file = formData.get("file") as File;
+
+    if (!file) {
+      return Response.json({ message: "No file uploaded" }, { status: 400 });
+    }
+    const result = await ProfileModel.patchProfile(file, userId);
     return Response.json(result);
   } catch (error) {
     errorHandler(error);

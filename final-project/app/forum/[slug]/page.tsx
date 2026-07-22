@@ -1,3 +1,4 @@
+
 import CommentCard from "@/components/forum/CommentCard";
 import CommentInput from "@/components/forum/CommentInput";
 import DiscussionBreadcrumb from "@/components/forum/DiscussionBreadcrumb";
@@ -8,6 +9,7 @@ import TopContributors from "@/components/forum/TopContributors";
 import { ArrowLeft, MessageCircle } from "lucide-react";
 import Link from "next/link";
 import { cookies } from "next/headers";
+import TrendingPosts from "@/components/forum/TrendingPosts";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -17,7 +19,11 @@ export default async function DiscussionPage({ params }: Props) {
   const { slug } = await params;
   const cookieStore = await cookies();
 
-  const res = await fetch(`http://localhost:3000/api/forum/${slug}`);
+  const res = await fetch(`http://localhost:3000/api/forum/${slug}`,{
+    headers: {
+      Cookie: cookieStore.toString(),
+    },
+  });
   if (!res.ok) return <main className="page-container py-20 text-center">Forum tidak ditemukan.</main>;
   const forumById = await res.json();
 
@@ -27,6 +33,7 @@ export default async function DiscussionPage({ params }: Props) {
     },
   });
   const chatData = await res2.json();
+  // console.log(chatData);
 
   return (
     <main className="page-container">
@@ -47,6 +54,7 @@ export default async function DiscussionPage({ params }: Props) {
           <CommentInput 
             forumId={forumById._id} 
             chatLength={chatData?.message?.length || 0} 
+            image={chatData?.image}
           />
 
           <div className="space-y-5">
@@ -55,6 +63,7 @@ export default async function DiscussionPage({ params }: Props) {
               roomId={forumById._id} 
               initialMessages={chatData?.message || []} 
               currentUser={chatData?.username || ""}
+              image={chatData?.image}
             />
             
             {(!chatData?.message || chatData.message.length === 0) && (
@@ -77,9 +86,7 @@ export default async function DiscussionPage({ params }: Props) {
 
         {/* RIGHT COLUMN */}
         <aside className="sticky top-6 h-fit space-y-6">
-          <DiscussionInfo />
-          <RelatedDiscussion />
-          <TopContributors />
+            <TrendingPosts/>
         </aside>
       </div>
     </main>

@@ -8,9 +8,10 @@ import { socket } from "@/socket";
 interface CommentInputProps {
   forumId: string;
   chatLength: number;
+  image: string
 }
 
-export default function CommentInput({ forumId, chatLength }: CommentInputProps) {
+export default function CommentInput({ forumId, chatLength, image }: CommentInputProps) {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [currentChatLength, setCurrentChatLength] = useState(chatLength);
@@ -86,7 +87,7 @@ export default function CommentInput({ forumId, chatLength }: CommentInputProps)
 
       <form onSubmit={handleSubmit} className="flex gap-4">
         <div className="relative h-12 w-12 shrink-0">
-          <Image src="/images/avatar1.jpg" alt="My Avatar" fill className="rounded-full object-cover" />
+          <Image src={image} alt="My Avatar" fill className="rounded-full object-cover" />
         </div>
 
         <div className="flex-1">

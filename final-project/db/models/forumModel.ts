@@ -1,21 +1,53 @@
 import { PostRoom } from "@/app/types";
 import { database } from "../config/mongodb";
-import { ObjectId } from "mongodb";
-import { put } from "@vercel/blob";
+import { ObjectId, Document } from "mongodb"; 
+import { put } from '@vercel/blob';
 
 export default class ForumModel {
   static collection() {
     return database.collection("forums");
   }
 
-  static async getAllForums() {
-    const agg = [
+  static async getAllForums(sortQuery: string | null, pageQuery: string | null) {
+    const limit = 5;
+    const page = parseInt(pageQuery || "1", 10) || 1;
+    const skip = (page - 1) * limit;
+
+    let sortStage: Record<string, 1 | -1> = { createdAt: -1 };
+    let matchStage: Record<string, any> | null = null;
+
+    switch (sortQuery) {
+      case "trending":
+        sortStage = { chatCount: -1, createdAt: -1 };
+        break;
+      case "most_like":
+        sortStage = { likeCount: -1, createdAt: -1 };
+        break;
+      case "unanswered":
+        matchStage = { chatCount: 0 };
+        sortStage = { createdAt: -1 };
+        break;
+      case "newest":
+      default:
+        sortStage = { createdAt: -1 };
+        break;
+    }
+
+    const agg: Document[] = [
       {
         $lookup: {
           from: "users",
           localField: "creatorId",
           foreignField: "_id",
           as: "userTemp",
+        },
+      },
+      {
+        $lookup: {
+          from: "chats",
+          localField: "_id",
+          foreignField: "roomId",
+          as: "chat",
         },
       },
       {
@@ -35,6 +67,14 @@ export default class ForumModel {
               else: { $arrayElemAt: ["$profileTemp", 0] },
             },
           },
+          likeCount: {
+            $ifNull: ["$like", 0],
+          },
+          chatCount: {
+            $size: {
+              $ifNull: ["$chat", []],
+            },
+          },
         },
       },
       {
@@ -44,32 +84,36 @@ export default class ForumModel {
           "creator.password": 0,
           "creator.email": 0,
         },
-      },
-      {
-        $sort: {
-          createdAt: -1,
-        },
-      },
+      }
     ];
+
+    if (matchStage) {
+      agg.push({ $match: matchStage });
+    }
+    agg.push({ $sort: sortStage });
+    agg.push({ $skip: skip });
+    agg.push({ $limit: limit });
+
     const forums = await this.collection().aggregate(agg).toArray();
     return forums;
   }
 
   static async createForum(forumData: PostRoom, UserId: string, img: File) {
     const blob = await put(img.name, img, {
-      access: "public",
-      addRandomSuffix: true,
+      access: 'public',
+      addRandomSuffix: true
     });
 
     const image = blob.url;
 
-    console.log(image);
     const result = await this.collection().insertOne({
       ...forumData,
       creatorId: new ObjectId(UserId),
       image,
       createdAt: new Date(),
+      likes: []
     });
+
     return "Forum created with ID: " + result.insertedId;
   }
 
@@ -79,19 +123,19 @@ export default class ForumModel {
   }
 
   static async getForumId(slug: string) {
-    const agg = [
+    const agg: Document[] = [
       {
         $match: {
-          slug: slug,
-        },
+          slug: slug
+        }
       },
       {
         $lookup: {
           from: "users",
           localField: "creatorId",
           foreignField: "_id",
-          as: "creator",
-        },
+          as: "creator"
+        }
       },
       {
         $project: {
@@ -104,16 +148,16 @@ export default class ForumModel {
           createdAt: 1,
           creatorId: 1,
           creator: {
-            $arrayElemAt: ["$creator", 0],
-          },
-        },
+            $arrayElemAt: ["$creator", 0]
+          }
+        }
       },
       {
         $project: {
           "creator.password": 0,
-          "creator.email": 0,
-        },
-      },
+          "creator.email": 0
+        }
+      }
     ];
 
     const cursor = this.collection().aggregate(agg);
@@ -121,4 +165,46 @@ export default class ForumModel {
 
     return forums[0];
   }
+
+  static async patchForum(userId: string, slug: string) {
+  const forum = await this.collection().findOne({ slug });
+
+  if (!forum) {
+    throw {
+      message: "Forum not found",
+      status: 404,
+    };
+  }
+
+  const userObjectId = new ObjectId(userId);
+
+  const isLiked = forum.like?.some((id: string) => id.toString() === userId);
+
+  if (isLiked) {
+    await this.collection().updateOne(
+      { slug },
+      {
+        $pull: {
+          likes: userObjectId,
+        },
+      } as any
+    );
+
+    return {
+      message: "Unlike success",
+    };
+  }
+
+  await this.collection().updateOne(
+    { slug },
+    {
+      $addToSet: {
+        likes: userObjectId,
+      },
+    }
+  );
+
+  return {
+    message: "Like success",
+  };
 }
