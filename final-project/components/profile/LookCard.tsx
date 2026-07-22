@@ -23,6 +23,7 @@ type LookCardProps = {
   onDelete?: () => void;
   onContinue?: () => void;
   onWishlist?: () => void;
+  onClick?: () => void;
 };
 
 export default function LookCard({
@@ -39,9 +40,13 @@ export default function LookCard({
   onDelete,
   onContinue,
   onWishlist,
+  onClick,
 }: LookCardProps) {
   return (
-    <div className="group overflow-hidden rounded-[30px] border border-[#efe4db] bg-white shadow-[0_8px_30px_rgba(15,23,42,0.06)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_45px_rgba(15,23,42,0.12)]">
+    <div
+      onClick={onClick}
+      className="cursor-pointer group overflow-hidden rounded-[30px] border border-[#efe4db] bg-white shadow-[0_8px_30px_rgba(15,23,42,0.06)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_45px_rgba(15,23,42,0.12)]"
+    >
       {/* IMAGE */}
       <div className="relative m-3 grid grid-cols-2 overflow-hidden rounded-2xl bg-[#faf8f6]">
         {/* BEFORE */}
@@ -65,7 +70,7 @@ export default function LookCard({
         </div>
 
         {/* STATUS */}
-        <button
+        {/* <button
           onClick={onWishlist}
           className="absolute right-3 top-3 z-20 flex h-8 w-8 items-center justify-center rounded-full border border-white/60 bg-white/90 shadow-lg backdrop-blur-md transition-all duration-200 hover:scale-105 hover:bg-white"
         >
@@ -77,7 +82,7 @@ export default function LookCard({
               // : "fill-transparent text-[#98A2B3]"
             }
           />
-        </button>
+        </button> */}
       </div>
 
       {/* CONTENT */}
@@ -145,7 +150,7 @@ export default function LookCard({
             </button>
           </div>
         ) : (
-          <div className="mt-6 grid grid-cols-2 gap-3">
+          <div className="mt-6 grid grid-cols-1 gap-3">
             <button
               onClick={onView}
               className="flex items-center justify-center gap-2 rounded-xl border border-[#efe4db] py-3 font-medium transition hover:bg-[#faf6f2]"
@@ -154,13 +159,13 @@ export default function LookCard({
               View
             </button>
 
-            <button
+            {/* <button
               onClick={onWishlist}
               className="flex items-center justify-center gap-2 rounded-xl border border-[#efe4db] py-3 font-medium transition hover:bg-[#faf6f2]"
             >
               <Heart size={16} />
               Wishlist
-            </button>
+            </button> */}
           </div>
         )}
       </div>

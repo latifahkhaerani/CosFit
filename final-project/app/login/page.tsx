@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import Image from "next/image";
 import Link from "next/link";
@@ -20,13 +20,13 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const route = useRouter()
+  const route = useRouter();
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
-    e.preventDefault()
-
+    e.preventDefault();
     try {
-      const response = await fetch(`/api/user/login`, {
+      const data = await fetch(`http://localhost:3000/api/user/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -34,18 +34,22 @@ export default function LoginPage() {
         body: JSON.stringify({ email, password }),
       });
 
-      const data = await response.json().catch(() => ({}));
-
-      if (!response.ok) {
-        throw new Error(data?.message || "Login failed");
+      if (!data.ok) {
+        const error = await data.json();
+        throw new Error(error.message);
       }
 
       route.push("/");
-      route.refresh();
     } catch (error) {
+      if (error instanceof Error) {
+        setErrorMessage(error.message);
+      } else {
+        setErrorMessage("Something went wrong.");
+      }
+
       errorHandler(error);
     }
-  }
+  };
 
   return (
     <main className="grid min-h-screen lg:grid-cols-2">
@@ -176,7 +180,9 @@ export default function LoginPage() {
                   type="email"
                   placeholder="Enter your email"
                   className="ml-3 w-full bg-transparent outline-none"
-                  onChange={(e) => {setEmail(e.target.value)}}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                  }}
                   value={email}
                 />
               </div>
@@ -194,12 +200,22 @@ export default function LoginPage() {
                   type="password"
                   placeholder="Enter password"
                   className="ml-3 w-full bg-transparent outline-none"
-                  onChange={(e) => {setPassword(e.target.value)}}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                  }}
                   value={password}
                 />
 
                 <Eye size={20} className="text-gray-400" />
               </div>
+
+              {errorMessage && (
+                <div className="mb-5 mt-5 rounded-2xl border border-red-200 bg-red-50 px-4 py-3">
+                  <p className="text-sm font-medium text-red-600">
+                    {errorMessage}
+                  </p>
+                </div>
+              )}
             </div>
 
             {/* Remember & Forgot */}
