@@ -7,7 +7,6 @@ export async function GET(req: Request, { params }: { params: Promise<{ roomId: 
         const userId = req.headers.get("x-user-id");
         
         const response = await ChatModel.getChatRoomId(roomId, userId)
-        console.log(response);
         return Response.json(response)
     } catch (error) {
         return errorHandler(error) 

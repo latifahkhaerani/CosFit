@@ -37,6 +37,8 @@ export default function DiscussionCard({
   verified = false,
   onLike,
 }: Props) {
+
+  console.log(description);
   return (
     <article className="group relative overflow-hidden rounded-2xl border border-white/80 bg-white/70 p-6 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-[#be2727]/30 hover:bg-white hover:shadow-[0_12px_30px_-4px_rgba(190,39,39,0.12)]">
       
