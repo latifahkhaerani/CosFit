@@ -12,6 +12,7 @@ export default function SidebarItem({ title, icon, active }: SidebarItemProps) {
     // logout logic
     await handleDeleteCookies()
     route.push("/")
+    route.refresh()
   };
 
   return title === "Logout" ? (

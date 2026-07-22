@@ -40,6 +40,7 @@ export default function LoginPage() {
       }
 
       route.push("/");
+      route.refresh();
     } catch (error) {
       if (error instanceof Error) {
         setErrorMessage(error.message);
