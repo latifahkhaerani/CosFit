@@ -92,18 +92,18 @@ export default class ProductModel {
     };
   }
 
-static async postProduct(productData: PostProduct, vendorId: string) {
-  const slug = generateSlug(productData.title, productData.theme);
+  static async postProduct(productData: PostProduct, vendorId: string) {
+    const slug = generateSlug(productData.title, ...productData.theme);
 
-  const result = await this.collection().insertOne({
-    ...productData,
-    discount: 0,
-    slug,
-    vendorId: new ObjectId(vendorId),
-  });
+    const result = await this.collection().insertOne({
+      ...productData,
+      discount: 0,
+      slug,
+      vendorId: new ObjectId(vendorId),
+    });
 
-  return "Product created with ID: " + result.insertedId;
-}
+    return "Product created with ID: " + result.insertedId;
+  }
 
   static async putProduct(productData: PostProduct, id: string) {
     const product = await this.collection().updateOne(
@@ -125,8 +125,11 @@ static async postProduct(productData: PostProduct, vendorId: string) {
     return `Product image of ${product.upsertedId} updated successfully`;
   }
 
-  static async addGaleryPhoto (imgUrl: string, id: string){
-    const product = await this.collection().updateOne({ _id: new ObjectId(id) },{ $push: { imgGalery: imgUrl } },);
+  static async addGaleryPhoto(imgUrl: string, id: string) {
+    const product = await this.collection().updateOne(
+      { _id: new ObjectId(id) },
+      { $push: { imgGalery: imgUrl } } as any,
+    );
     return `Product galery of ${product.upsertedId} updated successfully`;
   }
 
@@ -191,14 +194,14 @@ static async postProduct(productData: PostProduct, vendorId: string) {
   }
 
   static async getBySlug(slug: string) {
-  const product = await this.collection().findOne({
-    slug,
-  });
+    const product = await this.collection().findOne({
+      slug,
+    });
 
-  if (!product) {
-    throw { message: "Invalid Product" };
+    if (!product) {
+      throw { message: "Invalid Product" };
+    }
+
+    return product;
   }
-
-  return product;
-}
 }

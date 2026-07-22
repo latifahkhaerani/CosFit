@@ -1,5 +1,3 @@
-import { ObjectId } from "mongodb";
-
 // GET INTERFACE
 
 export interface GetUser {
@@ -74,9 +72,11 @@ export interface GetRoom {
 
 export interface GetOurEvent {
   _id: string;
+  slug: string;
   eventName: string;
   category: string;
   imgUrl: string;
+  creatorId?: string;
   forumId?: string;
   description: string;
   startDate?: string;
@@ -86,6 +86,7 @@ export interface GetOurEvent {
   externalLink?: string;
   eventType?: EventType;
   entries?: EventEntry[];
+  maxEntries?: number;
   status?: "upcoming" | "active" | "ended";
   createdAt?: string;
   updatedAt?: string;
@@ -190,6 +191,7 @@ export interface GetEvent {
   externalLink?: string;
   eventType: EventType;
   entries?: EventEntry[];
+  maxEntries?: number;
   status?: "upcoming" | "active" | "ended";
   createdAt?: string;
   updatedAt?: string;
@@ -200,6 +202,7 @@ export interface PostEvent {
   description: string;
   category?: string;
   imgUrl?: string;
+  creatorId?: string;
   forumId?: string;
   coverImage?: string;
   startDate: string;
@@ -214,8 +217,10 @@ export interface PostEvent {
 
 export interface PostOurEvent {
   eventName: string;
+  slug?: string;
   category: string;
   imgUrl: string;
+  creatorId?: string;
   forumId?: string;
   description: string;
   startDate?: string;
@@ -225,6 +230,7 @@ export interface PostOurEvent {
   externalLink?: string;
   eventType?: EventType;
   entries?: EventEntry[];
+  maxEntries?: number;
   status?: "upcoming" | "active" | "ended";
   updatedAt?: string;
 }
@@ -232,6 +238,8 @@ export interface PostOurEvent {
 export interface PostUserDesign {
   imgUrl: string;
   vote: number;
+  eventId: string;
+  entryTitle: string;
 }
 export interface PostVendor {
   namaToko: string;

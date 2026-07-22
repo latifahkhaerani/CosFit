@@ -1,6 +1,7 @@
 import EventForm from "@/components/admin/EventForm";
 import OurEventModel from "@/db/models/ourEventModel";
 import serializeEvent from "@/app/helpers/serializeEvent";
+import type { GetEvent } from "@/app/types";
 
 export const metadata = {
   title: "Edit Event | Admin",
@@ -19,7 +20,7 @@ export default async function EditEventPage({
   if (!rawData) {
     return (
       <div className="p-8 text-center text-slate-400">
-        <h1>Event tidak ditemukan.</h1>
+        <h1>Event not found.</h1>
       </div>
     );
   }
@@ -27,17 +28,28 @@ export default async function EditEventPage({
   // Format data menggunakan fungsi serialize milik Anda (untuk mengubah ObjectId menjadi string, dll)
   const event = serializeEvent(rawData);
 
-  // Map ke struktur GetEvent
-  const mappedEvent = {
+  const mappedEvent: GetEvent = {
     ...event,
     _id: String(event._id),
-    title: event.eventName ?? event.title ?? "",
-    coverImage: event.imgUrl ?? event.coverImage ?? "",
+    title: event.eventName ?? "",
+    description: event.description ?? "",
+    category: event.category ?? "",
+    coverImage: event.imgUrl ?? "",
+    startDate: event.startDate ?? "",
+    endDate: event.endDate,
+    locationName: event.locationName,
+    address: event.address,
+    externalLink: event.externalLink,
     eventType:
       event.eventType ??
       (event.category?.toLowerCase().includes("contest")
         ? "internal_contest"
         : "external_convention"),
+    entries: event.entries,
+    maxEntries: event.maxEntries,
+    status: event.status,
+    createdAt: event.createdAt,
+    updatedAt: event.updatedAt,
   };
 
   return (

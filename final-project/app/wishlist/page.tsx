@@ -114,7 +114,7 @@ export default async function WishlistPage() {
                 key={item._id}
                 image={product.imgUrl}
                 character={product.title}
-                series={product.theme}
+                series={product.theme.join(", ")}
                 vendor={item.vendor.namaToko}
                 vendorAvatar="/images/default-vendor.png"
                 price={Number(product.originalPrice)}

@@ -15,6 +15,7 @@ export interface EventsClientProps {
 
 const placeholderEvents: GetOurEvent[] = Array.from({ length: 4 }, (_, i) => ({
   _id: `event-${i}`,
+  slug: `event-${i}`,
   eventName: "",
   category: "",
   imgUrl: "",
@@ -33,8 +34,11 @@ export default function EventsClient({
   const [selectedCategory, setSelectedCategory] = useState(ALL_LABEL);
 
   const categories = useMemo(
-    () => Array.from(new Set(events.map((event) => event.category).filter(Boolean))),
-    [events]
+    () =>
+      Array.from(
+        new Set(events.map((event) => event.category).filter(Boolean)),
+      ),
+    [events],
   );
 
   const filteredEvents = useMemo(() => {

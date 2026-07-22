@@ -2,6 +2,8 @@ import AdminHomeEvents from "@/components/admin/AdminHomeEvents";
 import OurEventModel from "@/db/models/ourEventModel";
 import UserModel from "@/db/models/userModel";
 import serializeEvent from "@/app/helpers/serializeEvent";
+import VendorStatCard from "@/components/vendor/VendorStatCard";
+import { CalendarDays, CircleCheck, Users, Trophy } from "lucide-react";
 
 export default async function AdminHomePage() {
   // Fetch events
@@ -16,76 +18,66 @@ export default async function AdminHomePage() {
   });
 
   const totalEvents = events.length;
-  const now = Date.now();
 
-  // Filter untuk menghitung kontes aktif (Menggunakan eventType yang sudah disepakati)
-  const contestsActive = events.filter((ev) => {
-    if (ev.eventType !== "internal_contest") return false;
-
-    const start = ev.startDate ? new Date(ev.startDate).getTime() : null;
-    const end = ev.endDate ? new Date(ev.endDate).getTime() : null;
-
-    if (!start) return false;
-    if (end) return start <= now && now <= end;
-    return start <= now; // ongoing if started and no endDate
-  }).length;
+  const contestsActive = events.filter(
+    (ev) => ev.eventType === "internal_contest" && ev.status === "active",
+  ).length;
 
   // Fetch total users
   const userCount = await UserModel.collection().countDocuments();
 
   return (
-    <section className="space-y-6">
-      {/* Header Halaman */}
-      <div className="rounded-3xl border border-slate-800 bg-slate-900 p-6 md:p-8 shadow-sm">
-        <p className="text-sm font-medium text-slate-400">
-          Welcome back, Admin
-        </p>
-        <h1 className="mt-2 text-3xl font-bold text-slate-50">
-          Dashboard Overview
-        </h1>
-        <p className="mt-2 text-slate-400">
-          Review event performance, manage contests, and moderate entries.
-        </p>
-      </div>
-
-      {/* Kotak Statistik (Grid 3 Kolom) */}
-      <div className="grid gap-6 sm:grid-cols-3">
-        <div className="rounded-3xl border border-slate-800 bg-slate-900 p-6 shadow-sm">
-          <p className="text-xs uppercase tracking-[0.2em] text-slate-400">
-            Total Event
+    <section className="space-y-8">
+      <div className="card mb-8 flex items-center justify-between p-8">
+        <div>
+          <p className="text-sm font-medium uppercase tracking-[0.25em] text-muted">
+            Welcome back, Admin
           </p>
-          <p className="mt-3 text-4xl font-semibold text-slate-50">
-            {totalEvents}
+          <h1 className="mt-3 text-5xl font-bold leading-tight text-[var(--text)]">
+            Dashboard Overview
+          </h1>
+          <p className="mt-3 max-w-2xl text-lg text-muted">
+            Review event performance, manage contests, and monitor the platform
+            health from one place.
           </p>
-          <p className="mt-1 text-sm text-slate-500">Kontes & Convention</p>
-        </div>
-
-        <div className="rounded-3xl border border-slate-800 bg-slate-900 p-6 shadow-sm">
-          <p className="text-xs uppercase tracking-[0.2em] text-slate-400">
-            Kontes Aktif
-          </p>
-          <p className="mt-3 text-4xl font-semibold text-primary">
-            {contestsActive}
-          </p>
-          <p className="mt-1 text-sm text-slate-500">Sedang berlangsung</p>
-        </div>
-
-        <div className="rounded-3xl border border-slate-800 bg-slate-900 p-6 shadow-sm">
-          <p className="text-xs uppercase tracking-[0.2em] text-slate-400">
-            Total Pengguna
-          </p>
-          <p className="mt-3 text-4xl font-semibold text-slate-50">
-            {userCount}
-          </p>
-          <p className="mt-1 text-sm text-slate-500">User terdaftar</p>
         </div>
       </div>
 
-      {/* Tabel/Daftar Event */}
-      <div className="rounded-3xl border border-slate-800 bg-slate-900 p-6 shadow-sm">
-        <h2 className="mb-4 text-xl font-semibold text-slate-50">
-          Recent Events
-        </h2>
+      <div className="grid gap-6 xl:grid-cols-3">
+        <VendorStatCard
+          title="Total Event"
+          value={totalEvents}
+          growth="All active event records"
+          icon="calendar"
+          color="#B14744"
+        />
+
+        <VendorStatCard
+          title="Kontes Aktif"
+          value={contestsActive}
+          growth="Currently in progress"
+          icon="trophy"
+          color="#CC8857"
+        />
+
+        <VendorStatCard
+          title="Total Pengguna"
+          value={userCount}
+          growth="Registered users"
+          icon="users"
+          color="#16A34A"
+        />
+      </div>
+
+      <div className="card p-7">
+        <div className="mb-6 flex items-center justify-between gap-4">
+          <div>
+            <h2 className="card-title">Recent Events</h2>
+            <p className="card-subtitle">
+              Latest event updates and moderation queue
+            </p>
+          </div>
+        </div>
         <AdminHomeEvents events={events} />
       </div>
     </section>

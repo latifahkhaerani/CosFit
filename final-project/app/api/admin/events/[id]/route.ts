@@ -36,7 +36,14 @@ export async function PUT(
     const updatePayload: Partial<PostOurEvent> = {};
 
     // Support backward compatibility (eventName vs title, imgUrl vs coverImage)
-    if (body.title !== undefined) updatePayload.eventName = body.title;
+    if (body.title !== undefined) {
+      updatePayload.eventName = body.title;
+      updatePayload.slug = OurEventModel.slugify(body.title);
+    }
+    if (body.eventName !== undefined) {
+      updatePayload.eventName = body.eventName;
+      updatePayload.slug = OurEventModel.slugify(body.eventName);
+    }
     if (body.description !== undefined)
       updatePayload.description = body.description;
     if (body.coverImage !== undefined) updatePayload.imgUrl = body.coverImage;
@@ -66,6 +73,10 @@ export async function PUT(
 
     // Field spesifik Internal Contest
     if (body.entries !== undefined) updatePayload.entries = body.entries;
+    if (body.maxEntries !== undefined) {
+      updatePayload.maxEntries =
+        body.maxEntries === "" ? undefined : Number(body.maxEntries);
+    }
     if (body.status !== undefined) updatePayload.status = body.status;
 
     // Catat waktu pembaruan

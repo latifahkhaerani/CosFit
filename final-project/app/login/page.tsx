@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import { SubmitEvent, useState } from "react";
 import errorHandler from "../helpers/errorHandler";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -39,7 +39,10 @@ export default function LoginPage() {
         throw new Error(error.message);
       }
 
-      route.push("/");
+      const result = await data.json().catch(() => ({}));
+      const redirectPath = result.role === "Admin" ? "/admin" : "/";
+
+      route.push(redirectPath);
       route.refresh();
     } catch (error) {
       if (error instanceof Error) {

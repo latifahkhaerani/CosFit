@@ -15,8 +15,9 @@ export default function ConditionalNavbar({
   role: string | null;
 }) {
   const pathname = usePathname();
+  const isAdminRoute = pathname.startsWith("/admin");
 
-  if (HIDDEN_ON.includes(pathname)) {
+  if (HIDDEN_ON.includes(pathname) || isAdminRoute) {
     return <>{children}</>;
   }
 

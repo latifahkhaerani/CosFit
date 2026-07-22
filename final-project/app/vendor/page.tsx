@@ -1,18 +1,14 @@
 "use client";
 import VendorProductRow from "@/components/vendor/VendorProductRow";
 import VendorStatCard from "@/components/vendor/VendorStatCard";
-import {
-  CircleCheck,
-  Plus,
-} from "lucide-react";
+import { CircleCheck, Plus } from "lucide-react";
 import { useEffect, useState } from "react";
 import { GetProduct, GetVendor } from "../types";
 import Link from "next/link";
 
 export default function VendorDashboard() {
-
-  const [vendor, setVendor] = useState<GetVendor>()
-  const [vendorProd, setVendorProd] = useState<GetProduct[]>([])
+  const [vendor, setVendor] = useState<GetVendor>();
+  const [vendorProd, setVendorProd] = useState<GetProduct[]>([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
@@ -20,22 +16,23 @@ export default function VendorDashboard() {
     const fetchingVendorProfile = async () => {
       const response = await fetch("http://localhost:3000/api/vendor/profile");
       const dataVendor: GetVendor = await response.json();
-      setVendor(dataVendor)
-    }
-    fetchingVendorProfile()
-  }, [])
+      setVendor(dataVendor);
+    };
+    fetchingVendorProfile();
+  }, []);
 
   useEffect(() => {
     const fetchingVendorProduct = async () => {
-      const response = await fetch(`http://localhost:3000/api/vendor/product?page=${page}&limit=5`)
+      const response = await fetch(
+        `http://localhost:3000/api/vendor/product?page=${page}&limit=5`,
+      );
       const data = await response.json();
 
       setVendorProd(data.data);
       setTotalPages(data.totalPages);
-    }
-    fetchingVendorProduct()
-  }, [page])
-  
+    };
+    fetchingVendorProduct();
+  }, [page]);
 
   return (
     <main className="flex min-h-screen bg-(--background)">
@@ -43,10 +40,7 @@ export default function VendorDashboard() {
         {/* Top */}
 
         <div className="mb-8 flex items-center justify-between">
-          
-
           <div className="flex items-center gap-5">
-
             <Link href={"/vendor/create-prod"}>
               <button className="primary-btn flex items-center gap-2">
                 <Plus size={18} />
@@ -74,14 +68,13 @@ export default function VendorDashboard() {
 
         {/* Statistics */}
 
-
-          <VendorStatCard
-            title="Completed Rentals"
-            value={56}
-            growth="+15% from last month"
-            icon={CircleCheck}
-            color="#16A34A"
-          />
+        <VendorStatCard
+          title="Completed Rentals"
+          value={56}
+          growth="+15% from last month"
+          icon="check"
+          color="#16A34A"
+        />
 
         <div className="mt-8">
           {/* LEFT */}
@@ -110,19 +103,22 @@ export default function VendorDashboard() {
               <tbody>
                 {vendorProd.map((el, idx) => {
                   return (
-                    <VendorProductRow key={idx}
-                    image={el.imgUrl}
-                    character={el.title}
-                    series={el.theme}
-                    originalPrice={+el.originalPrice}
-                    finalPrice={el.finalPrice}
-                    discount={el.discount}
-                    views={el.views?? 0}
-                    wishlist={el.wishlists.length}
-                    id={el.slug}
-                    stock={el.stock}
+                    <VendorProductRow
+                      key={idx}
+                      image={el.imgUrl}
+                      character={el.title}
+                      series={el.theme.join(", ")}
+                      originalPrice={+el.originalPrice}
+                      finalPrice={el.finalPrice}
+                      discount={el.discount}
+                      availability="Available"
+                      rental="Available"
+                      views={el.views ?? 0}
+                      wishlist={el.wishlists.length}
+                      id={el.slug}
+                      stock={el.stock}
                     />
-                  )
+                  );
                 })}
               </tbody>
             </table>
