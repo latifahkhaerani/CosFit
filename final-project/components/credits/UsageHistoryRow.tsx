@@ -9,6 +9,7 @@ type Props = {
   costume: string;
   character: string;
   credit: number;
+  status: string;
 };
 
 export default function UsageHistoryRow({
@@ -20,76 +21,38 @@ export default function UsageHistoryRow({
 }: Props) {
   return (
     <tr className="border-t border-[var(--border)] transition hover:bg-[#FCFBFA]">
-
-      <td className="py-5 text-sm text-[var(--muted)]">
-
-        {date}
-
-      </td>
+      <td className="py-5 text-sm text-[var(--muted)]">{date}</td>
 
       <td>
-
         <div className="flex items-center gap-4">
-
           <Image
             src={image}
             alt={costume}
             width={58}
             height={58}
-            className="rounded-2xl object-cover"
+            className="rounded-2xl py-2 object-cover"
           />
 
           <div>
+            <h4 className="font-semibold">{costume}</h4>
 
-            <h4 className="font-semibold">
-
-              {costume}
-
-            </h4>
-
-            <p className="text-sm text-[var(--muted)]">
-
-              AI Try-On
-
-            </p>
-
+            <p className="text-sm text-[var(--muted)]">AI Try-On</p>
           </div>
-
         </div>
+      </td>
 
+      <td>{character}</td>
+
+      <td>
+        <span className="font-semibold text-left">-{credit}</span>
       </td>
 
       <td>
-
-        {character}
-
-      </td>
-
-      <td>
-
-        <span className="font-semibold">
-
-          -{credit}
-
-        </span>
-
-      </td>
-
-      <td>
-
         <span className="badge-success">
-
-          <CheckCircle2
-            size={13}
-            className="mr-1"
-          />
-
+          <CheckCircle2 size={13} className="mr-1" />
           Completed
-
         </span>
-
       </td>
-
     </tr>
   );
 }

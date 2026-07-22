@@ -45,8 +45,8 @@ export interface GetCheckout {
   productId: string;
   userId: string;
   status: string;
-  product: GetProduct; //added this to aggregate
-  vendor: GetVendor; //added this to aggregate
+  product: GetProduct; 
+  vendor: GetVendor; 
 }
 
 export interface GetInputImage {

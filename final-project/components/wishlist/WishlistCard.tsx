@@ -157,7 +157,7 @@ export default function WishlistCard({
 
         <div className="mt-auto grid grid-cols-2 gap-2.5">
           <Link
-            href="/try-on"
+            href={`/try-on?productId=${productSlug}`}
             onClick={(e) => e.stopPropagation()}
             className="flex items-center justify-center gap-2 rounded-xl border border-[#B14744] py-2 text-sm font-medium text-[#B14744] transition hover:bg-[#FFF3EF]"
           >

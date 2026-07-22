@@ -157,7 +157,7 @@ export default function ProfilePage() {
 
   const renderActiveSection = () => {
     switch (activeSection) {
-      case "Saved Looks":
+      case "Generated Looks":
         return <ProfileSavedLooks savedLooks={savedLooks} />;
       case "Wishlist":
         return (
@@ -223,13 +223,13 @@ export default function ProfilePage() {
 
               <button
                 type="button"
-                onClick={() => setActiveSection("Saved Looks")}
+                onClick={() => setActiveSection("Generated Looks")}
                 className="w-full"
               >
                 <SidebarItem
-                  active={activeSection === "Saved Looks"}
+                  active={activeSection === "Generated Looks"}
                   icon={<Sparkles size={18} />}
-                  title={"Saved Looks"}
+                  title={"Generated Looks"}
                 />
               </button>
 
@@ -330,7 +330,7 @@ export default function ProfilePage() {
                       <div className="mb-5 flex items-start justify-between gap-4">
                         <div>
                           <h3 className="text-xl font-semibold text-[#1f1a17]">
-                            Saved Looks
+                            Generated Looks
                           </h3>
 
                           <p className="mt-1 text-sm text-muted">
@@ -339,7 +339,7 @@ export default function ProfilePage() {
                         </div>
 
                         <button
-                          onClick={() => setActiveSection("Saved Looks")}
+                          onClick={() => setActiveSection("Generated Looks")}
                           className="text-sm font-medium text-primary transition hover:text-[#bc5f2f]"
                         >
                           View All →
@@ -395,7 +395,7 @@ export default function ProfilePage() {
                         <div className="flex items-center justify-between">
                           <div>
                             <p className="text-sm text-muted">
-                              Total Saved Looks
+                              Total Generated Looks
                             </p>
 
                             <h3 className="text-2xl font-semibold text-[#1f1a17]">
@@ -404,7 +404,7 @@ export default function ProfilePage() {
                           </div>
 
                           <button
-                            onClick={() => setActiveSection("Saved Looks")}
+                            onClick={() => setActiveSection("Generated Looks")}
                             className="rounded-2xl bg-primary px-4 py-2 text-sm font-medium text-white"
                           >
                             View All
