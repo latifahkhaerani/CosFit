@@ -7,7 +7,7 @@ import { ShoppingBag } from "lucide-react";
 type Props = {
   image: string;
   character: string;
-  series: string;
+  series: string | string[];
   vendor: string;
   price: number;
   status: string;
@@ -29,6 +29,8 @@ export default function CheckoutCard({
       : status === "returned"
         ? "bg-blue-100 text-blue-700"
         : "bg-orange-100 text-orange-700";
+
+  const seriesLabel = Array.isArray(series) ? series.join(", ") : series;
 
   return (
     <Link
@@ -56,11 +58,15 @@ export default function CheckoutCard({
           <h3 className="line-clamp-1 text-base font-semibold text-[#4D565C]">
             {character}
           </h3>
-
-          <p className="line-clamp-1 text-sm text-muted">{series}</p>
         </div>
 
         <div>
+          <p className="line-clamp-1 text-sm text-muted">
+            {seriesLabel || "Series"}
+          </p>
+          <p className="line-clamp-1 text-sm text-muted">
+            {seriesLabel || "Series"}
+          </p>
           <p className="text-sm">{vendor}</p>
         </div>
 

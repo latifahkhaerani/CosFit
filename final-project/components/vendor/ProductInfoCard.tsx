@@ -2,30 +2,23 @@
 
 import errorHandler from "@/app/helpers/errorHandler";
 import { GetProduct } from "@/app/types";
-import {
-  Coins,
-  Boxes,
-  TypeOutline,
-  Palette,
-  Ruler,
-} from "lucide-react";
+import { Coins, Boxes, TypeOutline, Palette, Ruler } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { SubmitEvent, useEffect, useState } from "react";
 import DescriptionEditor from "../DescriptionEditor";
 import ThemeCombobox from "../ThemeCombobox";
 
-export default function ProductInfoCard({product}: {product: GetProduct}) {
-
+export default function ProductInfoCard({ product }: { product: GetProduct }) {
   // const [imgUrl, setImgUrl] = useState<File | string>("")
-  const [isEdit, setIsEdit] = useState(false)
-  const [desc, setDesc] = useState(product.desc)
-  const [size, setSize] = useState(product.size)
-  const [themes, setThemes] = useState<string[]>(product.theme ?? [])
-  const [title, setTitle] = useState(product.title)
-  const [originalPrice, setOriginalPrice] = useState(product.originalPrice)
-  const [stock, setStock] = useState(product.stock)
-  const [discount, setDiscount] = useState(product.discount)
-  const [finalPrice, setFinalPrice] = useState(product.finalPrice)
+  const [isEdit, setIsEdit] = useState(false);
+  const [desc, setDesc] = useState(product.desc);
+  const [size, setSize] = useState(product.size);
+  const [themes, setThemes] = useState<string[]>(product.theme ?? []);
+  const [title, setTitle] = useState(product.title);
+  const [originalPrice, setOriginalPrice] = useState(product.originalPrice);
+  const [stock, setStock] = useState(product.stock);
+  const [discount, setDiscount] = useState(product.discount);
+  const [finalPrice, setFinalPrice] = useState(product.finalPrice);
 
   const [themeOptions, setThemeOptions] = useState([
     "Anime",
@@ -35,59 +28,79 @@ export default function ProductInfoCard({product}: {product: GetProduct}) {
     "School",
   ]);
 
-  const route = useRouter()
+  const route = useRouter();
 
   const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
-    e.preventDefault()
+    e.preventDefault();
     try {
-      if(!discount){
-        setFinalPrice(originalPrice)
+      if (!discount) {
+        setFinalPrice(originalPrice);
       }
-      const res =await fetch(`http://localhost:3000/api/user/product/${product._id}/edit`, {
-        method: "PATCH",  
-        headers: {
-          'Content-Type':'application/json'
+      const res = await fetch(
+        `http://localhost:3000/api/user/product/${product._id}/edit`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            desc,
+            size,
+            theme: themes,
+            originalPrice,
+            stock,
+            finalPrice,
+            discount,
+          }),
         },
-        body: JSON.stringify({desc, size, theme: themes, originalPrice, stock, finalPrice, discount})
-      })
-      
-      setIsEdit(false)
-      route.push(`/vendor/product/${product.slug}`)
+      );
+
+      setIsEdit(false);
+      route.push(`/vendor/product/${product.slug}`);
     } catch (error) {
-      errorHandler(error)
+      errorHandler(error);
     }
-  }
+  };
 
   useEffect(() => {
-    const priceCalc = +originalPrice - (+originalPrice * +discount / 100)
-    setFinalPrice(priceCalc)
-  }, [discount])
+    const priceCalc = +originalPrice - (+originalPrice * +discount) / 100;
+    setFinalPrice(priceCalc);
+  }, [discount]);
 
   return (
     <section className="card p-7">
       <div className="gap-5 flex">
-        <button className="secondary-btn" onClick={() => {setIsEdit(true)}}>Edit</button>
-        <button className="secondary-btn" onClick={() => {setIsEdit(false)}}>Cancel</button>
+        <button
+          className="secondary-btn"
+          onClick={() => {
+            setIsEdit(true);
+          }}
+        >
+          Edit
+        </button>
+        <button
+          className="secondary-btn"
+          onClick={() => {
+            setIsEdit(false);
+          }}
+        >
+          Cancel
+        </button>
       </div>
 
       {/* Header */}
 
       <div className="mb-8">
-
-        <h2 className="card-title">
-          Product Information
-        </h2>
+        <h2 className="card-title">Product Information</h2>
 
         <p className="card-subtitle">
           Rental settings and size specifications.
         </p>
-
       </div>
 
       {/* Information */}
-      {!isEdit? (
+      {!isEdit ? (
         <div className="space-y-5">
-
           <InfoItem
             icon={<TypeOutline size={18} />}
             title="Title"
@@ -113,11 +126,7 @@ export default function ProductInfoCard({product}: {product: GetProduct}) {
             value={stock + ""}
           />
 
-          <InfoItem
-            icon={<Ruler size={18} />}
-            title="Size"
-            value={size}
-          />
+          <InfoItem icon={<Ruler size={18} />} title="Size" value={size} />
 
           <InfoItem
             icon={<Coins size={18} />}
@@ -128,7 +137,7 @@ export default function ProductInfoCard({product}: {product: GetProduct}) {
           <InfoItem
             icon={<Coins size={18} />}
             title="Discount"
-            value={(discount?? 0) + ""}
+            value={(discount ?? 0) + ""}
           />
 
           <InfoItem
@@ -137,12 +146,20 @@ export default function ProductInfoCard({product}: {product: GetProduct}) {
             value={(finalPrice ?? 0) + ""}
           />
         </div>
-
-      ): (
+      ) : (
         <div>
           <form onSubmit={handleSubmit}>
             <Field label="Product Name" htmlFor="nameForum">
-            <input id="nameForum" required className="input-soft w-full" placeholder="e.g. Yae Miko XL" value={title} onChange={(e) => {setTitle(e.target.value)}}/>
+              <input
+                id="nameForum"
+                required
+                className="input-soft w-full"
+                placeholder="e.g. Yae Miko XL"
+                value={title}
+                onChange={(e) => {
+                  setTitle(e.target.value);
+                }}
+              />
             </Field>
             <Field label="Theme" htmlFor="Theme">
               <ThemeCombobox
@@ -153,31 +170,71 @@ export default function ProductInfoCard({product}: {product: GetProduct}) {
               />
             </Field>
             <Field label="Description" htmlFor="desc">
-            <DescriptionEditor
-              value={desc}
-              onChange={setDesc}
-            />
+              <DescriptionEditor value={desc} onChange={setDesc} />
             </Field>
             <Field label="Stock" htmlFor="Stock">
-            <input id="Stock" required className="input-soft w-full" placeholder="e.g. Yae Miko XL" value={stock} onChange={(e) => {setStock(+e.target.value)}}/>
+              <input
+                id="Stock"
+                required
+                className="input-soft w-full"
+                placeholder="e.g. Yae Miko XL"
+                value={stock}
+                onChange={(e) => {
+                  setStock(+e.target.value);
+                }}
+              />
             </Field>
             <Field label="Size" htmlFor="Size">
-            <input id="Size" required className="input-soft w-full" placeholder="e.g. Yae Miko XL" value={size} onChange={(e) => {setSize(+e.target.value)}}/>
+              <input
+                id="Size"
+                required
+                className="input-soft w-full"
+                placeholder="e.g. Yae Miko XL"
+                value={size}
+                onChange={(e) => {
+                  setSize(e.target.value);
+                }}
+              />
             </Field>
             <Field label="Original Price" htmlFor="Original Price">
-            <input id="Original Price" required className="input-soft w-full" placeholder="e.g. Yae Miko XL" value={originalPrice} onChange={(e) => {setOriginalPrice(+e.target.value)}}/>
+              <input
+                id="Original Price"
+                required
+                className="input-soft w-full"
+                placeholder="e.g. Yae Miko XL"
+                value={originalPrice}
+                onChange={(e) => {
+                  setOriginalPrice(+e.target.value);
+                }}
+              />
             </Field>
             <Field label="Discount" htmlFor="Discount">
-            <input id="Discount" required className="input-soft w-full" placeholder="e.g. Yae Miko XL" value={discount?? 0} onChange={(e) => {setDiscount(+e.target.value)}}/>
+              <input
+                id="Discount"
+                required
+                className="input-soft w-full"
+                placeholder="e.g. Yae Miko XL"
+                value={discount ?? 0}
+                onChange={(e) => {
+                  setDiscount(+e.target.value);
+                }}
+              />
             </Field>
             <Field label="Final Price" htmlFor="Final Price">
-            <input id="Final Price" required className="input-soft w-full" placeholder={(finalPrice?? 0) + ""} readOnly/>
+              <input
+                id="Final Price"
+                required
+                className="input-soft w-full"
+                placeholder={(finalPrice ?? 0) + ""}
+                readOnly
+              />
             </Field>
-            <button className="secondary-btn" type="submit">Submit</button>
+            <button className="secondary-btn" type="submit">
+              Submit
+            </button>
           </form>
         </div>
       )}
-
     </section>
   );
 }
@@ -237,9 +294,7 @@ function InfoItem({
               <p>{value}</p>
 
               {subtitle && (
-                <p className="text-xs text-[var(--muted)]">
-                  {subtitle}
-                </p>
+                <p className="text-xs text-[var(--muted)]">{subtitle}</p>
               )}
             </div>
           )}
@@ -249,10 +304,28 @@ function InfoItem({
   );
 }
 
-function Field({ label, htmlFor, icon, hint, children }: { label: string; htmlFor: string; icon?: React.ReactNode; hint?: string; children: React.ReactNode }) {
+function Field({
+  label,
+  htmlFor,
+  icon,
+  hint,
+  children,
+}: {
+  label: string;
+  htmlFor: string;
+  icon?: React.ReactNode;
+  hint?: string;
+  children: React.ReactNode;
+}) {
   return (
     <div>
-      <label htmlFor={htmlFor} className="mb-2 flex items-center gap-2 font-semibold text-[var(--text)]">{icon}{label}</label>
+      <label
+        htmlFor={htmlFor}
+        className="mb-2 flex items-center gap-2 font-semibold text-[var(--text)]"
+      >
+        {icon}
+        {label}
+      </label>
       {children}
       {hint ? <p className="mt-2 text-sm text-[var(--muted)]">{hint}</p> : null}
     </div>

@@ -15,7 +15,7 @@ import Link from "next/link";
 type WishlistCardProps = {
   image: string;
   character: string;
-  series: string;
+  series: string | string[];
   vendor: string;
   vendorAvatar: string;
   price: number;
@@ -48,19 +48,20 @@ export default function WishlistCard({
   onRemoved,
 }: WishlistCardProps) {
   const router = useRouter();
+  const seriesLabel = Array.isArray(series) ? series.join(", ") : series;
 
-async function handleRemove() {
-  const res = await fetch(`/api/user/wishlist/${wishlistId}`, {
-    method: "DELETE",
-  });
+  async function handleRemove() {
+    const res = await fetch(`/api/user/wishlist/${wishlistId}`, {
+      method: "DELETE",
+    });
 
-  if (!res.ok) {
-    console.error(await res.text());
-    return;
+    if (!res.ok) {
+      console.error(await res.text());
+      return;
+    }
+
+    await onRemoved?.();
   }
-
-  await onRemoved?.();
-}
 
   async function handleCheckout() {
     await fetch("/api/user/checkout", {
@@ -132,7 +133,7 @@ async function handleRemove() {
             </h3>
 
             <p className="mt-0.5 line-clamp-1 text-sm text-gray-500">
-              {series}
+              {seriesLabel || "Series"}
             </p>
           </div>
         </div>

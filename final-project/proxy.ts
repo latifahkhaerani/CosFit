@@ -14,7 +14,7 @@ export async function proxy(request: Request) {
     requestHeaders.set("x-pathname", pathname);
 
     const cookieStore = await cookies();
-    const authToken = cookieStore.get("Authorization");    
+    const authToken = cookieStore.get("Authorization");
 
     let decoded:
       | {
@@ -41,8 +41,6 @@ export async function proxy(request: Request) {
       }
     }
 
-
-    
     // Protected routes
     const isProtectedRoute =
       pathname === "/profile" ||
@@ -52,10 +50,11 @@ export async function proxy(request: Request) {
       pathname.startsWith("/api/user/wishlist") ||
       pathname.startsWith("/api/user/checkout") ||
       pathname.startsWith("/api/chat") ||
+      pathname === "/api/userDesign" ||
       pathname === "/api/user/try-on" ||
       pathname === "/api/user/history";
 
-      // Public routes (no login required)
+    // Public routes (no login required)
     const isPublicRoute =
       pathname === "/" ||
       pathname === "/login" ||
@@ -65,7 +64,7 @@ export async function proxy(request: Request) {
       pathname === "/api/user/register" ||
       pathname === "/api/user/login" ||
       pathname === "/api/vendor/register" ||
-      pathname === "/api/vendor/login"||
+      pathname === "/api/vendor/login" ||
       pathname === "/api/forum" ||
       pathname === "/api/forum/:slug";
 
@@ -88,8 +87,7 @@ export async function proxy(request: Request) {
     // Vendor-only routes
     if (
       decoded &&
-      (pathname.startsWith("/vendor") ||
-        pathname.startsWith("/api/vendor")) &&
+      (pathname.startsWith("/vendor") || pathname.startsWith("/api/vendor")) &&
       decoded.role !== "Vendor"
     ) {
       throw {
@@ -131,7 +129,5 @@ export async function proxy(request: Request) {
 }
 
 export const config = {
-  matcher: [
-    "/((?!_next/static|_next/image|favicon.ico).*)",
-  ],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
 };

@@ -1,21 +1,36 @@
 "use client";
-import { LucideIcon, TrendingUp } from "lucide-react";
+import {
+  CalendarDays,
+  CircleCheck,
+  TrendingUp,
+  Trophy,
+  Users,
+} from "lucide-react";
 
 type Props = {
   title: string;
   value: string | number;
   growth: string;
-  icon: LucideIcon;
+  icon: "calendar" | "trophy" | "users" | "check";
   color: string;
+};
+
+const ICONS = {
+  calendar: CalendarDays,
+  trophy: Trophy,
+  users: Users,
+  check: CircleCheck,
 };
 
 export default function VendorStatCard({
   title,
   value,
   growth,
-  icon: Icon,
+  icon,
   color,
 }: Props) {
+  const Icon = ICONS[icon] ?? CalendarDays;
+
   return (
     <div className="card group relative overflow-hidden p-6 hover:-translate-y-1 transition-all duration-300">
       <div
@@ -45,7 +60,6 @@ export default function VendorStatCard({
             color,
           }}
         >
-          
           <Icon size={26} />
         </div>
       </div>

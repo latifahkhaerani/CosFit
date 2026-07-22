@@ -19,6 +19,7 @@ interface AdminEventFormData {
   locationName: string;
   address: string;
   externalLink: string;
+  maxEntries: string;
   status: "upcoming" | "active" | "ended";
 }
 
@@ -31,6 +32,8 @@ export default function EventForm({ initialData }: EventFormProps) {
   const isEditMode = !!initialData;
 
   const [isLoading, setIsLoading] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [selectedCoverFile, setSelectedCoverFile] = useState<File | null>(null);
 
   const [startDate, setStartDate] = useState<Date | null>(
     initialData?.startDate ? new Date(initialData.startDate) : null,
@@ -54,9 +57,16 @@ export default function EventForm({ initialData }: EventFormProps) {
     locationName: initialData?.locationName || "",
     address: initialData?.address || "",
     externalLink: initialData?.externalLink || "",
+    maxEntries:
+      initialData?.maxEntries !== undefined
+        ? String(initialData.maxEntries)
+        : "",
     // Khusus Internal Contest
     status: initialData?.status || "upcoming",
   });
+
+  const currentCoverImage =
+    formData.coverImage || initialData?.coverImage || "";
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -78,15 +88,46 @@ export default function EventForm({ initialData }: EventFormProps) {
     setIsLoading(true);
 
     try {
+      let coverImageUrl = formData.coverImage;
+
+      if (selectedCoverFile) {
+        setUploadingImage(true);
+        const uploadForm = new FormData();
+        console.log(selectedCoverFile);
+        uploadForm.append("image", selectedCoverFile);
+
+        const uploadRes = await fetch("/api/admin/events/upload", {
+          method: "POST",
+          body: uploadForm,
+        });
+
+        if (!uploadRes.ok) {
+          const err = await uploadRes.json();
+          throw new Error(err.message || "Gagal upload cover image");
+        }
+
+        const uploadData = await uploadRes.json();
+        coverImageUrl = uploadData.url;
+        setFormData((prev) => ({
+          ...prev,
+          coverImage: uploadData.url,
+        }));
+      }
+
       const url = isEditMode
-        ? `/api/admin/events/${initialData._id}`
+        ? `/api/admin/events/${initialData?._id}`
         : `/api/admin/events`;
       const method = isEditMode ? "PUT" : "POST";
+
+      const payload = {
+        ...formData,
+        coverImage: coverImageUrl,
+      };
 
       const res = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(payload),
       });
 
       if (!res.ok) {
@@ -101,6 +142,7 @@ export default function EventForm({ initialData }: EventFormProps) {
       console.error(error);
       alert(error instanceof Error ? error.message : "Gagal menyimpan event");
     } finally {
+      setUploadingImage(false);
       setIsLoading(false);
     }
   };
@@ -108,17 +150,17 @@ export default function EventForm({ initialData }: EventFormProps) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="space-y-8 rounded-3xl border border-slate-800 bg-slate-900 p-6 md:p-8 shadow-sm"
+      className="space-y-8 rounded-3xl border border-border bg-surface p-6 md:p-8 shadow-card"
     >
-      <div className="flex items-center justify-between border-b border-slate-800 pb-6">
+      <div className="flex items-center justify-between border-b border-border pb-6">
         <div className="flex items-center gap-4">
           <Link
             href="/admin/events"
-            className="rounded-full bg-slate-800 p-2 text-slate-400 transition hover:text-slate-50"
+            className="rounded-full bg-background p-2 text-muted transition hover:text-foreground"
           >
             <ArrowLeft className="h-5 w-5" />
           </Link>
-          <h2 className="text-2xl font-semibold text-slate-50">
+          <h2 className="text-2xl font-semibold text-foreground">
             {isEditMode ? "Edit Event" : "Create New Event"}
           </h2>
         </div>
@@ -128,14 +170,14 @@ export default function EventForm({ initialData }: EventFormProps) {
         {/* Kolom Kiri: Info Utama */}
         <div className="space-y-5">
           <div>
-            <label className="mb-2 block text-sm font-medium text-slate-400">
+            <label className="mb-2 block text-sm font-medium text-muted">
               Tipe Event
             </label>
             <select
               name="eventType"
               value={formData.eventType}
               onChange={handleChange}
-              className="w-full rounded-xl border border-slate-800 bg-slate-950 p-3 text-sm text-slate-300 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+              className="w-full rounded-xl border border-border bg-white p-3 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
             >
               <option value="internal_contest">
                 Internal Contest (Vote Karya)
@@ -147,7 +189,7 @@ export default function EventForm({ initialData }: EventFormProps) {
           </div>
 
           <div>
-            <label className="mb-2 block text-sm font-medium text-slate-400">
+            <label className="mb-2 block text-sm font-medium text-muted">
               Judul Event
             </label>
             <input
@@ -156,13 +198,13 @@ export default function EventForm({ initialData }: EventFormProps) {
               required
               value={formData.title}
               onChange={handleChange}
-              className="w-full rounded-xl border border-slate-800 bg-slate-950 p-3 text-sm text-slate-300 focus:border-primary focus:outline-none"
+              className="w-full rounded-xl border border-border bg-white p-3 text-sm text-foreground focus:border-primary focus:outline-none"
               placeholder="Contoh: Cosplay Summer Fest 2024"
             />
           </div>
 
           <div>
-            <label className="mb-2 block text-sm font-medium text-slate-400">
+            <label className="mb-2 block text-sm font-medium text-muted">
               Kategori Event
             </label>
             <input
@@ -170,7 +212,7 @@ export default function EventForm({ initialData }: EventFormProps) {
               name="category"
               value={formData.category}
               onChange={handleChange}
-              className="w-full rounded-xl border border-slate-800 bg-slate-950 p-3 text-sm text-slate-300 focus:border-primary focus:outline-none"
+              className="w-full rounded-xl border border-border bg-white p-3 text-sm text-foreground focus:border-primary focus:outline-none"
               placeholder="Ex: Contest, Convention, Workshop"
             />
           </div>
@@ -178,7 +220,7 @@ export default function EventForm({ initialData }: EventFormProps) {
           {/* forumId is created automatically when creating an event; no admin input needed */}
 
           <div>
-            <label className="mb-2 block text-sm font-medium text-slate-400">
+            <label className="mb-2 block text-sm font-medium text-muted">
               Deskripsi
             </label>
             <textarea
@@ -186,23 +228,29 @@ export default function EventForm({ initialData }: EventFormProps) {
               rows={4}
               value={formData.description}
               onChange={handleChange}
-              className="w-full rounded-xl border border-slate-800 bg-slate-950 p-3 text-sm text-slate-300 focus:border-primary focus:outline-none"
+              className="w-full rounded-xl border border-border bg-white p-3 text-sm text-foreground focus:border-primary focus:outline-none"
               placeholder="Ceritakan detail event ini..."
             />
           </div>
 
           <div>
-            <label className="mb-2 block text-sm font-medium text-slate-400">
-              Cover Image URL
+            <label className="mb-2 block text-sm font-medium text-muted">
+              Cover Image
             </label>
             <input
-              type="url"
-              name="coverImage"
-              value={formData.coverImage}
-              onChange={handleChange}
-              className="w-full rounded-xl border border-slate-800 bg-slate-950 p-3 text-sm text-slate-300 focus:border-primary focus:outline-none"
-              placeholder="https://..."
+              type="file"
+              accept="image/*"
+              onChange={(e) => {
+                const file = e.target.files?.[0] ?? null;
+                setSelectedCoverFile(file);
+              }}
+              className="w-full rounded-xl border border-border bg-white p-3 text-sm text-foreground focus:border-primary focus:outline-none"
             />
+            <p className="mt-2 text-xs text-muted">
+              {currentCoverImage
+                ? "Gambar baru akan diupload ke Blob saat submit."
+                : "Pilih file gambar untuk cover event."}
+            </p>
           </div>
         </div>
 
@@ -211,7 +259,7 @@ export default function EventForm({ initialData }: EventFormProps) {
           <div className="grid grid-cols-2 gap-4">
             {/* Kalender Start Date */}
             <div className="relative">
-              <label className="mb-2 block text-sm font-medium text-slate-400">
+              <label className="mb-2 block text-sm font-medium text-muted">
                 Tanggal Mulai
               </label>
               <div className="relative">
@@ -229,10 +277,10 @@ export default function EventForm({ initialData }: EventFormProps) {
                   timeIntervals={30}
                   dateFormat="d MMMM yyyy, HH:mm"
                   placeholderText="Pilih tanggal & jam"
-                  className="w-full rounded-xl border border-slate-800 bg-slate-950 p-3 pl-10 text-sm text-slate-300 focus:border-primary focus:outline-none"
+                  className="w-full rounded-xl border border-border bg-white p-3 pl-10 text-sm text-foreground focus:border-primary focus:outline-none"
                 />
                 <CalendarIcon
-                  className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500"
+                  className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted"
                   pointerEvents="none"
                 />
               </div>
@@ -240,7 +288,7 @@ export default function EventForm({ initialData }: EventFormProps) {
 
             {/* Kalender End Date */}
             <div className="relative">
-              <label className="mb-2 block text-sm font-medium text-slate-400">
+              <label className="mb-2 block text-sm font-medium text-muted">
                 Tanggal Selesai
               </label>
               <div className="relative">
@@ -257,11 +305,11 @@ export default function EventForm({ initialData }: EventFormProps) {
                   timeFormat="HH:mm"
                   timeIntervals={30}
                   dateFormat="d MMMM yyyy, HH:mm"
-                  placeholderText="Pilih tanggal (Opsional)"
-                  className="w-full rounded-xl border border-slate-800 bg-slate-950 p-3 pl-10 text-sm text-slate-300 focus:border-primary focus:outline-none"
+                  placeholderText="Select date (Optional)"
+                  className="w-full rounded-xl border border-border bg-white p-3 pl-10 text-sm text-foreground focus:border-primary focus:outline-none"
                 />
                 <CalendarIcon
-                  className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500"
+                  className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted"
                   pointerEvents="none"
                 />
               </div>
@@ -270,40 +318,57 @@ export default function EventForm({ initialData }: EventFormProps) {
 
           {/* === FIELD KHUSUS INTERNAL CONTEST === */}
           {formData.eventType === "internal_contest" && (
-            <div className="rounded-2xl border border-purple-500/20 bg-purple-500/5 p-4">
-              <h3 className="mb-4 text-sm font-semibold text-purple-400">
-                Pengaturan Kontes Internal
+            <div className="rounded-2xl border border-[#D9BCE1] bg-[#FCF8FF] p-4">
+              <h3 className="mb-4 text-sm font-semibold text-primary">
+                Internal Contest Settings
               </h3>
               <div>
-                <label className="mb-2 block text-sm font-medium text-slate-400">
-                  Status Kontes
+                <label className="mb-2 block text-sm font-medium text-muted">
+                  Contest Status
                 </label>
                 <select
                   name="status"
                   value={formData.status}
                   onChange={handleChange}
-                  className="w-full rounded-xl border border-slate-800 bg-slate-950 p-3 text-sm text-slate-300 focus:border-purple-500 focus:outline-none"
+                  className="w-full rounded-xl border border-border bg-white p-3 text-sm text-foreground focus:border-primary focus:outline-none"
                 >
                   <option value="upcoming">Upcoming (Akan Datang)</option>
                   <option value="active">Active (Sedang Berjalan)</option>
                   <option value="ended">Ended (Berakhir)</option>
                 </select>
               </div>
-              <p className="mt-3 text-xs text-slate-500">
-                * Entries/Karya akan diisi secara otomatis ketika user melakukan
-                submit dari halaman depan aplikasi.
+              <div className="mt-4">
+                <label className="mb-2 block text-sm font-medium text-muted">
+                  Maximum Participant Entries
+                </label>
+                <input
+                  type="number"
+                  name="maxEntries"
+                  min="1"
+                  value={formData.maxEntries}
+                  onChange={handleChange}
+                  className="w-full rounded-xl border border-border bg-white p-3 text-sm text-foreground focus:border-primary focus:outline-none"
+                  placeholder="Leave blank for no limit"
+                />
+                <p className="mt-2 text-xs text-muted">
+                  Each user can still submit only one entry.
+                </p>
+              </div>
+              <p className="mt-3 text-xs text-muted">
+                * Entries/work submissions will be filled automatically when
+                users submit from the public app page.
               </p>
             </div>
           )}
 
           {/* === FIELD KHUSUS EXTERNAL CONVENTION === */}
           {formData.eventType === "external_convention" && (
-            <div className="space-y-4 rounded-2xl border border-blue-500/20 bg-blue-500/5 p-4">
-              <h3 className="text-sm font-semibold text-blue-400">
+            <div className="space-y-4 rounded-2xl border border-[#D9E8FF] bg-[#F7FAFF] p-4">
+              <h3 className="text-sm font-semibold text-primary">
                 Informasi Lokasi Event Luar
               </h3>
               <div>
-                <label className="mb-2 block text-sm font-medium text-slate-400">
+                <label className="mb-2 block text-sm font-medium text-muted">
                   Nama Lokasi / Venue
                 </label>
                 <input
@@ -311,12 +376,12 @@ export default function EventForm({ initialData }: EventFormProps) {
                   name="locationName"
                   value={formData.locationName}
                   onChange={handleChange}
-                  className="w-full rounded-xl border border-slate-800 bg-slate-950 p-3 text-sm text-slate-300 focus:border-blue-500 focus:outline-none"
+                  className="w-full rounded-xl border border-border bg-white p-3 text-sm text-foreground focus:border-primary focus:outline-none"
                   placeholder="Ex: Jakarta Convention Center"
                 />
               </div>
               <div>
-                <label className="mb-2 block text-sm font-medium text-slate-400">
+                <label className="mb-2 block text-sm font-medium text-muted">
                   Alamat Lengkap
                 </label>
                 <input
@@ -324,11 +389,11 @@ export default function EventForm({ initialData }: EventFormProps) {
                   name="address"
                   value={formData.address}
                   onChange={handleChange}
-                  className="w-full rounded-xl border border-slate-800 bg-slate-950 p-3 text-sm text-slate-300 focus:border-blue-500 focus:outline-none"
+                  className="w-full rounded-xl border border-border bg-white p-3 text-sm text-foreground focus:border-primary focus:outline-none"
                 />
               </div>
               <div>
-                <label className="mb-2 block text-sm font-medium text-slate-400">
+                <label className="mb-2 block text-sm font-medium text-muted">
                   Link Tiket / Info (External URL)
                 </label>
                 <input
@@ -336,7 +401,7 @@ export default function EventForm({ initialData }: EventFormProps) {
                   name="externalLink"
                   value={formData.externalLink}
                   onChange={handleChange}
-                  className="w-full rounded-xl border border-slate-800 bg-slate-950 p-3 text-sm text-slate-300 focus:border-blue-500 focus:outline-none"
+                  className="w-full rounded-xl border border-border bg-white p-3 text-sm text-foreground focus:border-primary focus:outline-none"
                   placeholder="https://..."
                 />
               </div>
@@ -345,10 +410,10 @@ export default function EventForm({ initialData }: EventFormProps) {
         </div>
       </div>
 
-      <div className="flex items-center justify-end gap-4 border-t border-slate-800 pt-6">
+      <div className="flex items-center justify-end gap-4 border-t border-border pt-6">
         <Link
           href="/admin/events"
-          className="rounded-xl px-5 py-2.5 text-sm font-medium text-slate-400 transition hover:text-slate-50"
+          className="rounded-xl px-5 py-2.5 text-sm font-medium text-muted transition hover:text-foreground"
         >
           Cancel
         </Link>
@@ -358,7 +423,7 @@ export default function EventForm({ initialData }: EventFormProps) {
           className="flex items-center gap-2 rounded-xl bg-primary px-6 py-2.5 text-sm font-medium text-white transition hover:bg-secondary disabled:opacity-50"
         >
           <Save className="h-4 w-4" />
-          {isLoading ? "Menyimpan..." : "Simpan Event"}
+          {isLoading || uploadingImage ? "Menyimpan..." : "Simpan Event"}
         </button>
       </div>
     </form>

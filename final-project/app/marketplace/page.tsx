@@ -41,7 +41,9 @@ export default async function MarketplacePage({
   const allProducts = await getProducts(search);
 
   const themeOptions = Array.from(
-    new Set(allProducts.map((p) => p.theme).filter(Boolean)),
+    new Set(
+      allProducts.flatMap((product) => product.theme ?? []).filter(Boolean),
+    ),
   ).sort();
   const sizeOptions = Array.from(
     new Set(allProducts.map((p) => p.size).filter(Boolean)),
@@ -51,7 +53,9 @@ export default async function MarketplacePage({
     const matchesSearch = search
       ? product.title.toLowerCase().includes(search.toLowerCase())
       : true;
-    const matchesTheme = theme ? product.theme === theme : true;
+    const matchesTheme = theme
+      ? product.theme.some((item) => item.toLowerCase() === theme.toLowerCase())
+      : true;
     const matchesSize = size ? product.size === size : true;
     return matchesSearch && matchesTheme && matchesSize;
   });

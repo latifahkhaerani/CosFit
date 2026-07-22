@@ -32,7 +32,11 @@ export default function MarketplaceClient({
 
   const themeOptions = useMemo(
     () =>
-      Array.from(new Set(products.map((p) => p.theme).filter(Boolean))).sort(),
+      Array.from(
+        new Set(
+          products.flatMap((product) => product.theme ?? []).filter(Boolean),
+        ),
+      ).sort(),
     [products],
   );
   const sizeOptions = useMemo(
@@ -46,7 +50,11 @@ export default function MarketplaceClient({
       const matchesSearch = search
         ? product.title.toLowerCase().includes(search.toLowerCase())
         : true;
-      const matchesTheme = theme ? product.theme === theme : true;
+      const matchesTheme = theme
+        ? product.theme.some(
+            (item) => item.toLowerCase() === theme.toLowerCase(),
+          )
+        : true;
       const matchesSize = size ? product.size === size : true;
       return matchesSearch && matchesTheme && matchesSize;
     });
@@ -64,7 +72,10 @@ export default function MarketplaceClient({
     <div className="mx-auto max-w-7xl px-6 py-10 lg:px-8">
       <MarketplaceHeader title={title} description={description} />
 
-      <MarketplaceFilters themeOptions={themeOptions} sizeOptions={sizeOptions} />
+      <MarketplaceFilters
+        themeOptions={themeOptions}
+        sizeOptions={sizeOptions}
+      />
 
       <ProductGrid
         products={filteredProducts}

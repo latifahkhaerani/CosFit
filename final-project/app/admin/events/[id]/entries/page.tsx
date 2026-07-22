@@ -1,17 +1,130 @@
 import { GetOurEvent } from "@/app/types";
+import OurEventModel from "@/db/models/ourEventModel";
+import UserDesignModel from "@/db/models/userDesignModel";
 
-type Props = { params: { id: string } };
+type Props = { params: Promise<{ id: string }> };
+
+function toStringValue(value: unknown) {
+  if (!value) return "";
+  if (typeof value === "object") {
+    if (typeof (value as { $oid?: string }).$oid === "string") {
+      return (value as { $oid: string }).$oid;
+    }
+    if (typeof (value as { toString?: () => string }).toString === "function") {
+      return String(value);
+    }
+  }
+  return String(value);
+}
 
 async function getEvent(id: string): Promise<GetOurEvent | null> {
-  const res = await fetch(`http://localhost:3000/api/admin/events/${id}`, {
-    cache: "no-store",
-  });
-  if (!res.ok) return null;
-  return res.json();
+  const event = await OurEventModel.getEventById(id);
+  if (!event) return null;
+
+  const normalizedEvent = event as unknown as Record<string, unknown>;
+
+  return {
+    _id: toStringValue(normalizedEvent._id),
+    slug: typeof normalizedEvent.slug === "string" ? normalizedEvent.slug : "",
+    eventName:
+      typeof normalizedEvent.eventName === "string"
+        ? normalizedEvent.eventName
+        : "",
+    category:
+      typeof normalizedEvent.category === "string"
+        ? normalizedEvent.category
+        : "",
+    imgUrl:
+      typeof normalizedEvent.imgUrl === "string" ? normalizedEvent.imgUrl : "",
+    description:
+      typeof normalizedEvent.description === "string"
+        ? normalizedEvent.description
+        : "",
+    creatorId: normalizedEvent.creatorId
+      ? toStringValue(normalizedEvent.creatorId)
+      : undefined,
+    forumId: normalizedEvent.forumId
+      ? toStringValue(normalizedEvent.forumId)
+      : undefined,
+    startDate:
+      typeof normalizedEvent.startDate === "string"
+        ? normalizedEvent.startDate
+        : undefined,
+    endDate:
+      typeof normalizedEvent.endDate === "string"
+        ? normalizedEvent.endDate
+        : undefined,
+    locationName:
+      typeof normalizedEvent.locationName === "string"
+        ? normalizedEvent.locationName
+        : undefined,
+    address:
+      typeof normalizedEvent.address === "string"
+        ? normalizedEvent.address
+        : undefined,
+    externalLink:
+      typeof normalizedEvent.externalLink === "string"
+        ? normalizedEvent.externalLink
+        : undefined,
+    eventType:
+      normalizedEvent.eventType === "internal_contest"
+        ? "internal_contest"
+        : "external_convention",
+    entries: Array.isArray(normalizedEvent.entries)
+      ? normalizedEvent.entries.map((entry) => {
+          const entryRecord = entry as Record<string, unknown>;
+          return {
+            _id: toStringValue(entryRecord._id),
+            userId: toStringValue(entryRecord.userId),
+            username:
+              typeof entryRecord.username === "string"
+                ? entryRecord.username
+                : "Unknown user",
+            entryTitle:
+              typeof entryRecord.entryTitle === "string"
+                ? entryRecord.entryTitle
+                : "Untitled entry",
+            entryImage:
+              typeof entryRecord.entryImage === "string"
+                ? entryRecord.entryImage
+                : "",
+            voteCount: Number(entryRecord.voteCount ?? 0),
+          };
+        })
+      : [],
+    maxEntries:
+      typeof normalizedEvent.maxEntries === "number"
+        ? normalizedEvent.maxEntries
+        : undefined,
+    status:
+      typeof normalizedEvent.status === "string"
+        ? (normalizedEvent.status as GetOurEvent["status"])
+        : undefined,
+    createdAt:
+      typeof normalizedEvent.createdAt === "string"
+        ? normalizedEvent.createdAt
+        : undefined,
+    updatedAt:
+      typeof normalizedEvent.updatedAt === "string"
+        ? normalizedEvent.updatedAt
+        : undefined,
+  };
+}
+
+async function getContestEntries(eventId: string) {
+  const designs = await UserDesignModel.getByEventId(eventId);
+
+  return designs.map((item: any) => ({
+    _id: toStringValue(item._id),
+    entryTitle: item.entryTitle ?? item.title ?? "Untitled entry",
+    entryImage: item.imgUrl ?? item.entryImage,
+    userId: item.username || toStringValue(item.userId) || "Unknown user",
+    voteCount: item.vote ?? item.voteCount ?? 0,
+  }));
 }
 
 export default async function Page({ params }: Props) {
-  const id = params.id;
+  const { id } = await params;
   const event = await getEvent(id);
 
   if (!event)
@@ -20,7 +133,9 @@ export default async function Page({ params }: Props) {
         Event not found.
       </div>
     );
-  const isContest = (event.category || "").toLowerCase().includes("contest");
+  const isContest =
+    event.eventType === "internal_contest" ||
+    (event.category || "").toLowerCase().includes("contest");
   if (!isContest)
     return (
       <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
@@ -28,7 +143,7 @@ export default async function Page({ params }: Props) {
       </div>
     );
 
-  const entries = (event as any).entries || [];
+  const entries = await getContestEntries(id);
 
   return (
     <section className="space-y-6">

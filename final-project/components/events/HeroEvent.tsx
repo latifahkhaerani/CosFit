@@ -14,7 +14,6 @@ import {
 export default function HeroEvent() {
   return (
     <section className="relative overflow-hidden rounded-[36px]">
-
       {/* Background */}
 
       <Image
@@ -37,76 +36,40 @@ export default function HeroEvent() {
       {/* Content */}
 
       <div className="relative z-10 flex flex-col gap-10 px-14 py-14 lg:flex-row lg:items-center lg:gap-14 lg:py-20">
-
         <div className="lg:flex-1">
-
           <div className="mb-5 flex items-center gap-3 text-[#FFD28F]">
-
             <Sparkles size={22} />
 
-            <span className="font-semibold">
-
-              COSFIT COMMUNITY
-
-            </span>
-
+            <span className="font-semibold">COSFIT COMMUNITY</span>
           </div>
 
           <h1 className="text-7xl font-bold leading-[1.05] text-white">
-
             Join the
-
             <br />
-
             CosFit Events
-
           </h1>
 
           <p className="mt-7 max-w-xl text-xl leading-8 text-white/90">
-
-            Participate in cosplay competitions,
-            fashion design contests,
-            workshops,
-            conventions,
-            and meet thousands of passionate cosplayers.
-
+            Participate in cosplay competitions, fashion design contests,
+            workshops, conventions, and meet thousands of passionate cosplayers.
           </p>
 
           {/* CTA */}
 
           <div className="mt-10 flex gap-5">
-
             <Link
               href="/events/all"
               className="primary-btn flex items-center gap-3 px-8 py-4 shadow-soft hover:scale-[1.02]"
             >
-
               Explore Events
-
               <ArrowRight size={18} />
-
             </Link>
-
-            <button className="rounded-2xl border border-white/30 bg-white/10 px-8 py-4 font-medium text-white backdrop-blur-xl transition hover:bg-white/20">
-
-              <div className="flex items-center gap-3">
-
-                <CalendarPlus size={18} />
-
-                Create Event
-
-              </div>
-
-            </button>
-
           </div>
-
         </div>
 
         {/* Stats sidebar */}
 
         <div className="grid grid-cols-2 gap-6 lg:w-[460px] lg:flex-shrink-0">
-
           <StatCard
             icon={<Trophy size={24} />}
             title="120+"
@@ -125,16 +88,9 @@ export default function HeroEvent() {
             subtitle="Winners"
           />
 
-          <StatCard
-            icon={<Store size={24} />}
-            title="80+"
-            subtitle="Vendors"
-          />
-
+          <StatCard icon={<Store size={24} />} title="80+" subtitle="Vendors" />
         </div>
-
       </div>
-
     </section>
   );
 }
@@ -150,25 +106,15 @@ function StatCard({
 }) {
   return (
     <div className="rounded-2xl border border-white/20 bg-white/10 px-6 py-6 backdrop-blur-xl transition">
-
       <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-[#FFD28F]">
-
         {icon}
-
       </div>
 
       <h3 className="mt-4 text-2xl font-bold leading-tight text-white">
-
         {title}
-
       </h3>
 
-      <p className="mt-1 text-white/80">
-
-        {subtitle}
-
-      </p>
-
+      <p className="mt-1 text-white/80">{subtitle}</p>
     </div>
   );
 }
