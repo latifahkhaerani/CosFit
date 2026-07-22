@@ -10,12 +10,15 @@ interface creatorType {
   username: string;
 }
 
-interface forumType {
+export interface forumType {
   _id: string;
   slug: string;
   nameForum: string;
+  desc: string;
+  tag: string[]
+  creatorId: string;
   image: string;
-  chatCount?: number;
+  createdAt: Date;
   chat?: string[];
   creator?: creatorType;
 }
@@ -74,7 +77,7 @@ export default function TrendingPosts() {
           <p className="text-sm text-[var(--muted)]">No trending posts yet.</p>
         ) : (
           posts.map((post, index) => {
-            const commentsCount = post.chatCount ?? post.chat?.length ?? 0;
+            const commentsCount = post.chat?.length ?? 0;
 
             return (
               <Link
