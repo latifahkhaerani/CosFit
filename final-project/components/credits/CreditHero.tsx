@@ -1,26 +1,46 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { Sparkles, Coins, ArrowRight, Images } from "lucide-react";
 
+import { GetUserProfile } from "@/app/types";
+import errorHandler from "@/app/helpers/errorHandler";
+
 export default function CreditHero() {
+  const [profile, setProfile] = useState<GetUserProfile | null>(null);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const res = await fetch("/api/user/profile", {
+          cache: "no-store",
+        });
+
+        if (!res.ok) {
+          throw new Error("Failed to load profile");
+        }
+
+        const data: GetUserProfile = await res.json();
+
+        setProfile(data);
+      } catch (error) {
+        errorHandler(error);
+      }
+    };
+
+    fetchProfile();
+  }, []);
+
+  const credits = profile?.userId?.[0]?.token ?? 0;
+
   return (
     <section className="overflow-hidden rounded-[40px] border border-[#F3E8DF] bg-gradient-to-br from-white via-[#FFFDFC] to-[#FFF8F4] p-12 shadow-sm">
       <div className="grid items-center gap-16 lg:grid-cols-[0.9fr_1.1fr]">
         {/* LEFT */}
 
-        {/* LEFT */}
-
         <div className="flex h-full flex-col justify-center">
-          {/* Heading */}
-
-          <div className="inline-flex w-fit items-center gap-2 rounded-full border border-[#F4E2D8] bg-[#FFF8F5] px-4 py-2">
-            <Sparkles size={18} className="text-primary" />
-            <span className="text-sm font-medium text-primary">
-              AI Powered Credits
-            </span>
-          </div>
-
           <h1 className="mt-6 max-w-md text-6xl font-bold leading-[1.05] tracking-[-0.03em] text-foreground">
             AI Virtual
             <br />
@@ -48,7 +68,7 @@ export default function CreditHero() {
               <div>
                 <div className="flex items-end gap-2">
                   <h2 className="text-6xl font-bold leading-none text-foreground">
-                    12
+                    {credits}
                   </h2>
 
                   <span className="pb-2 text-xl font-semibold text-muted">
@@ -62,11 +82,7 @@ export default function CreditHero() {
               </div>
             </div>
 
-            {/* Divider */}
-
             <div className="my-7 h-px bg-[#F2E8E1]" />
-
-            {/* Benefits */}
 
             <div className="space-y-4">
               <div className="flex items-center gap-3">
@@ -103,33 +119,28 @@ export default function CreditHero() {
               Get More Credits
             </button>
 
-            <button className="group flex items-center gap-2 text-[15px] font-semibold text-primary transition hover:gap-3">
+            <Link
+              href="/profile"
+              className="group flex items-center gap-2 text-[15px] font-semibold text-primary transition hover:gap-3"
+            >
               <Images size={18} />
               My Generated Looks
               <ArrowRight
                 size={17}
                 className="transition group-hover:translate-x-1"
               />
-            </button>
+            </Link>
           </div>
         </div>
 
         {/* RIGHT */}
 
-        {/* RIGHT */}
-
         <div className="relative flex items-center justify-center">
-          {/* Glow */}
-
           <div className="absolute h-[560px] w-[560px] rounded-full bg-[#FFE8D9] blur-[120px] opacity-70" />
-
-          {/* Floating Decoration */}
 
           <div className="absolute -left-8 top-14 h-28 w-28 rounded-full bg-[#FFF6EF] blur-2xl" />
 
           <div className="absolute -right-6 bottom-12 h-36 w-36 rounded-full bg-[#FFEFE5] blur-3xl" />
-
-          {/* Main Mockup */}
 
           <div className="relative overflow-hidden rounded-[36px] border border-[#F3E7DD] bg-white p-5 shadow-[0_30px_80px_rgba(0,0,0,.08)]">
             <Image
@@ -141,8 +152,6 @@ export default function CreditHero() {
               className="rounded-[28px]"
             />
 
-            {/* Bottom Card */}
-
             <div className="absolute bottom-7 left-7 right-7 rounded-3xl border border-[#F4E5D9] bg-white/95 p-5 shadow-xl backdrop-blur">
               <div className="flex items-center justify-between">
                 <div>
@@ -151,7 +160,8 @@ export default function CreditHero() {
                   </p>
 
                   <h3 className="mt-1 text-3xl font-bold text-foreground">
-                    12
+                    {credits}
+
                     <span className="ml-2 text-lg font-medium text-muted">
                       Credits
                     </span>
