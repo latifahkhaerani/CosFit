@@ -662,7 +662,7 @@ function TryOnContent() {
               ) : selectedProduct ? (
                 <>
                   <div className="relative overflow-hidden rounded-3xl group">
-                    <Image src={selectedProduct.imgUrl} alt="Selected Costume" width={500} height={700} unoptimized className="h-67.5 w-full object-cover" />
+                    <Image src={selectedProduct.imgUrl} alt="Selected Costume" width={500} height={700} unoptimized className="h-67.5 w-full object-cover object-top" />
                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
                        <button onClick={() => setShowAllProducts(true)} className="bg-white text-black px-4 py-2 rounded-xl text-sm font-medium cursor-pointer hover:bg-gray-100">
                          Change Product
