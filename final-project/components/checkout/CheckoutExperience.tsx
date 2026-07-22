@@ -1,14 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import {
-  Check,
-  Sparkles,
-  CalendarDays,
-  ArrowRight,
-  Minus,
-  Plus,
-} from "lucide-react";
+import { Check, Sparkles, Minus, Plus } from "lucide-react";
 import { useMemo, useState } from "react";
 import { GetProduct, GetVendor } from "../../app/types";
 
@@ -77,20 +70,7 @@ export default function CheckoutExperience({
         </p>
       </div>
 
-      {/* <section className="sticky top-0 z-40 border-b border-border/60 bg-white/90 backdrop-blur-md">
-        <div className="mx-auto flex h-20 max-w-360 items-center justify-between px-4 sm:px-6 lg:px-8 xl:px-10">
-          <div className="hidden items-center gap-12 lg:flex">
-            <Step active number={1} title="Checkout" />
-            <Step number={2} title="Review" />
-            <Step number={3} title="Payment" />
-            <Step number={4} title="Confirmation" />
-          </div>
-
-          <div className="flex items-center gap-2 text-sm text-muted">
-            🔒 Secure Checkout
-          </div>
-        </div>
-      </section> */}
+  
 
       <div className="mx-auto max-w-360 px-2 py-6 sm:px-4 lg:px-6 xl:px-8 xl:py-8">
         <div className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_380px]">
