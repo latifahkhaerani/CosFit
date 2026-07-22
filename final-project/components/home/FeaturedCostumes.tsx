@@ -117,59 +117,59 @@ function CostumeCard({
   };
   return (
     <div className="flex flex-col overflow-hidden rounded-2xl border border-border bg-surface">
-      <div className="relative aspect-[3/4] w-full overflow-hidden bg-cream/30">
-        <button
-          type="button"
-          onClick={() => onSelect?.(costume._id)}
-          className="h-full w-full text-left"
-        >
-          {costume.imgUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={costume.imgUrl}
-              alt={costume.title || "Costume"}
-              className="h-full w-full object-cover object-top"
-            />
-          ) : (
-            <div className="flex h-full w-full items-center justify-center text-base text-muted">
-              Costume image
-            </div>
-          )}
-        </button>
-        <button
-          type="button"
-          aria-label="Toggle favorite"
-          onClick={handleToggleFavorite}
-          className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full bg-surface shadow-sm transition hover:bg-cream/40"
-        >
-          <Heart
-            className={`h-5 w-5 ${isFavorited ? "fill-primary text-primary" : "text-muted"}`}
-          />
-        </button>
-      </div>
-
-      <div className="flex flex-1 flex-col gap-2 p-4">
-        <div>
-          <p className="text-lg font-semibold text-foreground">
-            {costume.title || "Costume Title"}
-          </p>
-          <p className="text-base text-muted">{costume.theme || "Series"}</p>
+  <div className="relative aspect-[3/4] w-full overflow-hidden bg-cream/30">
+    <button
+      type="button"
+      onClick={() => onSelect?.(costume._id)}
+      className="h-full w-full text-left"
+    >
+      {costume.imgUrl ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={costume.imgUrl}
+          alt={costume.title || "Costume"}
+          className="h-full w-full object-cover object-top"
+        />
+      ) : (
+        <div className="flex h-full w-full items-center justify-center text-base text-muted">
+          Costume image
         </div>
-        <p className="text-xl font-bold text-primary">
-          {formatPrice(costume.originalPrice, currency)}
-        </p>
-          <Link href={'marketplace/products/costume.slug'}>
-        <button
-          type="button"
-          onClick={() => onSelect?.(costume._id)}
-          className="mt-auto inline-flex items-center justify-center gap-2 rounded-xl border border-primary px-4 py-2.5 text-base font-medium text-primary transition hover:bg-cream/40"
-          >
-          {detailsLabel}
-          <ArrowRight className="h-5 w-5" />
-        </button>
-          </Link>
-      </div>
+      )}
+    </button>
+    <button
+      type="button"
+      aria-label="Toggle favorite"
+      onClick={handleToggleFavorite}
+      className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full bg-surface shadow-sm transition hover:bg-cream/40"
+    >
+      <Heart
+        className={`h-5 w-5 ${isFavorited ? "fill-primary text-primary" : "text-muted"}`}
+      />
+    </button>
+  </div>
+
+  <div className="flex flex-1 flex-col gap-2 p-4">
+    <div>
+      <p className="text-lg font-semibold text-foreground">
+        {costume.title || "Costume Title"}
+      </p>
+      <p className="text-base text-muted">{costume.theme || "Series"}</p>
     </div>
+    <p className="text-xl font-bold text-primary">
+      {formatPrice(costume.originalPrice, currency)}
+    </p>
+    
+    {/* BAGIAN TOMBOL YANG DIRAPIKAN */}
+    <Link
+      href={`/marketplace/products/${costume.slug}`}
+      onClick={() => onSelect?.(costume._id)}
+      className="mt-auto flex w-full items-center justify-center gap-2 rounded-xl border border-primary px-4 py-2.5 text-base font-medium text-primary transition-colors hover:bg-cream/40"
+    >
+      {detailsLabel}
+      <ArrowRight className="h-5 w-5" />
+    </Link>
+  </div>
+</div>
   );
 }
 
