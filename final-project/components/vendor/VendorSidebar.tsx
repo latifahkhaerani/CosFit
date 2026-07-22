@@ -35,6 +35,7 @@ export default function VendorSidebar() {
     // logout logic
     await handleDeleteCookies()
     route.push("/")
+    route.refresh()
   };
 
   return (
