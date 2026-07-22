@@ -14,6 +14,7 @@ export async function PATCH(
             access: 'public',
             addRandomSuffix: true
         });
+        console.log(id, image, blob);
         const res = await ProductModel.addGaleryPhoto(blob.url, id)
         return Response.json(res);
     } catch (error) {

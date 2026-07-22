@@ -39,7 +39,7 @@ export default async function VendorProductDetail({params}: {params: Promise<{id
 
         </div>
         <div className="grid grid-cols-[2.1fr_1fr] gap-7">
-          <ProductGallery imgUrl={product.imgUrl} imgGalery={product.imgGalery} id={id} />
+          <ProductGallery imgUrl={product.imgUrl} imgGalery={product.imgGalery} id={product._id} />
 
           <div className="space-y-7">
             <ProductInfoCard product={product}/>

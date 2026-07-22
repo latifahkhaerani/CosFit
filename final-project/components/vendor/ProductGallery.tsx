@@ -27,12 +27,12 @@ export default function ProductGallery({
     setUploading(true);
     try {
       const formData = new FormData();
+
       formData.append("image", file);
       const res = await fetch(`/api/vendor/product/${id}/galery`, {
         method: "PATCH",
         body: formData,
       });
-
       router.refresh()
     } catch (error) {
       console.error("PATCH ERROR:", error);
