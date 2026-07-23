@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import type { GetOurEvent } from "@/app/types";
+import { getEventStatus } from "@/app/helpers/getEventStatus";
 
 export interface FeaturedEventCardProps {
   event?: GetOurEvent;
@@ -19,10 +20,54 @@ const placeholderEvent: GetOurEvent = {
   description: "",
 };
 
+const formatEventDateRange = (startDate?: string, endDate?: string) => {
+  if (!startDate) {
+    return "";
+  }
+
+  const start = new Date(startDate);
+  const end = endDate ? new Date(endDate) : null;
+
+  if (Number.isNaN(start.getTime())) {
+    return "";
+  }
+
+  const dateFormatter = new Intl.DateTimeFormat("id-ID", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+  const timeFormatter = new Intl.DateTimeFormat("id-ID", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  });
+
+  const startDateText = dateFormatter.format(start);
+  const startTimeText = timeFormatter.format(start);
+  const endDateText =
+    end && !Number.isNaN(end.getTime()) ? dateFormatter.format(end) : null;
+  const endTimeText =
+    end && !Number.isNaN(end.getTime()) ? timeFormatter.format(end) : null;
+
+  if (endDateText && endDateText === startDateText) {
+    return `${startDateText}, ${startTimeText}${endTimeText ? ` - ${endTimeText}` : ""}`;
+  }
+
+  if (endDateText) {
+    return `${startDateText}${startTimeText !== "00:00" ? `, ${startTimeText}` : ""} - ${endDateText}`;
+  }
+
+  return startDateText;
+};
+
 export default function FeaturedEventCard({
   event = placeholderEvent,
   joinLabel = "Join Event",
 }: FeaturedEventCardProps) {
+  const status = getEventStatus(event.startDate, event.endDate);
+  const eventDateRange = formatEventDateRange(event.startDate, event.endDate);
+
   return (
     <section>
       <div className="mb-6 flex items-center gap-2">
@@ -76,6 +121,17 @@ export default function FeaturedEventCard({
             <h2 className="mt-4 text-4xl font-bold leading-tight">
               {event.eventName || "Event Name"}
             </h2>
+
+            {eventDateRange ? (
+              <div className="mt-3 flex flex-col gap-2">
+                <p className="text-sm text-[var(--muted)]">{eventDateRange}</p>
+                <span
+                  className={`inline-flex w-fit rounded-full px-3 py-1 text-xs font-semibold ${status.colorClass}`}
+                >
+                  {status.label}
+                </span>
+              </div>
+            ) : null}
 
             <p className="mt-5 leading-8 text-[var(--muted)]">
               {event.description || "Short description of this event."}

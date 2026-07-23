@@ -5,6 +5,9 @@ import { ArrowRight } from "lucide-react";
 import type { GetOurEvent } from "@/app/types";
 
 export default function EventDetailInfo({ event }: { event: GetOurEvent }) {
+  const hasExternalLink =
+    event.eventType === "external_convention" && Boolean(event.externalLink);
+
   return (
     <section className="card p-8">
       <h2 className="card-title">About This Event</h2>
@@ -18,6 +21,18 @@ export default function EventDetailInfo({ event }: { event: GetOurEvent }) {
           Back to Events
           <ArrowRight size={16} />
         </Link>
+
+        {hasExternalLink ? (
+          <a
+            href={event.externalLink}
+            target="_blank"
+            rel="noreferrer"
+            className="primary-btn flex items-center gap-2"
+          >
+            Open Event Website
+            <ArrowRight size={16} />
+          </a>
+        ) : null}
       </div>
     </section>
   );

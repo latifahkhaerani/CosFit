@@ -2,10 +2,12 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import EventCategoryCombobox from "@/components/admin/EventCategoryCombobox";
 import { EventType, GetEvent } from "@/app/types";
 import { Save, ArrowLeft, Calendar as CalendarIcon } from "lucide-react";
 import Link from "next/link";
 import DatePicker from "react-datepicker";
+import Swal from "sweetalert2";
 import "react-datepicker/dist/react-datepicker.css";
 
 interface AdminEventFormData {
@@ -27,6 +29,15 @@ interface EventFormProps {
   initialData?: GetEvent | null;
 }
 
+const DEFAULT_EVENT_CATEGORIES = [
+  "Contest",
+  "Convention",
+  "Workshop",
+  "Fashion",
+  "Photography",
+  "Gathering",
+];
+
 export default function EventForm({ initialData }: EventFormProps) {
   const router = useRouter();
   const isEditMode = !!initialData;
@@ -34,6 +45,31 @@ export default function EventForm({ initialData }: EventFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [selectedCoverFile, setSelectedCoverFile] = useState<File | null>(null);
+  const [categoryOptions, setCategoryOptions] = useState<string[]>(() => {
+    const options = [...DEFAULT_EVENT_CATEGORIES];
+    const initialCategories = initialData?.category
+      ? initialData.category
+          .split(",")
+          .map((item) => item.trim())
+          .filter(Boolean)
+      : [];
+
+    initialCategories.forEach((category) => {
+      if (!options.includes(category)) {
+        options.push(category);
+      }
+    });
+
+    return options;
+  });
+  const [categoryTags, setCategoryTags] = useState<string[]>(() => {
+    return initialData?.category
+      ? initialData.category
+          .split(",")
+          .map((item) => item.trim())
+          .filter(Boolean)
+      : [];
+  });
 
   const [startDate, setStartDate] = useState<Date | null>(
     initialData?.startDate ? new Date(initialData.startDate) : null,
@@ -67,6 +103,14 @@ export default function EventForm({ initialData }: EventFormProps) {
 
   const currentCoverImage =
     formData.coverImage || initialData?.coverImage || "";
+
+  const handleCategoryChange = (nextValue: string[]) => {
+    setCategoryTags(nextValue);
+    setFormData((prev) => ({
+      ...prev,
+      category: nextValue.join(", "),
+    }));
+  };
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -135,12 +179,24 @@ export default function EventForm({ initialData }: EventFormProps) {
         throw new Error(err.message || "Gagal menyimpan event");
       }
 
-      alert(`Event berhasil di${isEditMode ? "perbarui" : "buat"}!`);
+      await Swal.fire({
+        icon: "success",
+        title: isEditMode ? "Event updated" : "Event created",
+        text: isEditMode
+          ? "The event has been updated successfully."
+          : "The event has been created successfully.",
+        confirmButtonColor: "#c2410c",
+      });
       router.push("/admin/events");
       router.refresh();
     } catch (error: unknown) {
       console.error(error);
-      alert(error instanceof Error ? error.message : "Gagal menyimpan event");
+      await Swal.fire({
+        icon: "error",
+        title: "Failed to save event",
+        text: error instanceof Error ? error.message : "Gagal menyimpan event",
+        confirmButtonColor: "#c2410c",
+      });
     } finally {
       setUploadingImage(false);
       setIsLoading(false);
@@ -207,12 +263,11 @@ export default function EventForm({ initialData }: EventFormProps) {
             <label className="mb-2 block text-sm font-medium text-muted">
               Kategori Event
             </label>
-            <input
-              type="text"
-              name="category"
-              value={formData.category}
-              onChange={handleChange}
-              className="w-full rounded-xl border border-border bg-white p-3 text-sm text-foreground focus:border-primary focus:outline-none"
+            <EventCategoryCombobox
+              value={categoryTags}
+              onChange={handleCategoryChange}
+              options={categoryOptions}
+              setOptions={setCategoryOptions}
               placeholder="Ex: Contest, Convention, Workshop"
             />
           </div>
