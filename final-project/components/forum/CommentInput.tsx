@@ -16,6 +16,9 @@ export default function CommentInput({ forumId, chatLength, image }: CommentInpu
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [currentChatLength, setCurrentChatLength] = useState(chatLength);
+  
+  // Tambahkan state ini untuk memaksa re-render ReplyEditor
+  const [editorKey, setEditorKey] = useState(0);
 
   useEffect(() => {
     setCurrentChatLength(chatLength);
@@ -41,7 +44,11 @@ export default function CommentInput({ forumId, chatLength, image }: CommentInpu
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!message.trim() || loading) return;
+    
+    // Perbaikan tambahan: Tiptap sering menghasilkan tag <p></p> kosong, 
+    // pastikan kita mengecek isinya dengan menghapus tag HTML kosong.
+    const isMessageEmpty = !message || message === "<p></p>" || !message.replace(/<[^>]*>?/gm, '').trim();
+    if (isMessageEmpty || loading) return;
 
     setLoading(true);
 
@@ -66,7 +73,10 @@ export default function CommentInput({ forumId, chatLength, image }: CommentInpu
         chatData: data.message 
       });
 
+      // Reset state dan paksa editor untuk mount ulang
       setMessage("");
+      setEditorKey(prev => prev + 1);
+
     } catch (err) {
       console.error("Gagal mengirim komentar:", err);
       alert(err instanceof Error ? err.message : "Gagal mengirim komentar");
@@ -74,6 +84,9 @@ export default function CommentInput({ forumId, chatLength, image }: CommentInpu
       setLoading(false);
     }
   };
+
+  // Validasi tombol disable agar lebih akurat jika Tiptap mengirim <p></p>
+  const isSubmitDisabled = loading || !message || message === "<p></p>" || !message.replace(/<[^>]*>?/gm, '').trim();
 
   return (
     <section className="card p-6 bg-white border border-border rounded-xl">
@@ -88,13 +101,17 @@ export default function CommentInput({ forumId, chatLength, image }: CommentInpu
 
       <form onSubmit={handleSubmit} className="flex gap-4">
         <div className="relative h-12 w-12 shrink-0">
-          {image? (<Image src={image} alt="My Avatar" fill className="rounded-full object-cover" />): (<></>)}
-          
+          {image ? (
+            <Image src={image} alt="My Avatar" fill className="rounded-full object-cover" />
+          ) : (
+            <></>
+          )}
         </div>
 
         <div className="flex-1">
           <div className="flex-1">
             <ReplyEditor
+              key={editorKey} // Gunakan key di sini
               value={message}
               onChange={setMessage}
             />
@@ -113,7 +130,7 @@ export default function CommentInput({ forumId, chatLength, image }: CommentInpu
 
             <button 
               type="submit" 
-              disabled={loading || !message.trim()}
+              disabled={isSubmitDisabled}
               className="primary-btn flex items-center gap-2 px-5 py-2.5 bg-primary text-white font-medium rounded-xl hover:opacity-90 disabled:opacity-50 transition-opacity"
             >
               <Send size={15} />

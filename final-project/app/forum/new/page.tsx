@@ -112,14 +112,12 @@ async function handleSubmit(event: FormEvent) {
               />
             </Field>
 
-            <Field label="Description" htmlFor="desc">
               <Field label="Description" htmlFor="desc">
                 <DescriptionEditor
                   value={desc}
                   onChange={setDesc}
                 />
               </Field>
-            </Field>
 
             <Field
               label="Discussion image"
