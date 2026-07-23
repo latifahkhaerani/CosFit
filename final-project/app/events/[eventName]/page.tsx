@@ -11,6 +11,7 @@ import UserDesignModel from "@/db/models/userDesignModel";
 import ForumModel from "@/db/models/forumModel";
 import serializeEvent from "@/app/helpers/serializeEvent";
 import serializeRoom from "@/app/helpers/serializeRoom";
+import serializeUserDesign from "@/app/helpers/serializeUserDesign";
 import type { GetRoom } from "@/app/types";
 
 export const dynamic = "force-dynamic";
@@ -37,7 +38,9 @@ export default async function EventDetailPage({
   const cookieStore = await cookies();
   const contestEntries =
     event.eventType === "internal_contest"
-      ? await UserDesignModel.getByEventId(event._id)
+      ? (await UserDesignModel.getByEventId(event._id)).map((entry) =>
+          serializeUserDesign(entry as Record<string, unknown>),
+        )
       : [];
 
   let forum: GetRoom | null = null;
@@ -86,6 +89,7 @@ export default async function EventDetailPage({
           eventId={event._id}
           entryCount={contestEntries.length}
           maxEntries={event.maxEntries}
+          contestEntries={contestEntries}
         />
       ) : null}
       <EventForumPreview

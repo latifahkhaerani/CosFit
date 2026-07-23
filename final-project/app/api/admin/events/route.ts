@@ -4,6 +4,21 @@ import { ObjectId } from "mongodb";
 import errorHandler from "@/app/helpers/errorHandler";
 import type { PostOurEvent } from "@/app/types";
 
+function normalizeForumTags(value: unknown) {
+  if (Array.isArray(value)) {
+    return value.map((item) => String(item).trim()).filter(Boolean);
+  }
+
+  if (typeof value === "string") {
+    return value
+      .split(",")
+      .map((item) => item.trim())
+      .filter(Boolean);
+  }
+
+  return [];
+}
+
 export async function GET() {
   try {
     const events = await OurEventModel.getAllEvents();
@@ -50,7 +65,7 @@ export async function POST(req: Request) {
           slug,
           nameForum: payload.eventName || "Event Forum",
           desc: payload.description || "",
-          tag: payload.category ? [payload.category] : [],
+          tag: normalizeForumTags(payload.category),
           chatId: null,
           image: payload.imgUrl || undefined,
           createdAt: new Date(),

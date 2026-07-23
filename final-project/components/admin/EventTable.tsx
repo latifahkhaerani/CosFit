@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { GetEvent } from "@/app/types";
 import { Edit, Trash2, Users, Calendar, MapPin } from "lucide-react";
+import Swal from "sweetalert2";
 
 export default function EventTable({
   events: initialEvents,
@@ -22,7 +23,17 @@ export default function EventTable({
   }, []);
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Apakah Anda yakin ingin menghapus event ini?")) return;
+    const result = await Swal.fire({
+      title: "Delete this event?",
+      text: "This action cannot be undone.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#dc2626",
+      cancelButtonColor: "#6b7280",
+      confirmButtonText: "Yes, delete it",
+    });
+
+    if (!result.isConfirmed) return;
 
     setIsDeleting(id);
     try {
@@ -33,12 +44,30 @@ export default function EventTable({
       if (res.ok) {
         setEvents((prev) => prev.filter((ev) => ev._id !== id));
         router.refresh();
+        await Swal.fire({
+          icon: "success",
+          title: "Event deleted",
+          text: "The event has been removed successfully.",
+          confirmButtonColor: "#c2410c",
+          timer: 2200,
+          showConfirmButton: false,
+        });
       } else {
-        alert("Gagal menghapus event");
+        await Swal.fire({
+          icon: "error",
+          title: "Failed to delete event",
+          text: "Please try again later.",
+          confirmButtonColor: "#c2410c",
+        });
       }
     } catch (error) {
       console.error(error);
-      alert("Terjadi kesalahan sistem");
+      await Swal.fire({
+        icon: "error",
+        title: "System error",
+        text: "An unexpected error occurred while deleting the event.",
+        confirmButtonColor: "#c2410c",
+      });
     } finally {
       setIsDeleting(null);
     }
