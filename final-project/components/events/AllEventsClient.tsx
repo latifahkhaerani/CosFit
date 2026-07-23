@@ -6,7 +6,11 @@ import type { GetOurEvent } from "@/app/types";
 import EventGrid from "./EventGrid";
 import EventCategoryFilter from "./EventCategoryFilter";
 
-export type EventSortOption = "name-asc" | "name-desc";
+export type EventSortOption =
+  | "time-asc"
+  | "time-desc"
+  | "name-asc"
+  | "name-desc";
 
 export interface AllEventsClientProps {
   events: GetOurEvent[];
@@ -15,15 +19,21 @@ export interface AllEventsClientProps {
 
 const ALL_LABEL = "All";
 
-export default function AllEventsClient({ events, pageSize = 8 }: AllEventsClientProps) {
+export default function AllEventsClient({
+  events,
+  pageSize = 8,
+}: AllEventsClientProps) {
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState(ALL_LABEL);
-  const [sort, setSort] = useState<EventSortOption>("name-asc");
+  const [sort, setSort] = useState<EventSortOption>("time-asc");
   const [page, setPage] = useState(1);
 
   const categories = useMemo(
-    () => Array.from(new Set(events.map((event) => event.category).filter(Boolean))),
-    [events]
+    () =>
+      Array.from(
+        new Set(events.map((event) => event.category).filter(Boolean)),
+      ),
+    [events],
   );
 
   const filteredEvents = useMemo(() => {
@@ -32,22 +42,41 @@ export default function AllEventsClient({ events, pageSize = 8 }: AllEventsClien
         ? event.eventName.toLowerCase().includes(search.toLowerCase())
         : true;
       const matchesCategory =
-        selectedCategory === ALL_LABEL ? true : event.category === selectedCategory;
+        selectedCategory === ALL_LABEL
+          ? true
+          : event.category === selectedCategory;
       return matchesSearch && matchesCategory;
     });
 
-    return result.sort((a, b) =>
-      sort === "name-desc"
-        ? b.eventName.localeCompare(a.eventName)
-        : a.eventName.localeCompare(b.eventName)
-    );
+    return result.sort((a, b) => {
+      if (sort === "name-desc") {
+        return b.eventName.localeCompare(a.eventName);
+      }
+
+      if (sort === "name-asc") {
+        return a.eventName.localeCompare(b.eventName);
+      }
+
+      const aTime = a.startDate
+        ? new Date(a.startDate).getTime()
+        : Number.POSITIVE_INFINITY;
+      const bTime = b.startDate
+        ? new Date(b.startDate).getTime()
+        : Number.POSITIVE_INFINITY;
+
+      if (sort === "time-desc") {
+        return bTime - aTime;
+      }
+
+      return aTime - bTime;
+    });
   }, [events, search, selectedCategory, sort]);
 
   const totalPages = Math.max(1, Math.ceil(filteredEvents.length / pageSize));
   const currentPage = Math.min(page, totalPages);
   const paginatedEvents = filteredEvents.slice(
     (currentPage - 1) * pageSize,
-    currentPage * pageSize
+    currentPage * pageSize,
   );
 
   function handleSearchChange(value: string) {
@@ -85,6 +114,8 @@ export default function AllEventsClient({ events, pageSize = 8 }: AllEventsClien
           onChange={(e) => handleSortChange(e.target.value as EventSortOption)}
           className="rounded-xl border border-[var(--border)] bg-[var(--background)] px-4 py-3 outline-none focus:border-[var(--primary)] lg:w-56"
         >
+          <option value="time-asc">Nearest</option>
+          <option value="time-desc">Farthest</option>
           <option value="name-asc">Name (A&ndash;Z)</option>
           <option value="name-desc">Name (Z&ndash;A)</option>
         </select>
@@ -103,7 +134,8 @@ export default function AllEventsClient({ events, pageSize = 8 }: AllEventsClien
       ) : null}
 
       <p className="mb-4 text-sm text-[var(--muted)]">
-        {filteredEvents.length} event{filteredEvents.length === 1 ? "" : "s"} found
+        {filteredEvents.length} event{filteredEvents.length === 1 ? "" : "s"}{" "}
+        found
       </p>
 
       <EventGrid events={paginatedEvents} />

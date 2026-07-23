@@ -1,123 +1,121 @@
-import Footer from "@/components/Footer";
-import CategoryCard from "@/components/events/CategoryCard";
-import CommunityGallery from "@/components/events/CommunityGallery";
+import Link from "next/link";
 import EventNewsletter from "@/components/events/EventNewsletter";
 import FeaturedEventCard from "@/components/events/FeaturedEventCard";
-import HallOfFame from "@/components/events/HallOfFame";
-
 import HeroEvent from "@/components/events/HeroEvent";
-import PastEventCard from "@/components/events/PastEventCard";
 import EventsClient from "@/components/events/EventsClient";
 import OurEventModel from "@/db/models/ourEventModel";
-import UserDesignModel from "@/db/models/userDesignModel";
 import serializeEvent from "@/app/helpers/serializeEvent";
-import serializeUserDesign from "@/app/helpers/serializeUserDesign";
-import { Trophy, Shirt, Scissors, Camera, Ticket, Users } from "lucide-react";
+import { ArrowRight, Users } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
 export default async function EventsPage() {
   const events = (await OurEventModel.getAllEvents()).map(serializeEvent);
   const [featuredEvent, ...upcomingEvents] = events;
-  const userDesigns = (await UserDesignModel.getAllUserDesigns()).map(serializeUserDesign);
+  const now = new Date();
+
+  const pastEvents = [...events]
+    .filter((event) => {
+      if (!event.endDate) return false;
+
+      const endDate = new Date(event.endDate);
+      return !Number.isNaN(endDate.getTime()) && now > endDate;
+    })
+    .sort((a, b) => {
+      const aEnd = a.endDate ? new Date(a.endDate).getTime() : 0;
+      const bEnd = b.endDate ? new Date(b.endDate).getTime() : 0;
+      return bEnd - aEnd;
+    });
 
   return (
-    <>
-      <main className="page-container space-y-14">
-        <HeroEvent />
+    <main className="page-container space-y-14">
+      <HeroEvent />
 
-        <FeaturedEventCard event={featuredEvent} />
+      <FeaturedEventCard event={featuredEvent} />
 
-        {/* upcoming events (join event flow) */}
-        <EventsClient events={upcomingEvents.length > 0 ? upcomingEvents.slice(0, 4) : undefined} />
+      <section className="space-y-4">
+        <div className="flex flex-wrap items-center gap-3">
+          <button className="secondary-btn bg-primary text-white hover:bg-primary/90">
+            All
+          </button>
+          <button className="secondary-btn">Contests</button>
+          <button className="secondary-btn">Conventions</button>
+        </div>
+      </section>
 
-        {/* category */}
-        <section>
-          <div className="mb-8">
-            <h2 className="card-title">Explore by Category</h2>
-          </div>
+      <EventsClient
+        events={
+          upcomingEvents.length > 0 ? upcomingEvents.slice(0, 4) : undefined
+        }
+      />
 
-          <div className="grid gap-6 md:grid-cols-3 xl:grid-cols-6">
-            <CategoryCard
-              title="Contest"
-              color="#D95D4F"
-              icon={<Trophy size={34} />}
-            />
+      <section>
+        <div className="mb-8 flex items-center justify-between">
+          <h2 className="card-title">Past Events & Winners</h2>
+        </div>
 
-            <CategoryCard
-              title="Fashion"
-              color="#EC4899"
-              icon={<Shirt size={34} />}
-            />
+        <div className="grid gap-7 md:grid-cols-2 xl:grid-cols-4">
+          {pastEvents.slice(0, 4).map((event) => {
+            const participantCount = event.entries?.length ?? 0;
+            const ctaLabel =
+              event.eventType === "internal_contest"
+                ? "🏆 Lihat Pemenang"
+                : "📸 Lihat Galeri";
 
-            <CategoryCard
-              title="Workshop"
-              color="#F59E0B"
-              icon={<Scissors size={34} />}
-            />
+            return (
+              <article
+                key={event._id}
+                className="card group flex h-full flex-col overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-soft"
+              >
+                <div className="relative flex-shrink-0 overflow-hidden">
+                  {event.imgUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={event.imgUrl}
+                      alt={event.eventName || "Past event"}
+                      className="h-56 w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                  ) : (
+                    <div className="flex h-56 w-full items-center justify-center bg-[#FCFBFA] text-sm text-muted">
+                      Event image
+                    </div>
+                  )}
 
-            <CategoryCard
-              title="Photoshoot"
-              color="#3B82F6"
-              icon={<Camera size={34} />}
-            />
+                  <div className="absolute left-5 top-5">
+                    <span className="badge-warning flex items-center gap-2">
+                      {event.eventType === "internal_contest" ? "🏆" : "📍"}
+                      {event.eventType === "internal_contest"
+                        ? "Winner"
+                        : "Past Event"}
+                    </span>
+                  </div>
+                </div>
 
-            <CategoryCard
-              title="Convention"
-              color="#10B981"
-              icon={<Ticket size={34} />}
-            />
+                <div className="flex flex-1 flex-col p-6">
+                  <h3 className="line-clamp-2 text-xl font-semibold">
+                    {event.eventName || "Event Name"}
+                  </h3>
 
-            <CategoryCard
-              title="Gathering"
-              color="#8B5CF6"
-              icon={<Users size={34} />}
-            />
-          </div>
-        </section>
+                  <div className="mt-5 flex items-center gap-2 text-sm text-muted">
+                    <Users size={16} className="text-[var(--primary)]" />
+                    {participantCount} Participants
+                  </div>
 
-        {/* past event */}
-        <section>
-          <div className="mb-8 flex items-center justify-between">
-            <h2 className="card-title">Past Events</h2>
+                  <Link
+                    href={`/events/${event.slug}`}
+                    className="secondary-btn mt-auto flex w-full items-center justify-center gap-2"
+                  >
+                    {ctaLabel}
+                    <ArrowRight size={16} />
+                  </Link>
+                </div>
+              </article>
+            );
+          })}
+        </div>
+      </section>
 
-            <button className="secondary-btn">View All</button>
-          </div>
-
-          <div className="grid gap-7 md:grid-cols-2 xl:grid-cols-4">
-            <PastEventCard
-              image="/images/events/past1.jpg"
-              title="CosFit Winter Gathering"
-              participants="680+"
-            />
-
-            <PastEventCard
-              image="/images/events/past2.jpg"
-              title="Prop Making Contest"
-              participants="450+"
-            />
-
-            <PastEventCard
-              image="/images/events/past3.jpg"
-              title="CosFit Easter Parade"
-              participants="1,100+"
-            />
-
-            <PastEventCard
-              image="/images/events/past4.jpg"
-              title="Photography Contest"
-              participants="780+"
-            />
-          </div>
-        </section>
-{/* Hall of Fame (community designs, ranked by votes) */}
-
-<HallOfFame designs={userDesigns} />
-
-<CommunityGallery />
-
-<EventNewsletter />
-      </main>
-    </>
+      <EventNewsletter />
+    </main>
   );
 }
