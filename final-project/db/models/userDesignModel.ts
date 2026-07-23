@@ -49,6 +49,7 @@ export default class UserDesignModel {
       ...userDesignData,
       userId: new ObjectId(userId),
       eventId: eventObjectId,
+      votedBy: [],
     });
 
     const entryPayload = {
@@ -83,14 +84,38 @@ export default class UserDesignModel {
     });
   }
 
-  static async voteUserDesign(id: string, vote: number) {
+  static async voteUserDesign(id: string, userId: string, vote: number) {
+    const entry = await this.collection().findOne({
+      _id: new ObjectId(id),
+    });
+
+    if (!entry) {
+      throw new Error("User Design not found");
+    }
+
+    const voterObjectId = new ObjectId(userId);
+    const hasVoted = Array.isArray(entry.votedBy)
+      ? entry.votedBy.some(
+          (voter) => voter?.toString() === voterObjectId.toString(),
+        )
+      : false;
+
+    if (hasVoted) {
+      throw { message: "You can only vote once for this entry.", status: 409 };
+    }
+
     const result = await this.collection().updateOne(
       { _id: new ObjectId(id) },
-      { $inc: { vote: vote } },
+      {
+        $inc: { vote: vote },
+        $push: { votedBy: voterObjectId },
+      },
     );
+
     if (result.matchedCount === 0) {
       throw new Error("User Design not found");
     }
+
     return (
       "User Design with ID: " + id + " has been voted. New vote count: " + vote
     );
