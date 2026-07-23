@@ -13,11 +13,13 @@ interface chatType {
   createdAt: string;
   vendor: {
     namaToko: string;
-    role: string
+    role: string;
+    userImg: string
   }[];
   user: {
     username: string;
     role: string;
+    userImg: string
   }[];
 }
 
@@ -52,7 +54,6 @@ const formatTimeAgo = (dateString: string | undefined) => {
     return `${diffInHours} hour${diffInHours > 1 ? 's' : ''} ago`;
   }
 
-  // Jika sudah lebih dari 24 jam, tampilkan format tanggal
   return date.toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",
@@ -91,6 +92,7 @@ export default function CommentCard({ roomId, initialMessages, currentUser, imag
   return (
     <div className="flex w-full flex-col gap-6 p-4">
       {messages?.map((chat) => {
+        console.log(chat);
         const username = chat?.user?.[0]?.username || chat?.vendor?.[0]?.namaToko || "Unknown";
         const isMe = username === currentUser;
         const role = isMe ? "You" : chat?.user[0]?.role || chat?.vendor[0]?.role ;
@@ -100,7 +102,7 @@ export default function CommentCard({ roomId, initialMessages, currentUser, imag
             <div className="flex gap-4">
               
               <div className="relative h-12 w-12 shrink-0">
-                <Image src={image} alt="My Avatar" fill className="rounded-full object-cover" />
+                <Image src={chat?.user[0]?.userImg || chat?.vendor[0]?.userImg} alt="My Avatar" fill className="rounded-full object-cover" />
               </div>
 
               <div className="flex-1">
