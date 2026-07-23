@@ -116,7 +116,7 @@ function CostumeCard({
     }
   };
   return (
-    <div className="flex flex-col overflow-hidden rounded-2xl border border-border bg-surface">
+ <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-surface">
   <div className="relative aspect-[3/4] w-full overflow-hidden bg-cream/30">
     <button
       type="button"
@@ -148,26 +148,53 @@ function CostumeCard({
     </button>
   </div>
 
-  <div className="flex flex-1 flex-col gap-2 p-4">
-    <div>
-      <p className="text-lg font-semibold text-foreground">
+  <div className="flex flex-1 flex-col p-4">
+    {/* --- Bagian Atas (Info Kostum) --- */}
+    <div className="mb-4">
+      <p className="text-lg font-semibold text-foreground line-clamp-2">
         {costume.title || "Costume Title"}
       </p>
-      <p className="text-base text-muted">{costume.theme || "Series"}</p>
+      <p className="mt-1 text-sm text-muted line-clamp-1">
+        {costume.theme || "Series"}
+      </p>
     </div>
-    <p className="text-xl font-bold text-primary">
-      {formatPrice(costume.originalPrice, currency)}
-    </p>
     
-    {/* BAGIAN TOMBOL YANG DIRAPIKAN */}
-    <Link
-      href={`/marketplace/products/${costume.slug}`}
-      onClick={() => onSelect?.(costume._id)}
-      className="mt-auto flex w-full items-center justify-center gap-2 rounded-xl border border-primary px-4 py-2.5 text-base font-medium text-primary transition-colors hover:bg-cream/40"
-    >
-      {detailsLabel}
-      <ArrowRight className="h-5 w-5" />
-    </Link>
+    {/* --- Bagian Bawah (Harga & Tombol) yang selalu di bawah --- */}
+    <div className="mt-auto flex flex-col gap-4">
+      
+      {/* Wrapper Harga */}
+      <div className="flex flex-col">
+        {/* Tempat Diskon (diberi h-6 agar space-nya tetap ada meski tanpa diskon) */}
+        <div className="flex h-6 items-center gap-2">
+          {costume.discount && costume.discount > 0 ? (
+            <>
+              <span className="rounded-md bg-red-100 px-2 py-0.5 text-xs font-bold text-red-600">
+                Hemat {costume.discount}%
+              </span>
+              <span className="text-sm font-medium text-muted line-through">
+                {formatPrice(Number(costume.originalPrice), currency)}
+              </span>
+            </>
+          ) : null}
+        </div>
+        
+        {/* Harga Akhir (Final Price) */}
+        <p className="mt-1 text-[22px] font-bold leading-none text-primary">
+          {formatPrice(costume.finalPrice, currency)}
+        </p>
+      </div>
+      
+      {/* Tombol Details */}
+      <Link
+        href={`/marketplace/products/${costume.slug}`}
+        onClick={() => onSelect?.(costume._id)}
+        className="flex w-full items-center justify-center gap-2 rounded-xl border border-primary px-4 py-2.5 text-base font-medium text-primary transition-colors hover:bg-cream/40"
+      >
+        {detailsLabel}
+        <ArrowRight className="h-5 w-5" />
+      </Link>
+    </div>
+    
   </div>
 </div>
   );
