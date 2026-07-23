@@ -85,15 +85,6 @@ export default async function DiscussionPage({ params }: Props) {
                 <p className="text-sm text-gray-500 mt-1">Be the first one to help.</p>
               </div>
             )}
-
-            {/* LOAD MORE BUTTON */}
-            {chatData?.message?.length > 0 && (
-              <div className="mt-8 flex justify-center pb-4">
-                <button className="rounded-full bg-white px-8 py-2.5 text-sm font-semibold text-gray-600 shadow-sm border border-gray-200 transition-all hover:bg-gray-50 hover:shadow-md hover:text-gray-900">
-                  Load More Comments
-                </button>
-              </div>
-            )}
           </div>
         </section>
 

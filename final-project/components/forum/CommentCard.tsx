@@ -28,6 +28,38 @@ interface CommentCardProps {
   image: string
 }
 
+// Fungsi pembantu untuk memformat waktu relatif
+const formatTimeAgo = (dateString: string | undefined) => {
+  if (!dateString) return "Just now";
+
+  const date = new Date(dateString);
+  const now = new Date();
+  const diffInMs = now.getTime() - date.getTime();
+  
+  const diffInSeconds = Math.floor(diffInMs / 1000);
+  const diffInMinutes = Math.floor(diffInSeconds / 60);
+  const diffInHours = Math.floor(diffInMinutes / 60);
+
+  if (diffInMinutes < 1) {
+    return "Just now";
+  }
+  
+  if (diffInMinutes < 60) {
+    return `${diffInMinutes} minute${diffInMinutes > 1 ? 's' : ''} ago`;
+  }
+  
+  if (diffInHours < 24) {
+    return `${diffInHours} hour${diffInHours > 1 ? 's' : ''} ago`;
+  }
+
+  // Jika sudah lebih dari 24 jam, tampilkan format tanggal
+  return date.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric"
+  });
+};
+
 export default function CommentCard({ roomId, initialMessages, currentUser, image }: CommentCardProps) {
   const [messages, setMessages] = useState<chatType[]>(initialMessages);
   const roleColor = "#8B5CF6";
@@ -56,11 +88,10 @@ export default function CommentCard({ roomId, initialMessages, currentUser, imag
     };
   }, [roomId]);
 
-  console.log(messages);
   return (
     <div className="flex w-full flex-col gap-6 p-4">
       {messages?.map((chat) => {
-        const username = chat?.user?.[0]?.username || chat?.vendor?.[0]?.namaToko ||"Unknown";
+        const username = chat?.user?.[0]?.username || chat?.vendor?.[0]?.namaToko || "Unknown";
         const isMe = username === currentUser;
         const role = isMe ? "You" : chat?.user[0]?.role || chat?.vendor[0]?.role ;
 
@@ -69,8 +100,8 @@ export default function CommentCard({ roomId, initialMessages, currentUser, imag
             <div className="flex gap-4">
               
               <div className="relative h-12 w-12 shrink-0">
-                        <Image src={image} alt="My Avatar" fill className="rounded-full object-cover" />
-                      </div>
+                <Image src={image} alt="My Avatar" fill className="rounded-full object-cover" />
+              </div>
 
               <div className="flex-1">
                 <div className="flex items-start justify-between">
@@ -90,10 +121,9 @@ export default function CommentCard({ roomId, initialMessages, currentUser, imag
                         {role}
                       </span>
 
+                      {/* Menggunakan helper formatTimeAgo di sini */}
                       <span className="text-xs text-muted text-muted-foreground">
-                        {chat.createdAt
-                          ? new Date(chat.createdAt).toLocaleDateString()
-                          : "Just now"}
+                        {formatTimeAgo(chat.createdAt)}
                       </span>
                     </div>
                   </div>
