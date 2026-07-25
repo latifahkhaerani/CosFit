@@ -13,7 +13,7 @@ export default async function WishlistPage() {
 
     const auth = cookieStore.get("Authorization");
 
-    const res = await fetch("http://localhost:3000/api/user/wishlist", {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/user/wishlist`, {
       cache: "no-store",
       headers: {
         Cookie: `Authorization=${auth?.value}`,

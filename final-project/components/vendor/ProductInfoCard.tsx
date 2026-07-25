@@ -37,7 +37,7 @@ export default function ProductInfoCard({ product }: { product: GetProduct }) {
         setFinalPrice(originalPrice);
       }
       const res = await fetch(
-        `http://localhost:3000/api/user/product/${product._id}/edit`,
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/user/product/${product._id}/edit`,
         {
           method: "PATCH",
           headers: {

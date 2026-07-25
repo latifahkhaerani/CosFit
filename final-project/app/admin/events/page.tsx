@@ -6,7 +6,7 @@ import { Plus } from "lucide-react";
 export const revalidate = 0;
 
 async function getEvents(): Promise<GetEvent[]> {
-  const res = await fetch("http://localhost:3000/api/admin/events", {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/admin/events`, {
     cache: "no-store",
   });
   if (!res.ok) return [];

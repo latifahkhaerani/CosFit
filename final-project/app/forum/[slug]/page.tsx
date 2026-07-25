@@ -15,7 +15,7 @@ export default async function DiscussionPage({ params }: Props) {
   const { slug } = await params;
   const cookieStore = await cookies();
 
-  const res = await fetch(`http://localhost:3000/api/forum/${slug}`,{
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/forum/${slug}`,{
     headers: {
       Cookie: cookieStore.toString(),
     },
@@ -31,7 +31,7 @@ export default async function DiscussionPage({ params }: Props) {
   
   const forumById = await res.json();
 
-  const res2 = await fetch(`http://localhost:3000/api/chat/${forumById._id}`, {
+  const res2 = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/chat/${forumById._id}`, {
     headers: {
       Cookie: cookieStore.toString(),
     },

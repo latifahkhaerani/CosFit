@@ -43,7 +43,7 @@ export default function DesignChallengeForm({
 
   async function syncEntries() {
     try {
-      const response = await fetch(`/api/userDesign?eventId=${eventId}`);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/userDesign?eventId=${eventId}`);
       if (!response.ok) return;
       const data = await response.json();
       const nextEntries = Array.isArray(data?.designs)
@@ -84,7 +84,7 @@ export default function DesignChallengeForm({
       const formData = new FormData();
       formData.append("file", file);
 
-      const uploadRes = await fetch("/api/userDesign/upload", {
+      const uploadRes = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/userDesign/upload`, {
         method: "POST",
         body: formData,
       });
@@ -97,7 +97,7 @@ export default function DesignChallengeForm({
       const { url } = await uploadRes.json();
 
       setStatus("saving");
-      const res = await fetch("/api/userDesign", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/userDesign`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -132,7 +132,7 @@ export default function DesignChallengeForm({
     setErrorMessage("");
 
     try {
-      const response = await fetch(`/api/userDesign/${designId}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/userDesign/${designId}`, {
         method: "PATCH",
       });
 

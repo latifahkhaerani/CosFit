@@ -13,14 +13,14 @@ export default async function ProductDetailPage({
   const { id: slug } = await params;
 
   const product = await fetch(
-    `http://localhost:3000/api/user/product/${slug}`,
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/user/product/${slug}`,
     {
       cache: "no-store",
     },
   ).then((res) => res.json());
 
   const relatedProducts = await fetch(
-    `http://localhost:3000/api/user/product/${slug}/related`,
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/user/product/${slug}/related`,
     {
       cache: "no-store",
     },

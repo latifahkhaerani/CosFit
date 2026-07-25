@@ -53,19 +53,19 @@ export default function ProfilePage() {
     try {
       const [profileRes, wishlistRes, checkoutRes, productsRes, savedLooksRes] =
         await Promise.all([
-          fetch("http://localhost:3000/api/user/profile", {
+          fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/user/profile`, {
             cache: "no-store",
           }),
-          fetch("http://localhost:3000/api/user/wishlist", {
+          fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/user/wishlist`, {
             cache: "no-store",
           }),
-          fetch("http://localhost:3000/api/pay", {
+          fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/pay`, {
             cache: "no-store",
           }),
-          fetch("http://localhost:3000/api/user/product", {
+          fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/user/product`, {
             cache: "no-store",
           }),
-          fetch("http://localhost:3000/api/user/history", {
+          fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/user/history`, {
             cache: "no-store",
           }),
         ]);
@@ -104,7 +104,7 @@ export default function ProfilePage() {
       const formData = new FormData();
       formData.append("file", file);
 
-      const res = await fetch(`/api/user/profile`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/user/profile`, {
         method: "PATCH",
         body: formData,
       });
@@ -123,7 +123,7 @@ export default function ProfilePage() {
 
   const handleUpdateOther = async (address: string) => {
     try {
-      const res = await fetch(`/api/user/profile`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/user/profile`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

@@ -16,7 +16,7 @@ export interface PopularCharactersProps {
   onTryOn?: (productId: string) => void;
 }
 
-const data = await fetch("http://localhost:3000/api/user/product/popular");
+const data = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/user/product/popular`);
 const char: GetProduct[] = await data.json();
 
 function CharacterCard({

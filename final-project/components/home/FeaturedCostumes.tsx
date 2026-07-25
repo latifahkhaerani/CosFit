@@ -19,7 +19,7 @@ export interface FeaturedCostumesProps {
   currency?: string; // e.g. "USD", "IDR" — passed to Intl.NumberFormat
 }
 
-const data = await fetch("http://localhost:3000/api/user/product/featured");
+const data = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/user/product/featured`);
 const char: GetProduct[] = await data.json();
 
 function formatPrice(amount: number, currency: string) {
@@ -54,7 +54,7 @@ function CostumeCard({
   useEffect(() => {
     const fetchWishlistStatus = async () => {
       try {
-        const response = await fetch("/api/user/wishlist");
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/user/wishlist`);
         if (response.ok) {
           const wishlist = await response.json();
 
@@ -92,7 +92,7 @@ function CostumeCard({
 
     try {
       if (!previousState) {
-        const response = await fetch("/api/user/wishlist", {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/user/wishlist`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ productId: costume._id }),
@@ -100,7 +100,7 @@ function CostumeCard({
 
         if (!response.ok) throw new Error("Gagal menambah wishlist");
       } else {
-        const response = await fetch(`/api/user/wishlist/${costume._id}`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/user/wishlist/${costume._id}`, {
           method: "DELETE",
         });
 

@@ -14,7 +14,7 @@ interface MarketplacePageProps {
 
 async function getProducts(search: string) {
   const res = await fetch(
-    `http://localhost:3000/api/user/product?search=${encodeURIComponent(search)}`,
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/user/product?search=${encodeURIComponent(search)}`,
     {
       cache: "no-store",
     },

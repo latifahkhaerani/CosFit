@@ -24,7 +24,7 @@ export default function CreditPackageCard({
 
   const handlePurchase = async () => {
   try {
-    const res = await fetch("/api/topup", {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/topup`, {
       method: "POST",
       body: JSON.stringify({ credits }),
     });
@@ -33,7 +33,7 @@ export default function CreditPackageCard({
 
     window.snap.pay(data.token, {
       onSuccess: async () => {
-        await fetch("/api/topup", {method: "PATCH", body: JSON.stringify({credit: credits})})
+        await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/topup`, {method: "PATCH", body: JSON.stringify({credit: credits})})
         route.refresh();
       },
 

@@ -13,7 +13,7 @@ export interface UpcomingEventsProps {
   onSelectEvent?: (eventId: string) => void;
 }
 
-const data = await fetch("http://localhost:3000/api/event/closest");
+const data = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/event/closest`);
 const Events: GetOurEvent[] = await data.json();
 
 function EventCard({

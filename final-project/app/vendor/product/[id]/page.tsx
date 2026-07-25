@@ -4,7 +4,7 @@ import ProductInfoCard from "@/components/vendor/ProductInfoCard";
 export default async function VendorProductDetail({params}: {params: Promise<{id: string}>}) {
 
   const {id} = await params
-  const data = await fetch(`http://localhost:3000/api/user/product/${id}`)
+  const data = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/user/product/${id}`)
   const product = await data.json()
   return (
     <main className="flex min-h-screen bg-[var(--background)]">

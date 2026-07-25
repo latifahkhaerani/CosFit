@@ -54,7 +54,7 @@ export default async function EventDetailPage({
       if (forum?._id) {
         try {
           const chatRes = await fetch(
-            `http://localhost:3000/api/chat/${forum._id}`,
+            `${process.env.NEXT_PUBLIC_BASE_URL}/api/chat/${forum._id}`,
             {
               headers: {
                 Cookie: cookieStore.toString(),
